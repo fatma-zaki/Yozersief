@@ -1,9 +1,39 @@
-import { Fragment } from "react";
+import { Fragment, type CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 import { STEPS } from "./data";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
-import { Glow, NeonDark, Ornament, SectionHead, type Bp, type Vars } from "./parts";
+import { NeonDark, SectionHead, type Bp, type Vars } from "./parts";
+
+/** Tall «إبداع» calligraphy — centered watermark (teal wash, no glow). */
+function StepsCalligraphy({ style }: { style: CSSProperties }) {
+  const centered: CSSProperties = {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    ...style,
+  };
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element -- decorative */}
+      <img
+        src="/brand/ibda_calligraphy_vector.svg"
+        alt=""
+        aria-hidden="true"
+        className={cn(s.orn, s.lightOnly)}
+        style={{ ...centered, opacity: 0.11 }}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element -- decorative */}
+      <img
+        src="/brand/ibda_calligraphy_vector.svg"
+        alt=""
+        aria-hidden="true"
+        className={cn(s.orn, s.darkOnly)}
+        style={{ ...centered, opacity: 0.28 }}
+      />
+    </>
+  );
+}
 
 /** «خطوات بسيطة» — how an order works (design: how section). */
 export function Steps() {
@@ -12,7 +42,14 @@ export function Steps() {
       id="how"
       aria-labelledby="how-h"
       className={cn(s.section, s.bg, s.reveal)}
-      style={{ "--bg-l": "transparent", "--bg-d": "#001b17" } as Vars}
+      style={
+        {
+          "--bg-l": "transparent",
+          "--bg-d": "#001b17",
+          /* Let the centered calligraphy show fully; size/position stay as set. */
+          overflow: "visible",
+        } as Vars
+      }
     >
       {/* Desktop */}
       <div
@@ -21,11 +58,7 @@ export function Steps() {
           { position: "relative", "--pad-l": "56px 24px 88px", "--pad-d": "72px 24px 88px" } as Vars
         }
       >
-        <Glow
-          light="radial-gradient(circle at 85% 40%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 26%), radial-gradient(circle at 15% 70%, rgba(126,232,199,0.25) 0, rgba(126,232,199,0) 24%)"
-          dark="radial-gradient(ellipse 30% 50% at 85% 40%, rgba(5,64,57,0.55) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 30% 50% at 15% 70%, rgba(5,64,57,0.45) 0%, rgba(5,64,57,0) 100%)"
-        />
-        <Ornament tone="teal" style={{ top: -40, left: -260, width: 480, height: 480 }} dark=".2" />
+        <StepsCalligraphy style={{ width: 420, height: 583 }} />
         <div
           style={{
             maxWidth: 1180,
@@ -99,10 +132,7 @@ export function Steps() {
           { position: "relative", "--pad-l": "40px 24px 72px", "--pad-d": "72px 24px" } as Vars
         }
       >
-        <Glow
-          light="radial-gradient(circle at 85% 50%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 35%)"
-          dark="radial-gradient(ellipse 45% 50% at 85% 50%, rgba(5,64,57,0.55) 0%, rgba(5,64,57,0) 100%)"
-        />
+        <StepsCalligraphy style={{ width: 340, height: 472 }} />
         <Head bp="t" className={s.mb} style={{ "--mb-l": "36px", "--mb-d": "40px" } as Vars} />
         <ol
           style={{
@@ -142,10 +172,7 @@ export function Steps() {
           { position: "relative", "--pad-l": "32px 16px 56px", "--pad-d": "56px 16px" } as Vars
         }
       >
-        <Glow
-          light="radial-gradient(circle at 85% 50%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 45%)"
-          dark="radial-gradient(ellipse 70% 50% at 85% 50%, rgba(5,64,57,0.55) 0%, rgba(5,64,57,0) 100%)"
-        />
+        <StepsCalligraphy style={{ width: 260, height: 361 }} />
         <Head bp="m" style={{ marginBottom: 26 }} />
         <ol
           style={{

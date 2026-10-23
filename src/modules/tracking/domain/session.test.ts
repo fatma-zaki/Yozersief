@@ -4,6 +4,7 @@ import {
   TRACKING_SESSION_TTL_SECONDS,
   openTrackingSession,
   sealTrackingSession,
+  trackingSessionClearCookieOptions,
   trackingSessionCookieOptions,
 } from "./session";
 
@@ -37,6 +38,19 @@ describe("trackingSessionCookieOptions", () => {
     expect(cleared.secure).toBe(true);
     expect(cleared.httpOnly).toBe(true);
     expect(cleared.path).toBe("/track");
+  });
+
+  it("trackingSessionClearCookieOptions matches set flags with maxAge 0", () => {
+    const cleared = trackingSessionClearCookieOptions(true);
+    expect(cleared).toEqual(trackingSessionCookieOptions(0, true));
+    expect(cleared).toEqual({
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: TRACKING_COOKIE_PATH,
+      maxAge: 0,
+    });
+    expect(trackingSessionClearCookieOptions(false).secure).toBe(false);
   });
 });
 

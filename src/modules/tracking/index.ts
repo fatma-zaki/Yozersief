@@ -3,9 +3,16 @@ export { verifyTrackingLookup, type VerifyLookupResult } from "./application/ver
 export { getCustomerTrackingView } from "./application/get-tracking-view";
 export {
   setTrackingSessionCookie,
+  readTrackingSession,
   readTrackingSessionOrderId,
   clearTrackingSessionCookie,
+  type TrackingSessionState,
 } from "./application/session-cookie";
+export {
+  trackingSessionGateMessage,
+  type TrackingSessionGate,
+  type TrackingSessionGateMessage,
+} from "./application/session-ux";
 export {
   TRACKING_COOKIE_NAME,
   TRACKING_COOKIE_PATH,
@@ -13,6 +20,7 @@ export {
   sealTrackingSession,
   openTrackingSession,
   trackingSessionCookieOptions,
+  trackingSessionClearCookieOptions,
   type TrackingSessionCookieOptions,
   type TrackingSessionPayload,
 } from "./domain/session";
