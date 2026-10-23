@@ -152,16 +152,19 @@ export async function markInvitationAccepted(id: string, tx: DbOrTx) {
   await tx.update(invitations).set({ acceptedAt: new Date() }).where(eq(invitations.id, id));
 }
 
-export async function findStaffByContact(contact: { phone?: string; email?: string }) {
+export async function findStaffByContact(
+  contact: { phone?: string; email?: string },
+  tx: DbOrTx = db,
+) {
   if (contact.phone) {
-    const [row] = await db
+    const [row] = await tx
       .select({ id: staffUsers.id })
       .from(staffUsers)
       .where(eq(staffUsers.phone, contact.phone));
     if (row) return row;
   }
   if (contact.email) {
-    const [row] = await db
+    const [row] = await tx
       .select({ id: staffUsers.id })
       .from(staffUsers)
       .where(eq(staffUsers.email, contact.email));
@@ -209,4 +212,20 @@ export async function listStaffMembers() {
     .from(staffUsers)
     .innerJoin(roles, eq(roles.id, staffUsers.roleId))
     .orderBy(roles.id, staffUsers.name);
+}
+
+export async function findStaffRole(userId: string, tx: DbOrTx) {
+  const [row] = await tx
+    .select({ id: staffUsers.id, roleKey: roles.key })
+    .from(staffUsers)
+    .innerJoin(roles, eq(roles.id, staffUsers.roleId))
+    .where(eq(staffUsers.id, userId));
+  return row ?? null;
+}
+
+export async function updateStaffStatus(userId: string, status: "active" | "paused", tx: DbOrTx) {
+  await tx
+    .update(staffUsers)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(staffUsers.id, userId));
 }

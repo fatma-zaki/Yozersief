@@ -12,7 +12,7 @@ export {
   type RoleAccess,
 } from "./application/role-access";
 export { onStaffSessionCreated, prepareStaffSession } from "./application/session-hooks";
-export { listMembers } from "./application/members";
+export { listMembers, setMemberStatus } from "./application/members";
 export { listMySessions, signOutOtherDevices } from "./application/sessions";
 export { deviceLabelFromUserAgent } from "./domain/device";
 export { displayEmail, isPlaceholderEmail, placeholderEmailFor } from "./domain/staff";

@@ -103,7 +103,7 @@ export async function acceptInvitation(
     }
     const email = byEmail ? invitation.contact : (data.email ?? placeholderEmailFor(phone));
 
-    if (await findStaffByContact({ phone, email })) {
+    if (await findStaffByContact({ phone, email }, tx)) {
       return err(new ConflictError("staff exists", "الرقم أو الإيميل ده متسجّل لعضو تاني."));
     }
 

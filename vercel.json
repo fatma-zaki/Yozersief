@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm db:migrate && pnpm build",
+  "regions": ["fra1"],
+  "crons": [
+    { "path": "/api/cron/messages-dispatch", "schedule": "* * * * *" },
+    { "path": "/api/cron/quotes-expire", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/otp-cleanup", "schedule": "15 * * * *" },
+    { "path": "/api/cron/links-cleanup", "schedule": "30 3 * * *" }
+  ]
+}

@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Dummy values so env validation passes; real secrets live in Vercel.
+env:
+  APP_URL: http://localhost:3000
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  DATABASE_URL: postgres://youzersef:youzersef@localhost:5432/youzersef
+  BETTER_AUTH_SECRET: ci-better-auth-secret-0123456789abcdef
+  TOKEN_HASH_SECRET: ci-token-hash-secret-0123456789abcdefgh
+  TRACKING_COOKIE_SECRET: ci-tracking-cookie-secret-0123456789ab
+  CRON_SECRET: ci-cron-secret-0123456789
+  RATE_LIMIT_DISABLED: "true"
+  SEED_ADMIN_PHONE: "01000000099"
+  SEED_ADMIN_PASSWORD: ci-admin-password-123
+  E2E_DESK_PHONE: "01000000010"
+  E2E_DESK_PASSWORD: ci-desk-password-123
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm format:check
+      - run: pnpm test
+      - name: Migrations match the schema
+        run: |
+          pnpm db:check
+          pnpm db:generate --name ci-drift-check
+          if [ -n "$(git status --porcelain drizzle)" ]; then
+            echo "::error::src/db/schema changed without a committed migration (run pnpm db:generate)."
+            git status --porcelain drizzle
+            exit 1
+          fi
+      - name: Integration tests (fresh PGlite DB, real migrations)
+        run: pnpm test:integration
+      - run: pnpm build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: checks
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: youzersef
+          POSTGRES_PASSWORD: youzersef
+          POSTGRES_DB: youzersef
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U youzersef" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Fresh database
+        run: |
+          pnpm db:migrate
+          pnpm db:seed
+          pnpm db:seed
+          pnpm tsx scripts/seed-e2e.ts
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
