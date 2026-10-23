@@ -44,9 +44,9 @@ export function IdeaBanner() {
           />
           <Ornament
             tone="mint"
-            style={{ top: -220, right: -160, width: 520, height: 520 }}
+            style={{ top: -180, right: -200, width: 440, height: 440, transform: "rotate(180deg)" }}
             light="0"
-            dark=".45"
+            dark=".3"
           />
           {/* `fill` images are always 100% wide, so the wrapper sets the 52% width. */}
           <div

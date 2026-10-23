@@ -2,15 +2,18 @@ import "server-only";
 import { forbidden, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { UnauthorizedError } from "@/lib/errors";
 import { assertCan, can, type Permission, type StaffContext } from "@/lib/rbac";
 import { getSetting } from "@/modules/content";
 import { getRoleAccess } from "@/modules/identity";
 import { auth } from "./auth";
+import { assertTwoFactorEnrollment, resolveStaffForAction } from "./session-guards";
 
 /**
  * The current staff member, or null. Deduplicated per request with React `cache`.
  * Reads cookies, so callers must sit inside a <Suspense> boundary (Cache Components).
+ *
+ * Returns null when there is no session, the account is not active, or role access is missing.
+ * An incomplete login 2FA challenge never yields a session from Better Auth, so it is null here.
  */
 export const getStaffContext = cache(async (): Promise<StaffContext | null> => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -58,16 +61,27 @@ export async function requirePagePermission(
   return staff;
 }
 
-/** Server actions / route handlers: throws typed errors instead of rendering. */
+/**
+ * Server actions / route handlers: active session + global 2FA enrollment when enforced.
+ * Throws UnauthorizedError / TwoFactorRequiredError (never redirects).
+ */
 export async function requireStaff(): Promise<StaffContext> {
-  const staff = await getStaffContext();
-  if (!staff) throw new UnauthorizedError();
-  return staff;
+  return resolveStaffForAction(await getStaffContext(), "protected");
 }
 
-/** Server actions / route handlers: session + permission, or a typed 401/403. */
+/**
+ * Session only — exclusively for enable/confirm 2FA enrollment while setup is incomplete.
+ * Do not use for ordinary protected actions.
+ */
+export async function requireStaffEnrollingTwoFactor(): Promise<StaffContext> {
+  return resolveStaffForAction(await getStaffContext(), "two_factor_setup");
+}
+
+/** Server actions / route handlers: session + 2FA (when enforced) + permission, or typed 401/403. */
 export async function requirePermission(permission: Permission): Promise<StaffContext> {
   const staff = await requireStaff();
   assertCan(staff, permission);
   return staff;
 }
+
+export { assertTwoFactorEnrollment };

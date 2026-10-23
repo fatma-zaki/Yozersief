@@ -4,22 +4,24 @@ import { Redis } from "@upstash/redis";
 import { env } from "@/env";
 import { RateLimitedError } from "./errors";
 import { logger } from "./logger";
+import {
+  allowFromRedisResult,
+  allowWhenRedisUnavailable,
+  isAuthSensitiveLimit,
+  LIMITS,
+  type LimitName,
+} from "./ratelimit-policy";
+
+export type { LimitName } from "./ratelimit-policy";
+export { isAuthSensitiveLimit, LIMITS } from "./ratelimit-policy";
 
 /**
  * Named limits (brief A6.8). Windows are per identifier (phone, IP, user…).
  * Production uses Upstash Redis; development falls back to an in-memory window per instance.
+ *
+ * Failure policy: see `ratelimit-policy.ts` — auth-sensitive fail closed on Redis errors/timeouts;
+ * public limits (`upload.token`, tracking, order submit) fail open for availability.
  */
-const LIMITS = {
-  "otp.send": { requests: 3, window: "10 m" },
-  "otp.verify": { requests: 10, window: "10 m" },
-  "tracking.lookup": { requests: 20, window: "10 m" },
-  "order.submit": { requests: 5, window: "1 h" },
-  "upload.token": { requests: 60, window: "1 h" },
-  "auth.login": { requests: 10, window: "15 m" },
-  "access.request": { requests: 10, window: "1 h" },
-} as const satisfies Record<string, { requests: number; window: `${number} ${"s" | "m" | "h"}` }>;
-
-export type LimitName = keyof typeof LIMITS;
 
 const redis =
   env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN
@@ -37,6 +39,7 @@ function limiterFor(name: LimitName): Ratelimit | null {
       redis,
       limiter: Ratelimit.slidingWindow(requests, window),
       prefix: `yz:rl:${name}`,
+      // Keep Upstash's 5s default; we interpret `reason: "timeout"` explicitly below.
     });
     limiters.set(name, limiter);
   }
@@ -67,16 +70,30 @@ export async function checkRateLimit(name: LimitName, identifier: string): Promi
   const limiter = limiterFor(name);
   if (!limiter) return memoryLimit(name, identifier);
   try {
-    const { success } = await limiter.limit(identifier);
-    return success;
+    const result = await limiter.limit(identifier);
+    if (result.reason === "timeout") {
+      const allow = allowWhenRedisUnavailable(name);
+      logger.error("rate limiter timed out", {
+        name,
+        category: isAuthSensitiveLimit(name) ? "auth_sensitive" : "public",
+        decision: allow ? "allow" : "deny",
+      });
+      return allow;
+    }
+    return allowFromRedisResult(name, result);
   } catch (error) {
-    // Fail open on a Redis outage rather than locking every customer out; it is logged.
-    logger.error("rate limiter unavailable", { name, error });
-    return true;
+    const allow = allowWhenRedisUnavailable(name);
+    logger.error("rate limiter unavailable", {
+      name,
+      category: isAuthSensitiveLimit(name) ? "auth_sensitive" : "public",
+      decision: allow ? "allow" : "deny",
+      error,
+    });
+    return allow;
   }
 }
 
-/** Throws RateLimitedError when over the limit. */
+/** Throws RateLimitedError when over the limit (or when auth-sensitive Redis protection fails). */
 export async function enforceRateLimit(name: LimitName, identifier: string): Promise<void> {
   if (!(await checkRateLimit(name, identifier))) throw new RateLimitedError(name);
 }

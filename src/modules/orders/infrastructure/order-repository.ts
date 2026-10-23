@@ -1,7 +1,18 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 import { activityLogs, mockups, orderEvents, orders, payments, productionJobs } from "@/db/schema";
+import { db } from "@/db/client";
 import type { DbOrTx, Tx } from "@/db/tx";
 import type { BizStage, OrderStatus } from "../domain/lifecycle";
+
+/** True when an order row exists (used before minting upload tokens). */
+export async function orderExists(orderId: string, tx: DbOrTx = db): Promise<boolean> {
+  const [row] = await tx
+    .select({ id: orders.id })
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+  return Boolean(row);
+}
 
 /** Locks the order row for the rest of the transaction so concurrent transitions serialise. */
 export async function lockOrder(orderId: string, tx: Tx) {

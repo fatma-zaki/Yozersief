@@ -13,7 +13,8 @@ const DESIGN_TYPES: Record<string, readonly string[]> = {
   pdf: ["application/pdf"],
   svg: ["image/svg+xml"],
   ai: ["application/postscript", "application/illustrator", "application/pdf"],
-  psd: ["image/vnd.adobe.photoshop", "application/x-photoshop", "application/octet-stream"],
+  // Do not accept application/octet-stream: that would allow arbitrary bytes under a .psd name.
+  psd: ["image/vnd.adobe.photoshop", "application/x-photoshop"],
 };
 
 const SHEET_TYPES: Record<string, readonly string[]> = {
@@ -29,6 +30,19 @@ export function allowedTypesFor(kind: FileKind): Record<string, readonly string[
 
 export function allowedContentTypes(kind: FileKind): string[] {
   return [...new Set(Object.values(allowedTypesFor(kind)).flat())];
+}
+
+/** True when `contentType` is allowed for this kind + filename extension. */
+export function isAllowedContentType(
+  kind: FileKind,
+  fileName: string,
+  contentType: string,
+): boolean {
+  const ext = extensionOf(fileName);
+  const types = allowedTypesFor(kind)[ext];
+  if (!types) return false;
+  const normalized = contentType.split(";")[0]?.trim().toLowerCase() ?? "";
+  return types.some((t) => t.toLowerCase() === normalized);
 }
 
 export function extensionOf(fileName: string): string {

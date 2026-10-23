@@ -70,13 +70,8 @@ function HeroDesktop() {
       />
       <Ornament
         tone="mint"
-        style={{ top: 40, right: -260, width: 620, height: 620, transform: "rotate(180deg)" }}
-        dark=".6"
-      />
-      <Ornament
-        tone="mint"
-        style={{ top: -120, left: -260, width: 620, height: 620 }}
-        light=".55"
+        style={{ top: 250, right: -140, width: 580, height: 580, transform: "scaleX(-1)" }}
+        light=".5"
         dark=".4"
       />
       <div
@@ -215,14 +210,9 @@ function HeroTablet() {
       />
       <Ornament
         tone="mint"
-        style={{ top: 60, right: -270, width: 520, height: 520, transform: "rotate(180deg)" }}
-        dark=".55"
-      />
-      <Ornament
-        tone="mint"
-        style={{ top: -120, left: -270, width: 520, height: 520 }}
-        light=".55"
-        dark=".4"
+        style={{ top: 220, right: -120, width: 500, height: 500, transform: "scaleX(-1)" }}
+        light=".5"
+        dark=".38"
       />
       <div style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 440 }}>
         <div
@@ -327,12 +317,11 @@ function HeroMobile() {
         light="radial-gradient(ellipse 90% 40% at 70% 18%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%), radial-gradient(ellipse 90% 40% at 30% 65%, rgba(0,92,88,0.6) 0%, rgba(0,92,88,0) 100%)"
         dark="radial-gradient(ellipse 90% 40% at 70% 18%, rgba(5,64,57,0.85) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 90% 40% at 30% 65%, rgba(3,39,34,0.9) 0%, rgba(3,39,34,0) 100%)"
       />
-      <Ornament tone="mint" style={{ top: 40, left: -200, width: 400, height: 400 }} dark=".45" />
       <Ornament
         tone="mint"
-        style={{ top: 380, right: -220, width: 380, height: 380, transform: "rotate(180deg)" }}
-        light=".7"
-        dark=".45"
+        style={{ top: 185, right: -80, width: 380, height: 380, transform: "scaleX(-1)" }}
+        light=".5"
+        dark=".35"
       />
       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 14 }}>
         <span className={cn(s.pill, s.pillD)}>مطبوعات مميزة</span>

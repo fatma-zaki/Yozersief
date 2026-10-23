@@ -55,9 +55,29 @@ export function parseEnv(): ServerEnv {
     throw new Error(`Invalid environment variables:\n${issues}\nSee .env.example.`);
   }
   const env = result.data;
-  // The production deployment must not fall back to the per-instance in-memory limiter.
-  if (process.env.VERCEL_ENV === "production" && !env.UPSTASH_REDIS_REST_URL) {
+  assertProductionRateLimitConfig(env, process.env.VERCEL_ENV);
+  return env;
+}
+
+/**
+ * Production (Vercel production) must use shared Redis rate limiting and must not allow
+ * RATE_LIMIT_DISABLED. Local / preview may omit Redis and use the in-memory fallback.
+ */
+export function assertProductionRateLimitConfig(
+  env: Pick<
+    ServerEnv,
+    "RATE_LIMIT_DISABLED" | "UPSTASH_REDIS_REST_URL" | "UPSTASH_REDIS_REST_TOKEN"
+  >,
+  vercelEnv: string | undefined,
+): void {
+  if (vercelEnv !== "production") return;
+  if (env.RATE_LIMIT_DISABLED) {
+    throw new Error("RATE_LIMIT_DISABLED cannot be enabled in production.");
+  }
+  if (!env.UPSTASH_REDIS_REST_URL) {
     throw new Error("UPSTASH_REDIS_REST_URL is required in production (rate limiting).");
   }
-  return env;
+  if (!env.UPSTASH_REDIS_REST_TOKEN) {
+    throw new Error("UPSTASH_REDIS_REST_TOKEN is required in production (rate limiting).");
+  }
 }

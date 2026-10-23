@@ -128,9 +128,9 @@ function FooterDesktop() {
     <div className={s.d} style={{ position: "relative", padding: "64px 24px 28px" }}>
       <Ornament
         tone="mint"
-        style={{ bottom: -260, left: -220, width: 600, height: 600, transform: "rotate(180deg)" }}
-        light=".5"
-        dark=".3"
+        style={{ bottom: -240, left: -260, width: 520, height: 520 }}
+        light=".35"
+        dark=".25"
       />
       <div
         style={{
@@ -273,9 +273,9 @@ function FooterTablet() {
     <div className={s.t} style={{ position: "relative", padding: "56px 24px 28px" }}>
       <Ornament
         tone="mint"
-        style={{ bottom: -220, left: -200, width: 500, height: 500, transform: "rotate(180deg)" }}
-        light=".5"
-        dark=".3"
+        style={{ bottom: -200, left: -240, width: 440, height: 440 }}
+        light=".35"
+        dark=".25"
       />
       <div
         style={{
@@ -349,9 +349,9 @@ function FooterMobile() {
     <div className={s.m} style={{ position: "relative", padding: "40px 16px 120px" }}>
       <Ornament
         tone="mint"
-        style={{ bottom: -140, left: -160, width: 400, height: 400, transform: "rotate(180deg)" }}
-        light=".5"
-        dark=".3"
+        style={{ bottom: -140, left: -180, width: 360, height: 360 }}
+        light=".32"
+        dark=".22"
       />
       <div
         style={{

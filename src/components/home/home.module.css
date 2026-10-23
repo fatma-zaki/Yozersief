@@ -156,20 +156,21 @@
   pointer-events: none;
 }
 
-/* Calligraphy ornaments; the mint one glows like in the design. */
+/* Calligraphy ornaments — soft mint glow, never competing with content. */
 .orn {
   position: absolute;
   z-index: -1;
   pointer-events: none;
   max-width: none;
+  user-select: none;
 }
 .ornMint {
-  filter: drop-shadow(0 0 4px rgba(126, 232, 199, 0.8))
-    drop-shadow(0 0 14px rgba(126, 232, 199, 0.35));
+  filter: drop-shadow(0 0 6px rgba(126, 232, 199, 0.35))
+    drop-shadow(0 0 22px rgba(126, 232, 199, 0.18));
 }
 :global(.dark) .ornMint {
-  filter: drop-shadow(0 0 4px rgba(126, 232, 199, 0.7))
-    drop-shadow(0 0 14px rgba(126, 232, 199, 0.3));
+  filter: drop-shadow(0 0 6px rgba(126, 232, 199, 0.3))
+    drop-shadow(0 0 20px rgba(126, 232, 199, 0.14));
 }
 
 /* Light design: curved hand-off between a dark band and the page. Dark design: a glowing line. */

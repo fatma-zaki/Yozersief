@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkUpload, MAX_FILE_BYTES, qualityFlagFor } from "./files";
+import { checkUpload, isAllowedContentType, MAX_FILE_BYTES, qualityFlagFor } from "./files";
 
 describe("checkUpload", () => {
   it.each(["logo.png", "LOGO.JPG", "a.jpeg", "b.pdf", "c.ai", "d.psd", "e.svg"])(
@@ -30,5 +30,12 @@ describe("qualityFlagFor", () => {
     expect(qualityFlagFor({ width: 640, height: 480 })).toBe("low_res");
     expect(qualityFlagFor({ width: 2480, height: 3508 })).toBe("ok");
     expect(qualityFlagFor(null)).toBeNull();
+  });
+});
+
+describe("isAllowedContentType", () => {
+  it("accepts photoshop MIME for .psd and rejects octet-stream", () => {
+    expect(isAllowedContentType("design", "a.psd", "image/vnd.adobe.photoshop")).toBe(true);
+    expect(isAllowedContentType("design", "a.psd", "application/octet-stream")).toBe(false);
   });
 });
