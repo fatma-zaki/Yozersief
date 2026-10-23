@@ -6,6 +6,31 @@ export type FileKind = (typeof FILE_KINDS)[number];
 
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 
+const DRAFT_PATH_PURPOSE = "yz-draft-path:v1:";
+
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Non-reversible public folder id for Blob pathnames.
+ * Derived with SHA-256 so the client can compute it without the server secret; the raw
+ * submission UUID must never appear in public paths. This id is not a capability — claiming
+ * drafts still requires the raw submission key (HMAC-bound in `upload_drafts`).
+ */
+export async function draftPathId(submissionKey: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(`${DRAFT_PATH_PURPOSE}${submissionKey}`),
+  );
+  return toHex(digest);
+}
+
+/** Pathname must stay under `drafts/{draftPathId}/` so confirm can bind ownership without leaking the key. */
+export async function draftPathPrefix(submissionKey: string): Promise<string> {
+  return `drafts/${await draftPathId(submissionKey)}/`;
+}
+
 const DESIGN_TYPES: Record<string, readonly string[]> = {
   png: ["image/png"],
   jpg: ["image/jpeg"],

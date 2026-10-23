@@ -1,11 +1,12 @@
 /**
- * Rate-limit failure policy (Phase 0 P0).
+ * Rate-limit failure policy (Phase 0 P0 / ADR-0007).
  *
  * Categories:
- * - Auth-sensitive (`auth.login`, `access.request`, `otp.send`, `otp.verify`):
+ * - Auth-sensitive (`auth.login`, `access.request`, `otp.send`, `otp.verify`,
+ *   `tracking.lookup`):
  *   FAIL CLOSED when Redis throws or times out — deny the request rather than silently
- *   disabling protection for credential / OTP attempts.
- * - Public / availability-oriented (`upload.token`, `tracking.lookup`, `order.submit`):
+ *   disabling protection for credential / tracking verification attempts.
+ * - Public / availability-oriented (`upload.token`, `order.submit`):
  *   FAIL OPEN on Redis throw/timeout so a Redis blip does not take down customer-facing
  *   flows. Abuse is still bounded when Redis is healthy.
  *
@@ -30,6 +31,7 @@ const AUTH_SENSITIVE = new Set<LimitName>([
   "access.request",
   "otp.send",
   "otp.verify",
+  "tracking.lookup",
 ]);
 
 export function isAuthSensitiveLimit(name: LimitName): boolean {

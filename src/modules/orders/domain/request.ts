@@ -14,6 +14,8 @@ import { normalizeEgyptianMobile } from "@/lib/phone";
 import { MAX_FILE_BYTES } from "./files";
 import type { CustomerType } from "./lifecycle";
 
+/** Wear size split S–XXL (brief B4). Defined in catalog seed; re-exported for request-domain consumers. */
+export { WEAR_SIZES };
 export type WearSize = (typeof WEAR_SIZES)[number];
 export const PRINT_PLACES = ["front", "back", "sleeve"] as const;
 export type PrintPlace = (typeof PRINT_PLACES)[number];
@@ -27,7 +29,7 @@ export type StickerShape = (typeof STICKER_SHAPES)[number];
 export const BULK_OPTIONS = ["sample", "perPiece", "batches"] as const;
 export type BulkOption = (typeof BULK_OPTIONS)[number];
 
-/** A file the customer picked. Uploading is wired by the backend; the builder only validates. */
+/** A file the customer picked. Local File blobs live in the builder; `uploaded` marks Blob drafts. */
 export type DraftFile = {
   id: string;
   name: string;
@@ -36,6 +38,8 @@ export type DraftFile = {
   error?: string;
   /** Object URL for image previews (browser only). */
   thumb?: string;
+  /** True after a successful draft upload + confirm for this submission key. */
+  uploaded?: boolean;
 };
 
 export type RequestDraft = {
@@ -86,6 +90,10 @@ export type Check = {
   field: string;
 };
 
+function emptyWearSizes(): Record<WearSize, string> {
+  return Object.fromEntries(WEAR_SIZES.map((s) => [s, ""])) as Record<WearSize, string>;
+}
+
 export function emptyDraft(): RequestDraft {
   return {
     ctype: "",
@@ -93,7 +101,7 @@ export function emptyDraft(): RequestDraft {
     prod: "",
     color: "",
     qty: "",
-    sizes: { S: "", M: "", L: "", XL: "", XXL: "" },
+    sizes: emptyWearSizes(),
     places: [],
     text: "",
     model: "",

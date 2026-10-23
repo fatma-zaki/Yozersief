@@ -11,7 +11,7 @@ import {
   Upload,
   User,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import type { CategoryKey } from "@/modules/catalog";
 import { ar, t } from "@/i18n/ar";
 import { cn } from "@/lib/cn";
@@ -30,7 +30,7 @@ import {
 import { BuilderHeader, MobileHeader, ReadinessAside, type StepState } from "./chrome";
 import { Confirmation } from "./Confirmation";
 import { StepContact, StepDetails, StepFiles, StepReview, StepType } from "./steps";
-import { DEMO_MODE, submitRequest } from "./submit";
+import { clearSubmissionKey, DEMO_MODE, getOrCreateSubmissionKey, submitRequest } from "./submit";
 import s from "./builder.module.css";
 
 const b = ar.order.builder;
@@ -87,6 +87,8 @@ export function RequestBuilder({ initialCategory }: { initialCategory: CategoryK
   const [orderRef, setOrderRef] = useState("");
   const [today] = useState(() => cairoDateString(new Date()));
   const [hydrated, setHydrated] = useState(false);
+  /** Local File blobs keyed by DraftFile.id (not serialisable; lost on reload). */
+  const fileBlobs = useRef(new Map<string, File>());
 
   // Restore the tab's draft once, then keep it saved.
   useEffect(() => {
@@ -145,10 +147,13 @@ export function RequestBuilder({ initialCategory }: { initialCategory: CategoryK
 
   const onFiles = (event: ChangeEvent<HTMLInputElement>) => {
     const perPiece = isOrg(draft) && draft.perPiece;
+    const nextBlobs = new Map(fileBlobs.current);
     const picked: DraftFile[] = Array.from(event.target.files ?? []).map((file) => {
       const error = fileError(file, perPiece);
+      const id = `f${Date.now()}${Math.random().toString(36).slice(2, 6)}`;
+      if (!error) nextBlobs.set(id, file);
       return {
-        id: `f${Date.now()}${Math.random().toString(36).slice(2, 6)}`,
+        id,
         name: file.name,
         size: file.size,
         status: error ? "failed" : "done",
@@ -157,12 +162,14 @@ export function RequestBuilder({ initialCategory }: { initialCategory: CategoryK
       };
     });
     event.target.value = "";
+    fileBlobs.current = nextBlobs;
     if (picked.length) set({ files: [...draft.files, ...picked] });
   };
 
   const removeFile = (id: string) => {
     const file = draft.files.find((f) => f.id === id);
     if (file?.thumb) URL.revokeObjectURL(file.thumb);
+    fileBlobs.current.delete(id);
     set({ files: draft.files.filter((f) => f.id !== id) });
   };
 
@@ -178,8 +185,15 @@ export function RequestBuilder({ initialCategory }: { initialCategory: CategoryK
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const result = await submitRequest(draft);
+      const submissionKey = getOrCreateSubmissionKey();
+      const result = await submitRequest(draft, {
+        submissionKey,
+        fileBlobs: fileBlobs.current,
+      });
       if (result.ok) {
+        for (const f of draft.files) if (f.thumb) URL.revokeObjectURL(f.thumb);
+        fileBlobs.current.clear();
+        clearSubmissionKey();
         setOrderRef(result.ref);
         setStep(6);
         save(null);
@@ -196,6 +210,8 @@ export function RequestBuilder({ initialCategory }: { initialCategory: CategoryK
 
   const restart = () => {
     for (const f of draft.files) if (f.thumb) URL.revokeObjectURL(f.thumb);
+    fileBlobs.current.clear();
+    clearSubmissionKey();
     save(null);
     setDraft(emptyDraft());
     setShowErr({});

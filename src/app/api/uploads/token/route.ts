@@ -14,9 +14,9 @@ import {
 
 /**
  * Client uploads to Vercel Blob (brief A6.5): the browser asks here for a token, uploads
- * directly to Blob, and Blob calls back here when done (not on localhost).
+ * directly to Blob, and Blob calls back here when done (not on localhost — use /api/uploads/confirm).
  *
- * Anonymous draft tokens stay disabled until a draft registry + cleanup exist.
+ * Anonymous draft tokens use `submissionKey` (upload_drafts). Staff order attachments use `orderId`.
  * Staff attaching to an order must satisfy global 2FA when enforced; completion uses head().
  */
 export async function POST(request: Request) {

@@ -3,8 +3,12 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Feedback";
 
 /**
- * WhatsApp tracking link (B6, A6.7). Phase 2 resolves the hashed token to an order and
- * pre-fills the ref; until then every link falls back to manual entry with a warning.
+ * WhatsApp tracking link entry (B6, A6.7).
+ *
+ * Token-based pre-fill is not implemented in the no-OTP scope (ADR-0007): resolving a
+ * public token without the intended hashed lookup + phone confirmation would be unsafe.
+ * Every link falls back to manual entry with a warning — we do not treat the path token
+ * as authorization or expose an order from it.
  */
 export default function TrackingLinkPage({ params }: PageProps<"/t/[token]">) {
   return (

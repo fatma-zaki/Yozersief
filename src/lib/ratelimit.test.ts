@@ -71,6 +71,16 @@ describe("checkRateLimit with Redis backend", () => {
     );
   });
 
+  it("denies tracking.lookup on Redis timeout (fail closed)", async () => {
+    limit.mockResolvedValue({ success: true, reason: "timeout" });
+    const { checkRateLimit } = await import("./ratelimit");
+    await expect(checkRateLimit("tracking.lookup", "ip:1.2.3.4")).resolves.toBe(false);
+    expect(loggerError).toHaveBeenCalledWith(
+      "rate limiter timed out",
+      expect.objectContaining({ name: "tracking.lookup", decision: "deny" }),
+    );
+  });
+
   it("denies auth-sensitive requests when Redis throws", async () => {
     limit.mockRejectedValue(new Error("redis down"));
     const { checkRateLimit } = await import("./ratelimit");

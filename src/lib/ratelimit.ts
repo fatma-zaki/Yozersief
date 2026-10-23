@@ -19,8 +19,8 @@ export { isAuthSensitiveLimit, LIMITS } from "./ratelimit-policy";
  * Named limits (brief A6.8). Windows are per identifier (phone, IP, user…).
  * Production uses Upstash Redis; development falls back to an in-memory window per instance.
  *
- * Failure policy: see `ratelimit-policy.ts` — auth-sensitive fail closed on Redis errors/timeouts;
- * public limits (`upload.token`, tracking, order submit) fail open for availability.
+ * Failure policy: see `ratelimit-policy.ts` — auth-sensitive (incl. `tracking.lookup`) fail closed
+ * on Redis errors/timeouts; public limits (`upload.token`, `order.submit`) fail open for availability.
  */
 
 const redis =

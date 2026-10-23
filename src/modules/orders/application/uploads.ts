@@ -2,44 +2,75 @@ import { z } from "zod";
 import { logActivity } from "@/modules/audit";
 import { orderFiles } from "@/db/schema";
 import { withTransaction } from "@/db/tx";
+import { env } from "@/env";
 import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
 import { can, type StaffContext } from "@/lib/rbac";
+import { hashToken } from "@/lib/tokens";
 import {
   allowedContentTypes,
   checkUpload,
+  draftPathPrefix,
   FILE_KINDS,
   isAllowedContentType,
   MAX_FILE_BYTES,
   type FileKind,
 } from "../domain/files";
 import { orderExists } from "../infrastructure/order-repository";
+import { countDraftsForSubmission, insertUploadDraft } from "../infrastructure/submit-repository";
 import type { FileStorage } from "./file-storage";
 import { createFileStorage } from "../infrastructure/vercel-blob-storage";
 
-export const uploadPayloadSchema = z.object({
-  kind: z.enum(FILE_KINDS),
-  /** Present when attaching to an existing order (staff). Required until a draft registry exists. */
-  orderId: z.uuid().optional(),
-});
+/** Max anonymous draft files per submission key (abuse ceiling). */
+export const MAX_DRAFTS_PER_SUBMISSION = 20;
+
+/** Drafts expire after 24h if never claimed into an order. */
+export const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
+
+export const uploadPayloadSchema = z
+  .object({
+    kind: z.enum(FILE_KINDS),
+    /** Present when attaching to an existing order (staff). */
+    orderId: z.uuid().optional(),
+    /**
+     * Anonymous Request Builder uploads before the order exists. Must match the
+     * pathname prefix `drafts/{draftPathId}/` (SHA-256 of the key, not the raw UUID)
+     * and the later submit `submissionKey`.
+     */
+    submissionKey: z.string().uuid().optional(),
+  })
+  .superRefine((value, ctx) => {
+    const hasOrder = Boolean(value.orderId);
+    const hasDraft = Boolean(value.submissionKey);
+    if (hasOrder === hasDraft) {
+      ctx.addIssue({
+        code: "custom",
+        message: "لازم تحدد طلب موجود أو مفتاح رفع مؤقت، مش الاتنين مع بعض.",
+        path: hasOrder ? ["submissionKey"] : ["orderId"],
+      });
+    }
+    if (hasDraft && value.kind === "mockup") {
+      ctx.addIssue({
+        code: "custom",
+        message: "رفع الموكاب للفريق بس.",
+        path: ["kind"],
+      });
+    }
+  });
+
 export type UploadPayload = z.infer<typeof uploadPayloadSchema>;
 
 export type AuthorizeUploadDeps = {
   orderExists?: (orderId: string) => Promise<boolean>;
+  countDrafts?: (submissionKeyHash: string) => Promise<number>;
+  hashSecret?: string;
 };
 
 /**
  * Decides whether a client may upload `pathname` (brief A6.5). Returns the Blob token options.
  *
- * Draft uploads (no orderId) stay rejected until an expiring draft registry + cleanup cron
- * exist (schema migration required — not in this task). Historical anonymous blobs cannot be
- * safely deleted without verifying they are absent from `order_files`; that cleanup is deferred.
- *
- * Order-attached uploads require:
- * - staff with `orders.view` (and `mockups.manage` for mockups)
- * - that the order row exists
- *
- * Per-order row-level ACL (e.g. assignee-only) is **not** defined in the codebase or brief yet;
- * until a business rule lands, existence + `orders.view` is the supported access check.
+ * Paths:
+ * - Staff + `orderId`: order must exist; `orders.view` (and `mockups.manage` for mockups).
+ * - Anonymous + `submissionKey`: draft registry; mockups forbidden; pathname prefix enforced.
  */
 export async function authorizeUpload(
   staff: StaffContext | null,
@@ -49,6 +80,48 @@ export async function authorizeUpload(
 ) {
   const check = checkUpload({ kind: payload.kind, fileName: pathname });
   if (!check.ok) throw new ValidationError({ file: [check.message] }, check.message);
+
+  if (payload.submissionKey && payload.orderId) {
+    throw new ValidationError(
+      { orderId: ["متعارض"] },
+      "لازم تحدد طلب موجود أو مفتاح رفع مؤقت، مش الاتنين مع بعض.",
+    );
+  }
+
+  if (payload.submissionKey) {
+    const prefix = await draftPathPrefix(payload.submissionKey);
+    if (!pathname.startsWith(prefix)) {
+      throw new ValidationError(
+        { file: ["مسار غير مسموح"] },
+        "مسار الملف مش مطابق لمفتاح الرفع. ارفع تاني من صفحة الطلب.",
+      );
+    }
+    if (payload.kind === "mockup") {
+      throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+    }
+
+    const secret = deps.hashSecret ?? env.TOKEN_HASH_SECRET;
+    const submissionKeyHash = await hashToken(payload.submissionKey, secret);
+    const count = await (deps.countDrafts ?? countDraftsForSubmission)(submissionKeyHash);
+    if (count >= MAX_DRAFTS_PER_SUBMISSION) {
+      throw new ValidationError(
+        { file: ["وصلنا للحد الأقصى"] },
+        "وصلت للحد الأقصى لعدد الملفات في الطلب ده.",
+      );
+    }
+
+    return {
+      allowedContentTypes: allowedContentTypes(payload.kind),
+      maximumSizeInBytes: MAX_FILE_BYTES,
+      addRandomSuffix: true,
+      tokenPayload: JSON.stringify({
+        kind: payload.kind,
+        submissionKey: payload.submissionKey,
+        staffId: null,
+        requestedPathname: pathname,
+      }),
+    };
+  }
 
   if (!payload.orderId) {
     throw new ValidationError(
@@ -86,13 +159,14 @@ export type UploadCompletionBlob = {
 
 export type UploadCompletionPayload = {
   orderId?: string;
+  submissionKey?: string;
   kind: FileKind;
   staffId: string | null;
   requestedPathname?: string;
 };
 
 /**
- * Validates Blob metadata via `head()` then inserts `order_files`.
+ * Validates Blob metadata via `head()` then inserts `order_files` or `upload_drafts`.
  * Does not trust client-reported size or content type.
  */
 export async function completeUploadedFile(
@@ -101,9 +175,10 @@ export async function completeUploadedFile(
   deps: {
     storage?: FileStorage | null;
     record?: typeof recordUploadedFile;
+    recordDraft?: typeof recordUploadDraft;
   } = {},
 ) {
-  if (!tokenPayload.orderId) return; // stale draft tokens: ignore
+  if (!tokenPayload.orderId && !tokenPayload.submissionKey) return;
 
   const storage = deps.storage === undefined ? createFileStorage() : deps.storage;
   if (!storage) {
@@ -165,6 +240,33 @@ export async function completeUploadedFile(
     );
   }
 
+  if (tokenPayload.submissionKey) {
+    const prefix = await draftPathPrefix(tokenPayload.submissionKey);
+    if (!meta.pathname.startsWith(prefix)) {
+      try {
+        await storage.delete(meta.url);
+      } catch {
+        // best-effort
+      }
+      throw new ValidationError({ file: ["مسار غير مسموح"] }, "مسار الملف مش مطابق لمفتاح الرفع.");
+    }
+    if (tokenPayload.kind === "mockup") {
+      throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+    }
+    const recordDraft = deps.recordDraft ?? recordUploadDraft;
+    await recordDraft({
+      submissionKey: tokenPayload.submissionKey,
+      kind: tokenPayload.kind,
+      url: meta.url,
+      pathname: meta.pathname,
+      contentType: meta.contentType,
+      sizeBytes: meta.size,
+    });
+    return;
+  }
+
+  if (!tokenPayload.orderId) return;
+
   const record = deps.record ?? recordUploadedFile;
   await record({
     orderId: tokenPayload.orderId,
@@ -208,5 +310,35 @@ export async function recordUploadedFile(input: {
       orderId: input.orderId,
       meta: { kind: input.kind },
     });
+  });
+}
+
+export async function recordUploadDraft(input: {
+  submissionKey: string;
+  kind: FileKind;
+  url: string;
+  pathname: string;
+  contentType: string;
+  sizeBytes: number;
+}) {
+  if (input.kind === "mockup") {
+    throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+  }
+  const submissionKeyHash = await hashToken(input.submissionKey, env.TOKEN_HASH_SECRET);
+  const count = await countDraftsForSubmission(submissionKeyHash);
+  if (count >= MAX_DRAFTS_PER_SUBMISSION) {
+    throw new ValidationError(
+      { file: ["وصلنا للحد الأقصى"] },
+      "وصلت للحد الأقصى لعدد الملفات في الطلب ده.",
+    );
+  }
+  await insertUploadDraft({
+    submissionKeyHash,
+    kind: input.kind,
+    fileName: input.pathname.split("/").pop() ?? input.pathname,
+    mimeType: input.contentType,
+    sizeBytes: input.sizeBytes,
+    storageKey: input.url,
+    expiresAt: new Date(Date.now() + DRAFT_TTL_MS),
   });
 }

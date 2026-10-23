@@ -1,18 +1,23 @@
 import { describe, expect, it, vi } from "vitest";
 import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
 import type { Permission, StaffContext } from "@/lib/rbac";
-import { MAX_FILE_BYTES } from "../domain/files";
+import { draftPathPrefix, MAX_FILE_BYTES } from "../domain/files";
 import type { FileStorage, StoredBlobMeta } from "./file-storage";
 
 vi.mock("@/env", () => ({
   env: {
     DATABASE_URL: "postgres://local/test",
     APP_URL: "http://localhost:3000",
+    TOKEN_HASH_SECRET: "t".repeat(32),
   },
 }));
 vi.mock("@/db/client", () => ({ db: {} }));
 vi.mock("@/db/tx", () => ({ withTransaction: vi.fn() }));
 vi.mock("@/modules/audit", () => ({ logActivity: vi.fn() }));
+vi.mock("../infrastructure/submit-repository", () => ({
+  countDraftsForSubmission: vi.fn(async () => 0),
+  insertUploadDraft: vi.fn(async () => ({ id: "draft-1" })),
+}));
 
 const { authorizeUpload, completeUploadedFile } = await import("./uploads");
 
@@ -29,6 +34,7 @@ const staff = (
 });
 
 const orderId = "11111111-1111-4111-8111-111111111111";
+const submissionKey = "22222222-2222-4222-8222-222222222222";
 const orderExists = vi.fn(async () => true);
 
 function memoryStorage(meta: StoredBlobMeta | null, deleted: string[] = []): FileStorage {
@@ -47,9 +53,19 @@ function memoryStorage(meta: StoredBlobMeta | null, deleted: string[] = []): Fil
 }
 
 describe("authorizeUpload", () => {
-  it("rejects draft uploads without orderId", async () => {
+  it("rejects when neither orderId nor submissionKey is set", async () => {
     await expect(
       authorizeUpload(null, "designs/logo.png", { kind: "design" }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("rejects when both orderId and submissionKey are set", async () => {
+    await expect(
+      authorizeUpload(null, `${await draftPathPrefix(submissionKey)}logo.png`, {
+        kind: "design",
+        orderId,
+        submissionKey,
+      }),
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
@@ -109,6 +125,68 @@ describe("authorizeUpload", () => {
         { orderExists },
       ),
     ).resolves.toBeTruthy();
+  });
+
+  it("allows anonymous draft uploads under the derived path prefix (not the raw UUID)", async () => {
+    const pathname = `${await draftPathPrefix(submissionKey)}logo.png`;
+    expect(pathname).not.toContain(submissionKey);
+    const result = await authorizeUpload(
+      null,
+      pathname,
+      { kind: "design", submissionKey },
+      { hashSecret: "t".repeat(32), countDrafts: async () => 0 },
+    );
+    expect(JSON.parse(result.tokenPayload as string)).toMatchObject({
+      submissionKey,
+      staffId: null,
+      kind: "design",
+    });
+  });
+
+  it("rejects draft uploads outside the submission key prefix", async () => {
+    await expect(
+      authorizeUpload(
+        null,
+        "other/logo.png",
+        { kind: "design", submissionKey },
+        { hashSecret: "t".repeat(32), countDrafts: async () => 0 },
+      ),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("rejects a leaked path claimed with a different submission key", async () => {
+    const otherKey = "33333333-3333-4333-8333-333333333333";
+    const leakedPath = `${await draftPathPrefix(submissionKey)}logo.png`;
+    await expect(
+      authorizeUpload(
+        null,
+        leakedPath,
+        { kind: "design", submissionKey: otherKey },
+        { hashSecret: "t".repeat(32), countDrafts: async () => 0 },
+      ),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it("rejects mockup drafts", async () => {
+    await expect(
+      authorizeUpload(
+        null,
+        `${await draftPathPrefix(submissionKey)}m.png`,
+        { kind: "mockup", submissionKey },
+        { hashSecret: "t".repeat(32), countDrafts: async () => 0 },
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+
+  it("rejects when the draft quota is full", async () => {
+    await expect(
+      authorizeUpload(
+        null,
+        `${await draftPathPrefix(submissionKey)}logo.png`,
+        { kind: "design", submissionKey },
+        { hashSecret: "t".repeat(32), countDrafts: async () => 20 },
+      ),
+    ).rejects.toBeInstanceOf(ValidationError);
   });
 });
 
@@ -202,13 +280,101 @@ describe("completeUploadedFile", () => {
     );
   });
 
-  it("no-ops for draft completions without orderId", async () => {
+  it("no-ops when neither orderId nor submissionKey is set", async () => {
     await expect(
       completeUploadedFile(
         blob,
-        { ...payload, orderId: undefined },
+        { kind: "design", staffId: null },
         { storage: memoryStorage(null) },
       ),
     ).resolves.toBeUndefined();
+  });
+
+  it("records a draft when submissionKey is present and pathname matches", async () => {
+    const recordDraft = vi.fn(async () => undefined);
+    const prefix = await draftPathPrefix(submissionKey);
+    const pathname = `${prefix}logo-abc.png`;
+    expect(pathname).not.toContain(submissionKey);
+    await completeUploadedFile(
+      { url: "https://blob.example/" + pathname, pathname, contentType: "image/png" },
+      {
+        kind: "design",
+        submissionKey,
+        staffId: null,
+        requestedPathname: `${prefix}logo.png`,
+      },
+      {
+        storage: memoryStorage({
+          size: 100,
+          pathname,
+          contentType: "image/png",
+          url: "https://blob.example/" + pathname,
+        }),
+        recordDraft,
+      },
+    );
+    expect(recordDraft).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submissionKey,
+        kind: "design",
+        sizeBytes: 100,
+      }),
+    );
+  });
+
+  it("rejects draft completion when pathname does not match the submission key", async () => {
+    const deleted: string[] = [];
+    await expect(
+      completeUploadedFile(
+        blob,
+        {
+          kind: "design",
+          submissionKey,
+          staffId: null,
+          requestedPathname: `${await draftPathPrefix(submissionKey)}logo.png`,
+        },
+        {
+          storage: memoryStorage(
+            {
+              size: 100,
+              pathname: blob.pathname,
+              contentType: "image/png",
+              url: blob.url,
+            },
+            deleted,
+          ),
+        },
+      ),
+    ).rejects.toBeInstanceOf(ValidationError);
+    expect(deleted).toContain(blob.url);
+  });
+
+  it("rejects completion of a leaked path with a different submission key", async () => {
+    const deleted: string[] = [];
+    const otherKey = "33333333-3333-4333-8333-333333333333";
+    const pathname = `${await draftPathPrefix(submissionKey)}logo-abc.png`;
+    await expect(
+      completeUploadedFile(
+        { url: "https://blob.example/" + pathname, pathname, contentType: "image/png" },
+        {
+          kind: "design",
+          submissionKey: otherKey,
+          staffId: null,
+          requestedPathname: `${await draftPathPrefix(otherKey)}logo.png`,
+        },
+        {
+          storage: memoryStorage(
+            {
+              size: 100,
+              pathname,
+              contentType: "image/png",
+              url: "https://blob.example/" + pathname,
+            },
+            deleted,
+          ),
+        },
+      ),
+    ).rejects.toBeInstanceOf(ValidationError);
+    expect(deleted).toContain("https://blob.example/" + pathname);
   });
 });
