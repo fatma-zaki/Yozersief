@@ -13,7 +13,6 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   title: { default: `${ar.app.name} | ${ar.app.tagline}`, template: `%s | ${ar.app.name}` },
   description: ar.home.subtitle,
-  icons: { icon: "/brand/logo.jpg" },
 };
 
 export const viewport: Viewport = {
