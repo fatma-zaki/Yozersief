@@ -55,7 +55,11 @@ Commits follow Conventional Commits. Husky runs lint-staged on commit and commit
 3. Set the remaining variables from `.env.example`: secrets, `APP_URL`, Sentry, `CRON_SECRET`.
 4. The build runs `pnpm db:migrate && pnpm build`. Run `pnpm db:seed` once per new database with
    that environment's variables.
-5. The every-minute `messages:dispatch` cron needs Vercel Pro. On Hobby, crons run daily at most.
+5. Vercel Hobby allows daily crons only, so `vercel.json` schedules every job daily. The frequent
+   runs (`messages:dispatch` every 5 minutes, `otp:cleanup` hourly) come from
+   `.github/workflows/cron.yml`. Add the GitHub repo secrets `CRON_APP_URL` (production URL, no
+   trailing slash) and `CRON_SECRET` (same value as in Vercel). On Vercel Pro, move the schedules
+   back into `vercel.json` and delete that workflow.
 
 Health check: `GET /api/health` returns DB status and the deployed commit.
 

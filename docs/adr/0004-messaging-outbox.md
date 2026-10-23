@@ -23,7 +23,12 @@
 
 ## Consequences
 
-- Vercel Cron's every-minute schedule needs a Pro plan. On Hobby, crons run at most daily.
+- Vercel Cron's every-minute schedule needs a Pro plan. On Hobby, any schedule that runs more
+  than once a day fails the deploy. While on Hobby, `vercel.json` runs every cron daily as a
+  backstop, and a scheduled GitHub Actions workflow (`.github/workflows/cron.yml`) calls
+  `messages:dispatch` every 5 minutes and `otp:cleanup` hourly with the same `CRON_SECRET`.
+  GitHub can delay scheduled runs by a few minutes. On Pro, move the schedules back to
+  `vercel.json` and delete the workflow.
 - Today the dispatcher calls providers inside the claiming transaction. That is fine for the
   manual provider and small batches. With the Cloud API, move to claim → commit → send →
   update, or to a queue service; the interface stays the same.

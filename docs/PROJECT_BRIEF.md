@@ -219,7 +219,7 @@ Rules:
 
 - Sentry (client + server), with the release tied to the Vercel deployment.
 - `/api/health` checks the DB and returns the version.
-- Vercel Cron jobs: `messages:dispatch` (every minute), `quotes:expire` (daily), `otp:cleanup` (hourly), `links:cleanup` (daily).
+- Vercel Cron jobs: `messages:dispatch` (every minute), `quotes:expire` (daily), `otp:cleanup` (hourly), `links:cleanup` (daily). On Vercel Hobby the frequent ones run from GitHub Actions instead (ADR-0004).
 
 ### A7. Design system implementation
 
