@@ -1,0 +1,456 @@
+/*
+ * The variable-based admin screens (Admin-Products, -Gallery, -Content, -Team, -Accounts and their
+ * -Dark files) share one stylesheet whose light and dark files differ only in these variables.
+ * Wrap a screen in `.root` (a column like the design's .main-col); its classes below are ported
+ * from those files verbatim.
+ */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  --bg: #f3faf8;
+  --ink: #030909;
+  --ink-strong: #030909;
+  --muted: rgba(3, 9, 9, 0.6);
+  --line: rgba(0, 92, 88, 0.12);
+  --accent-ink: #005c58;
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.6));
+  --card-bd: rgba(255, 255, 255, 0.95);
+  --card-sh: 0 0 0 1px rgba(0, 92, 88, 0.1), inset 0 1px 0 #fff, 0 10px 26px rgba(0, 92, 88, 0.1);
+  --bar-sh:
+    0 0 0 1px rgba(126, 232, 199, 0.5), inset 0 1px 0 #fff, 0 0 22px rgba(126, 232, 199, 0.2),
+    0 12px 30px rgba(0, 92, 88, 0.1);
+  --field-bg: rgba(255, 255, 255, 0.85);
+  --field-bd: rgba(0, 92, 88, 0.25);
+  --field-ink: #030909;
+  --focus: #005c58;
+  --focus-ring: rgba(126, 232, 199, 0.45);
+  --soft-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6));
+  --soft-ink: #005c58;
+  --soft-bd: rgba(0, 92, 88, 0.25);
+  --cta-bg: linear-gradient(180deg, rgba(0, 120, 112, 0.92), rgba(0, 43, 40, 0.92));
+  --chip-off-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5));
+  --chip-off-ink: #005c58;
+  --chip-off-bd: rgba(0, 92, 88, 0.18);
+  --chip-on-bg: linear-gradient(180deg, #00706a, #004541);
+  --chip-on-ink: #fff;
+  --tint: linear-gradient(135deg, rgba(184, 242, 222, 0.45), rgba(126, 232, 199, 0.16));
+  --tint-bd: rgba(0, 92, 88, 0.12);
+  --tile-bg: linear-gradient(135deg, rgba(220, 250, 240, 0.9), rgba(184, 242, 222, 0.45));
+  --tile-ink: #005c58;
+  --side-bg: #01302d;
+  --side-glow: rgba(0, 92, 88, 0.95);
+  --warn-bg: rgba(214, 174, 98, 0.22);
+  --warn-ink: #5c430f;
+  --warn-bd: #d6ae62;
+  --ok-bg: linear-gradient(180deg, #00706a, #004541);
+  --ok-ink: #fff;
+  --off-bg: rgba(3, 9, 9, 0.08);
+  --off-ink: rgba(3, 9, 9, 0.6);
+  --overlay: rgba(0, 43, 40, 0.45);
+  --sheet-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 250, 248, 0.97));
+  --toast-bg: #01302d;
+  --img-bg: #e8f3f0;
+  --opt-bg: #ffffff;
+  --opt-ink: #030909;
+  --bubble-bg: linear-gradient(135deg, #e3faf1, #c9f2e2);
+  --bubble-ink: #032722;
+}
+:global(.dark) .root {
+  --bg: #001412;
+  --ink: #f2fbf8;
+  --ink-strong: #ffffff;
+  --muted: rgba(242, 251, 248, 0.6);
+  --line: rgba(126, 232, 199, 0.14);
+  --accent-ink: #7ee8c7;
+  --card-bg: linear-gradient(160deg, rgba(5, 64, 57, 0.5), rgba(0, 27, 23, 0.55));
+  --card-bd: rgba(126, 232, 199, 0.22);
+  --card-sh: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 34px rgba(0, 0, 0, 0.35);
+  --bar-sh:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 22px rgba(126, 232, 199, 0.12),
+    0 14px 34px rgba(0, 0, 0, 0.4);
+  --field-bg: rgba(0, 20, 18, 0.6);
+  --field-bd: rgba(126, 232, 199, 0.3);
+  --field-ink: #ffffff;
+  --focus: #7ee8c7;
+  --focus-ring: rgba(126, 232, 199, 0.3);
+  --soft-bg: rgba(126, 232, 199, 0.07);
+  --soft-ink: #b8f2de;
+  --soft-bd: rgba(126, 232, 199, 0.32);
+  --cta-bg: linear-gradient(180deg, rgba(5, 64, 57, 0.8), rgba(0, 27, 23, 0.8));
+  --chip-off-bg: rgba(126, 232, 199, 0.05);
+  --chip-off-ink: rgba(242, 251, 248, 0.8);
+  --chip-off-bd: rgba(126, 232, 199, 0.22);
+  --chip-on-bg: linear-gradient(180deg, rgba(126, 232, 199, 0.28), rgba(126, 232, 199, 0.12));
+  --tint: rgba(126, 232, 199, 0.07);
+  --tint-bd: rgba(126, 232, 199, 0.2);
+  --tile-bg: linear-gradient(135deg, rgba(126, 232, 199, 0.16), rgba(5, 64, 57, 0.45));
+  --tile-ink: #7ee8c7;
+  --side-bg: #032722;
+  --side-glow: rgba(5, 64, 57, 0.95);
+  --warn-bg: rgba(214, 174, 98, 0.14);
+  --warn-ink: #e9c98a;
+  --ok-bg: linear-gradient(180deg, rgba(126, 232, 199, 0.32), rgba(126, 232, 199, 0.12));
+  --off-bg: rgba(242, 251, 248, 0.08);
+  --off-ink: rgba(242, 251, 248, 0.6);
+  --overlay: rgba(0, 8, 7, 0.6);
+  --sheet-bg: #032722;
+  --toast-bg: #032722;
+  --img-bg: #032722;
+  --opt-bg: #032722;
+  --opt-ink: #ffffff;
+  --bubble-bg: linear-gradient(135deg, #0b5249, #063a33);
+  --bubble-ink: #f2fbf8;
+}
+.root :where(a) {
+  color: var(--accent-ink);
+}
+.root :focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.card {
+  background: var(--card-bg);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--card-bd);
+  box-shadow: var(--card-sh);
+  border-radius: 26px;
+}
+.bar {
+  border-radius: 24px;
+  padding: 12px 14px 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--bar-sh);
+}
+.h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 36px;
+  font-weight: 800;
+  color: var(--ink-strong);
+}
+.h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 800;
+  color: var(--ink-strong);
+}
+.strong {
+  color: var(--ink-strong);
+}
+.muted {
+  color: var(--muted);
+}
+.lbl {
+  font-size: 13px;
+  font-weight: 700;
+}
+.tint {
+  background: var(--tint);
+  box-shadow: inset 0 0 0 1px var(--tint-bd);
+  border-radius: 16px;
+}
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: var(--tile-bg);
+  color: var(--tile-ink);
+  box-shadow: 0 0 0 1px var(--tint-bd);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  text-decoration: none;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cta {
+  background: var(--cta-bg);
+  color: #fff;
+  border: 1.5px solid rgba(126, 232, 199, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 0 18px rgba(126, 232, 199, 0.12),
+    0 0 18px rgba(126, 232, 199, 0.42),
+    0 0 40px rgba(126, 232, 199, 0.18);
+}
+.soft {
+  background: var(--soft-bg);
+  color: var(--soft-ink);
+  border: 1px solid var(--soft-bd);
+}
+.line {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--field-bd);
+}
+.root a.cta {
+  color: #fff;
+}
+.root a.soft {
+  color: var(--soft-ink);
+}
+
+.chip {
+  min-height: 38px;
+  padding: 4px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.chipOff {
+  background: var(--chip-off-bg);
+  color: var(--chip-off-ink);
+  border: 1px solid var(--chip-off-bd);
+}
+.chipOn {
+  background: var(--chip-on-bg);
+  color: var(--chip-on-ink);
+  border: 1px solid rgba(126, 232, 199, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 14px rgba(126, 232, 199, 0.4);
+}
+
+.fld {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--field-bd);
+  background: var(--field-bg);
+  color: var(--field-ink);
+  font-size: 15px;
+}
+.fld:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  outline: none;
+}
+.fld option {
+  background: var(--opt-bg);
+  color: var(--opt-ink);
+}
+.fld[aria-invalid="true"] {
+  border: 2px solid var(--warn-bd);
+  background: var(--warn-bg);
+}
+
+/* ---------- Switch ---------- */
+.sw {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 0;
+  padding: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.sw::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.45s var(--yz-ease);
+}
+.swOn {
+  background: linear-gradient(180deg, #00a08f, #00706a);
+  box-shadow: 0 0 12px rgba(126, 232, 199, 0.55);
+}
+.swOn::after {
+  transform: translateX(-20px);
+}
+.swOff {
+  background: var(--off-bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.sw[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bOk {
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+  box-shadow: 0 0 10px rgba(126, 232, 199, 0.35);
+}
+.bWarn {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border: 1px solid var(--warn-bd);
+}
+.bOff {
+  background: var(--off-bg);
+  color: var(--off-ink);
+}
+.bRole {
+  background: var(--tint);
+  color: var(--accent-ink);
+  box-shadow: inset 0 0 0 1px var(--tint-bd);
+}
+.bGlass {
+  background: rgba(0, 20, 18, 0.6);
+  color: #fff;
+  border: 1px solid rgba(126, 232, 199, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--tint);
+  box-shadow: inset 0 0 0 1px var(--tint-bd);
+  color: var(--accent-ink);
+}
+.opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.opt input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.opt:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+/* Checkbox row (.chk in Gallery and Content). */
+.chk {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+.chk input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.chk:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 40;
+  max-width: 460px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px 12px 18px;
+  border-radius: 20px;
+  background: var(--toast-bg);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid rgba(126, 232, 199, 0.55);
+  box-shadow:
+    0 0 26px rgba(126, 232, 199, 0.3),
+    0 16px 34px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Motion ---------- */
+.btn,
+.chip,
+.sw,
+.lift {
+  transition:
+    background 0.5s var(--yz-ease),
+    border-color 0.5s var(--yz-ease),
+    box-shadow 0.5s var(--yz-ease),
+    transform 0.5s var(--yz-ease),
+    color 0.35s var(--yz-ease),
+    opacity 0.4s var(--yz-ease),
+    filter 0.5s var(--yz-ease) !important;
+}
+.btn:hover,
+.lift:hover {
+  transform: translateY(-2px);
+}
+@keyframes drawerIn {
+  from {
+    transform: translateX(-104%);
+  }
+  to {
+    transform: none;
+  }
+}
+.drawer {
+  animation: drawerIn 0.6s var(--yz-ease) both;
+}
+
+/*
+ * Phones. These screens have no mobile design (only Admin and Admin-Traffic do), so their fixed
+ * grids get the smallest change that keeps them usable: stack, two columns, or scroll sideways.
+ */
+@media (max-width: 699.98px) {
+  .stackM {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .twoM {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .scrollM {
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,722 @@
+/*
+ * Admin dashboard styles, ported from docs/design (Admin*.html and their -Dark files).
+ * Layout values live inline in the components, copied from the design. This file holds:
+ *  - theme switches read by `sx()` / `tv()` (theme.ts): --<key>-l in light, --<key>-d in dark,
+ *  - the design's shared classes (glass, buttons, chips, fields, tiles, pills…),
+ *  - the shell: page, sidebar, mobile bottom nav, and the design's motion.
+ * Light rules come from the light file's <style>; `:global(.dark)` rules from the -Dark file.
+ */
+
+/* ---------- Breakpoints: desktop ≥700 · mobile <700 (Admin-Mobile designs are 390 wide) ---------- */
+@media (max-width: 699.98px) {
+  .d {
+    display: none !important;
+  }
+}
+@media (min-width: 700px) {
+  .m {
+    display: none !important;
+  }
+}
+
+/* ---------- Theme switches ---------- */
+:global(.dark) .lightOnly {
+  display: none !important;
+}
+.darkOnly {
+  display: none !important;
+}
+:global(.dark) .darkOnly {
+  display: revert !important;
+}
+/* Light-only / dark-only values (`sx()`): `.xL` applies --x-l outside .dark, `.xD` --x-d inside. */
+:global(:root:not(.dark)) .bgL {
+  background: var(--bg-l);
+}
+:global(.dark) .bgD {
+  background: var(--bg-d);
+}
+:global(:root:not(.dark)) .fgL {
+  color: var(--fg-l);
+}
+:global(.dark) .fgD {
+  color: var(--fg-d);
+}
+:global(:root:not(.dark)) .bdL {
+  border: var(--bd-l);
+}
+:global(.dark) .bdD {
+  border: var(--bd-d);
+}
+:global(:root:not(.dark)) .bcL {
+  border-color: var(--bc-l);
+}
+:global(.dark) .bcD {
+  border-color: var(--bc-d);
+}
+:global(:root:not(.dark)) .btL {
+  border-top: var(--bt-l);
+}
+:global(.dark) .btD {
+  border-top: var(--bt-d);
+}
+:global(:root:not(.dark)) .bbL {
+  border-bottom: var(--bb-l);
+}
+:global(.dark) .bbD {
+  border-bottom: var(--bb-d);
+}
+:global(:root:not(.dark)) .shL {
+  box-shadow: var(--sh-l);
+}
+:global(.dark) .shD {
+  box-shadow: var(--sh-d);
+}
+:global(:root:not(.dark)) .opL {
+  opacity: var(--op-l);
+}
+:global(.dark) .opD {
+  opacity: var(--op-d);
+}
+:global(:root:not(.dark)) .flL {
+  filter: var(--fl-l);
+}
+:global(.dark) .flD {
+  filter: var(--fl-d);
+}
+:global(:root:not(.dark)) .tshL {
+  text-shadow: var(--tsh-l);
+}
+:global(.dark) .tshD {
+  text-shadow: var(--tsh-d);
+}
+
+/* ---------- Page ---------- */
+.page {
+  /* The designs set no line-height, so text uses Cairo's "normal" metrics (not Tailwind's 1.5). */
+  line-height: normal;
+  font-family: var(--font-cairo), "Segoe UI", Tahoma, sans-serif;
+  background: #f3faf8;
+  color: #030909;
+}
+:global(.dark) .page {
+  background: #001412;
+  color: #f2fbf8;
+}
+/* Undo Tailwind preflight where the designs rely on browser defaults. */
+.page :where(img, svg) {
+  display: inline;
+  vertical-align: baseline;
+  max-width: none;
+}
+.page :where(a) {
+  color: #005c58;
+  text-decoration: underline;
+}
+:global(.dark) .page :where(a) {
+  color: #7ee8c7;
+}
+.page button,
+.page input,
+.page select,
+.page textarea {
+  font-family: inherit;
+}
+.page :focus-visible {
+  outline: 2px solid #005c58;
+  outline-offset: 2px;
+}
+.page .dk :focus-visible,
+:global(.dark) .page :focus-visible {
+  outline-color: #7ee8c7;
+}
+.page h1,
+.page h2,
+.page h3,
+.page p,
+.page dl,
+.page dd,
+.page ol,
+.page ul {
+  margin: 0;
+}
+
+/* Marker for dark surfaces inside the light design (focus ring colour). */
+.dk {
+}
+
+/* ---------- Glass ---------- */
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(0, 92, 88, 0.1),
+    inset 0 1px 0 #ffffff,
+    0 10px 26px rgba(0, 92, 88, 0.1);
+}
+:global(.dark) .glass {
+  background: linear-gradient(160deg, rgba(5, 64, 57, 0.5) 0%, rgba(0, 27, 23, 0.55) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(126, 232, 199, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 16px 34px rgba(0, 0, 0, 0.35);
+}
+/* Light design's glass on dark teal (sidebar user card); the dark design uses .glass there. */
+.glassDark {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.03) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(126, 232, 199, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 22px rgba(126, 232, 199, 0.12);
+}
+:global(.dark) .glassDark {
+  background: linear-gradient(160deg, rgba(5, 64, 57, 0.5) 0%, rgba(0, 27, 23, 0.55) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(126, 232, 199, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 16px 34px rgba(0, 0, 0, 0.35);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 14px;
+  border-radius: 999px;
+  background: rgba(126, 232, 199, 0.24);
+  border: 1px solid rgba(0, 92, 88, 0.22);
+  color: #005c58;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+:global(.dark) .pill {
+  background: rgba(126, 232, 199, 0.08);
+  border: 1px solid rgba(126, 232, 199, 0.4);
+  color: #b8f2de;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 12px rgba(126, 232, 199, 0.18);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  position: relative;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn[disabled] {
+  opacity: 0.65;
+  cursor: progress;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.cta {
+  background: linear-gradient(180deg, rgba(0, 120, 112, 0.92) 0%, rgba(0, 43, 40, 0.92) 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(126, 232, 199, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 0 18px rgba(126, 232, 199, 0.12),
+    0 0 18px rgba(126, 232, 199, 0.45),
+    0 0 40px rgba(126, 232, 199, 0.2);
+}
+.cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 0 26px rgba(126, 232, 199, 0.65),
+    0 0 56px rgba(126, 232, 199, 0.28);
+}
+:global(.dark) .cta {
+  background: linear-gradient(180deg, rgba(5, 64, 57, 0.8) 0%, rgba(0, 27, 23, 0.8) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 18px rgba(126, 232, 199, 0.12),
+    0 0 18px rgba(126, 232, 199, 0.4),
+    0 0 44px rgba(126, 232, 199, 0.16);
+}
+:global(.dark) .cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 0 26px rgba(126, 232, 199, 0.6),
+    0 0 60px rgba(126, 232, 199, 0.25);
+}
+.page a.cta {
+  color: #ffffff;
+}
+.soft {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6));
+  color: #005c58;
+  border: 1px solid rgba(0, 92, 88, 0.25);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 4px 12px rgba(0, 92, 88, 0.1);
+}
+.soft:hover {
+  background: linear-gradient(135deg, rgba(184, 242, 222, 0.7), rgba(126, 232, 199, 0.3));
+}
+:global(.dark) .soft {
+  background: rgba(126, 232, 199, 0.07);
+  color: #b8f2de;
+  border: 1px solid rgba(126, 232, 199, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+:global(.dark) .soft:hover {
+  background: rgba(126, 232, 199, 0.14);
+  border-color: rgba(126, 232, 199, 0.7);
+  color: #ffffff;
+}
+.page a.soft {
+  color: #005c58;
+}
+:global(.dark) .page a.soft {
+  color: #b8f2de;
+}
+.line {
+  background: transparent;
+  color: #030909;
+  border: 1px solid rgba(3, 9, 9, 0.35);
+}
+.line:hover {
+  background: rgba(3, 9, 9, 0.05);
+}
+:global(.dark) .line {
+  color: #f2fbf8;
+  border: 1px solid rgba(242, 251, 248, 0.4);
+}
+:global(.dark) .line:hover {
+  background: rgba(242, 251, 248, 0.06);
+}
+/* Transparent button on dark teal (mobile header). */
+.ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- Chips ---------- */
+.chip {
+  min-height: 38px;
+  padding: 4px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.chipOff {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5));
+  color: #005c58;
+  border: 1px solid rgba(0, 92, 88, 0.18);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 3px 8px rgba(0, 92, 88, 0.06);
+}
+:global(.dark) .chipOff {
+  background: rgba(126, 232, 199, 0.05);
+  color: rgba(242, 251, 248, 0.8);
+  border: 1px solid rgba(126, 232, 199, 0.22);
+  box-shadow: none;
+}
+:global(.dark) .chipOff:hover {
+  border-color: rgba(126, 232, 199, 0.6);
+  color: #ffffff;
+}
+.chipOn {
+  background: linear-gradient(180deg, #00706a, #004541);
+  color: #ffffff;
+  border: 1px solid rgba(126, 232, 199, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 14px rgba(126, 232, 199, 0.45);
+}
+:global(.dark) .chipOn {
+  background: linear-gradient(180deg, rgba(126, 232, 199, 0.28), rgba(126, 232, 199, 0.12));
+  border: 1px solid rgba(126, 232, 199, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 16px rgba(126, 232, 199, 0.35);
+}
+
+.neon {
+  color: #7ee8c7;
+  text-shadow:
+    0 0 10px rgba(126, 232, 199, 0.55),
+    0 0 26px rgba(126, 232, 199, 0.35);
+}
+:global(.dark) .neon {
+  text-shadow:
+    0 0 10px rgba(126, 232, 199, 0.5),
+    0 0 26px rgba(126, 232, 199, 0.28);
+}
+/* The mint ornament glows. */
+.ornament {
+  filter: drop-shadow(0 0 4px rgba(126, 232, 199, 0.8))
+    drop-shadow(0 0 12px rgba(126, 232, 199, 0.35));
+}
+:global(.dark) .ornament {
+  filter: drop-shadow(0 0 4px rgba(126, 232, 199, 0.7))
+    drop-shadow(0 0 12px rgba(126, 232, 199, 0.3));
+}
+
+.ic {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  color: #005c58;
+  background: linear-gradient(135deg, rgba(220, 250, 240, 0.9), rgba(184, 242, 222, 0.45));
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(0, 92, 88, 0.14),
+    inset 0 1px 0 #fff,
+    0 6px 14px rgba(0, 92, 88, 0.14);
+}
+:global(.dark) .tile {
+  color: #7ee8c7;
+  background: linear-gradient(135deg, rgba(126, 232, 199, 0.16), rgba(5, 64, 57, 0.45));
+  border: 1px solid rgba(126, 232, 199, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 14px rgba(126, 232, 199, 0.18);
+}
+
+/* ---------- Fields ---------- */
+.fld {
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 92, 88, 0.25);
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  color: #030909;
+  box-shadow: inset 0 1px 2px rgba(0, 43, 40, 0.06);
+}
+.fld:focus {
+  border-color: #005c58;
+  box-shadow: 0 0 0 3px rgba(126, 232, 199, 0.45);
+  outline: none;
+}
+.fld[aria-invalid="true"] {
+  border: 2px solid #b8862b;
+  background: #fbf6ec;
+}
+:global(.dark) .fld {
+  border: 1px solid rgba(126, 232, 199, 0.3);
+  background: rgba(0, 20, 18, 0.6);
+  color: #ffffff;
+  box-shadow: none;
+}
+:global(.dark) .fld:focus {
+  border-color: #7ee8c7;
+  box-shadow: 0 0 0 3px rgba(126, 232, 199, 0.3);
+}
+:global(.dark) .fld::placeholder {
+  color: rgba(242, 251, 248, 0.45);
+}
+:global(.dark) .fld option {
+  background: #032722;
+  color: #ffffff;
+}
+:global(.dark) .fld[aria-invalid="true"] {
+  border: 2px solid #d6ae62;
+  background: rgba(214, 174, 98, 0.1);
+}
+
+.h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(3, 9, 9, 0.6);
+}
+:global(.dark) .h3 {
+  color: rgba(242, 251, 248, 0.6);
+}
+
+.rowbtn {
+  cursor: pointer;
+  font-family: inherit;
+}
+.rowbtn:hover {
+  background: rgba(126, 232, 199, 0.12) !important;
+}
+:global(.dark) .rowbtn:hover {
+  background: rgba(126, 232, 199, 0.08) !important;
+}
+.stat {
+  cursor: pointer;
+}
+.stat:hover {
+  transform: translateY(-2px);
+}
+
+.waBubble {
+  position: relative;
+  white-space: pre-wrap;
+  padding: 12px 14px 22px;
+  border-radius: 18px 18px 4px 18px;
+  background: linear-gradient(135deg, #e3faf1, #c9f2e2);
+  color: #032722;
+  font-size: 14px;
+  line-height: 23px;
+  box-shadow:
+    0 0 0 1px rgba(0, 92, 88, 0.14),
+    0 6px 16px rgba(0, 92, 88, 0.12);
+}
+:global(.dark) .waBubble {
+  background: linear-gradient(135deg, #0b5249, #063a33);
+  color: #f2fbf8;
+  box-shadow:
+    0 0 0 1px rgba(126, 232, 199, 0.3),
+    0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.check {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+.check input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.check:focus-within {
+  outline: 2px solid #005c58;
+  outline-offset: 2px;
+}
+:global(.dark) .check:focus-within {
+  outline-color: #7ee8c7;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- Sidebar ---------- */
+.sideL {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+}
+.page a.sideL {
+  color: rgba(255, 255, 255, 0.82);
+}
+.page a.sideL[aria-current="page"] {
+  color: #ffffff;
+}
+.sideL:hover,
+.page a.sideL:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+:global(.dark) .page a.sideL {
+  color: rgba(242, 251, 248, 0.78);
+}
+:global(.dark) .page a.sideL[aria-current="page"] {
+  color: #ffffff;
+}
+:global(.dark) .page a.sideL:hover {
+  background: rgba(126, 232, 199, 0.07);
+  color: #ffffff;
+}
+/* Sign-out button in the sidebar: plain outline in light, .soft in dark. */
+.signOut {
+  color: #b8f2de;
+  background: transparent;
+  border: 1px solid rgba(126, 232, 199, 0.35);
+}
+:global(.dark) .signOut {
+  background: rgba(126, 232, 199, 0.07);
+  color: #b8f2de;
+  border: 1px solid rgba(126, 232, 199, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+:global(.dark) .signOut:hover {
+  background: rgba(126, 232, 199, 0.14);
+  border-color: rgba(126, 232, 199, 0.7);
+  color: #ffffff;
+}
+
+/* Mobile bottom nav (Admin-Mobile .glass-nav). */
+.glassNav {
+  background: linear-gradient(135deg, rgba(0, 92, 88, 0.38), rgba(0, 43, 40, 0.46));
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(126, 232, 199, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(126, 232, 199, 0.12),
+    0 12px 30px rgba(0, 20, 18, 0.35);
+}
+:global(.dark) .glassNav {
+  background: linear-gradient(160deg, rgba(5, 64, 57, 0.62), rgba(0, 27, 23, 0.64));
+  border: 1px solid rgba(126, 232, 199, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 18px rgba(126, 232, 199, 0.1),
+    0 12px 30px rgba(0, 0, 0, 0.45);
+}
+.page a.navItem {
+  color: inherit;
+}
+.page a.navItem[aria-current="page"] {
+  color: #7ee8c7;
+}
+
+/* Mobile: horizontally scrolling chip strip, bigger chips, tappable cards. */
+.strip {
+  scrollbar-width: none;
+}
+.strip::-webkit-scrollbar {
+  display: none;
+}
+.chipM {
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 6px 16px;
+}
+.cardBtn:active {
+  transform: scale(0.98);
+}
+
+/* ---------- Motion ---------- */
+.btn,
+.chip,
+.cardBtn,
+.rowbtn,
+.sideL,
+.stat,
+.fld {
+  transition:
+    background 0.5s var(--yz-ease),
+    border-color 0.5s var(--yz-ease),
+    box-shadow 0.5s var(--yz-ease),
+    transform 0.5s var(--yz-ease),
+    color 0.35s var(--yz-ease),
+    opacity 0.35s var(--yz-ease) !important;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+.up {
+  animation: fadeUp 0.8s var(--yz-ease) both;
+}
+.d1 {
+  animation-delay: 0.08s;
+}
+.d2 {
+  animation-delay: 0.16s;
+}
+.d3 {
+  animation-delay: 0.24s;
+}
+.d4 {
+  animation-delay: 0.32s;
+}
+.pop {
+  animation: pop 0.5s var(--yz-ease) both;
+}
+.fade {
+  animation: fadeIn 0.4s var(--yz-ease) both;
+}
+.slide {
+  animation: slideIn 0.6s var(--yz-ease) both;
+}
+.sheet {
+  animation: sheetUp 0.55s var(--yz-ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

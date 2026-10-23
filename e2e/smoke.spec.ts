@@ -14,7 +14,8 @@ async function signIn(page: Page, who: { identifier: string; password: string })
   await page.getByLabel("الإيميل أو رقم الموبايل").fill(who.identifier);
   await page.getByLabel("كلمة السر", { exact: true }).fill(who.password);
   await page.getByRole("button", { name: "دخول" }).click();
-  await page.waitForURL("**/dashboard");
+  // The admin is redirected on to /dashboard/orders.
+  await page.waitForURL(/\/dashboard(\/|$)/);
 }
 
 test("home page loads in Arabic RTL", async ({ page }) => {

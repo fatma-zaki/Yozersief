@@ -1,5 +1,7 @@
 import { Construction } from "lucide-react";
 import type { ReactNode } from "react";
+import { PageHeader } from "@/components/admin/PageHeader";
+import shell from "@/components/admin/shell/shell.module.css";
 import { EmptyState } from "@/components/ui/Feedback";
 import { ar } from "@/i18n/ar";
 import { requirePagePermission } from "@/lib/auth/session";
@@ -29,11 +31,8 @@ export async function SectionPage({
     allowWithoutTwoFactor: href === "/dashboard/security",
   });
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl leading-10 font-extrabold">{section.labelAr}</h1>
-        {description ? <p className="text-ink-muted">{description}</p> : null}
-      </div>
+    <div className={`${shell.gutter} flex flex-col gap-4`}>
+      <PageHeader title={section.labelAr} subtitle={description ?? ""} />
       {children ?? (
         <EmptyState
           icon={<Construction />}
