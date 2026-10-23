@@ -251,3 +251,32 @@ export function toRequestDraft(input: SubmitOrderInput): RequestDraft {
     address: input.address,
   };
 }
+
+/* ---------- Admin orders screen (brief B7) ---------- */
+
+const orderIdSchema = z.string().uuid();
+
+/** «موافقة» / «طلب بيانات من العميل» / «رفض». Text rules per decision live in the lifecycle. */
+export const decideOrderSchema = z.object({
+  orderId: orderIdSchema,
+  decision: z.enum(["approve", "info", "reject"]),
+  /** Price & date (individual approve), quote (business approve), what's needed, or the reason. */
+  text: z.string().trim().max(2000).default(""),
+  /** Prepare the customer's WhatsApp message (always on for info and reject). */
+  notify: z.boolean().default(true),
+});
+export type DecideOrderInput = z.input<typeof decideOrderSchema>;
+
+/** «سجّل المرحلة الجاية» on a business order. */
+export const advanceStageSchema = z.object({
+  orderId: orderIdSchema,
+  notify: z.boolean().default(true),
+});
+export type AdvanceStageInput = z.input<typeof advanceStageSchema>;
+
+/** «ملاحظة داخلية» — never shown to the customer. */
+export const internalNoteSchema = z.object({
+  orderId: orderIdSchema,
+  note: z.string().trim().max(4000),
+});
+export type InternalNoteInput = z.input<typeof internalNoteSchema>;
