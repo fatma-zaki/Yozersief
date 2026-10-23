@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>لوحة الإدارة — موبايل</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f3faf8}
+*{box-sizing:border-box}
+a{color:#005c58}
+button,input,textarea{font-family:inherit}
+:focus-visible{outline:2px solid #005c58;outline-offset:2px}
+.dk :focus-visible,.glass-nav :focus-visible{outline-color:#7ee8c7}
+.glass-nav{background:linear-gradient(135deg,rgba(0,92,88,.38),rgba(0,43,40,.46));-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 20px rgba(126,232,199,.12),0 12px 30px rgba(0,20,18,.35)}
+.gl-dark{background:linear-gradient(135deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.03) 100%);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 22px rgba(126,232,199,.12)}
+.gl-light{background:linear-gradient(135deg,rgba(255,255,255,.88) 0%,rgba(255,255,255,.6) 100%);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,92,88,.10),inset 0 1px 0 #ffffff,0 10px 26px rgba(0,92,88,.1)}
+.g-btn{position:relative;cursor:pointer;-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%)}
+.g-btn[disabled]{opacity:.65;cursor:progress}
+.g-cta{background:linear-gradient(180deg,rgba(0,120,112,.92) 0%,rgba(0,43,40,.92) 100%);color:#ffffff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.45),0 0 40px rgba(126,232,199,.2)}
+.g-ghost{background:rgba(255,255,255,.08);color:#ffffff;border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.g-soft{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.6));color:#005c58;border:1px solid rgba(0,92,88,.25);box-shadow:inset 0 1px 0 #ffffff,0 4px 12px rgba(0,92,88,.1)}
+.g-line{background:transparent;color:#030909;border:1px solid rgba(3,9,9,.35)}
+.g-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.chip{flex-shrink:0;min-height:42px;padding:6px 16px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+.chip-off{background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.5));color:#005c58;border:1px solid rgba(0,92,88,.18);box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(0,92,88,.06)}
+.chip-on{background:linear-gradient(180deg,#00706a,#004541);color:#ffffff;border:1px solid rgba(126,232,199,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 14px rgba(126,232,199,.45)}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.35)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.8)) drop-shadow(0 0 12px rgba(126,232,199,.35))}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.fld{width:100%;min-height:46px;padding:8px 14px;border-radius:14px;border:1px solid rgba(0,92,88,.25);background:rgba(255,255,255,.85);font-size:16px;color:#030909}
+.fld:focus{border-color:#005c58;box-shadow:0 0 0 3px rgba(126,232,199,.45);outline:none}
+.strip{scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+.wa-bubble{position:relative;white-space:pre-wrap;padding:12px 14px 22px;border-radius:18px 18px 4px 18px;background:linear-gradient(135deg,#e3faf1,#c9f2e2);color:#032722;font-size:14px;line-height:23px;box-shadow:0 0 0 1px rgba(0,92,88,.14),0 6px 16px rgba(0,92,88,.12)}
+.check{position:relative;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;cursor:pointer;font-size:14px;font-weight:700}
+.check input{position:absolute;opacity:0;width:1px;height:1px}
+.check:focus-within{outline:2px solid #005c58;outline-offset:2px}
+/* smooth motion */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+.g-btn,.chip,.card-btn{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease) !important}
+.g-btn:active,.card-btn:active{transform:scale(.98)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .75s var(--ease) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}
+.sheet{animation:sheetUp .55s var(--ease) both}
+.fade{animation:fadeIn .4s var(--ease) both}
+.pop{animation:pop .5s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1460px; position: relative; overflow: clip; isolation: isolate; background: #f3faf8; color: #030909; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 520px; left: -200px; width: 420px; height: 420px; pointer-events: none">
+
+<header class="dk" style="position: relative; overflow: hidden; isolation: isolate; background: #01302d; color: #ffffff; border-radius: 0 0 28px 28px; padding: 12px 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); box-shadow: 0 1px 0 rgba(126,232,199,0.6), 0 10px 28px rgba(126,232,199,0.22)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 90% at 75% 10%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -120px; left: -150px; width: 330px; height: 330px; opacity: .5; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 10px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 46px; height: 46px; border-radius: 14px; box-shadow: 0 0 0 1px rgba(126,232,199,0.4), 0 0 14px rgba(126,232,199,0.25)">
+<div style="flex-grow: 1; display: flex; flex-direction: column">
+<h1 style="margin: 0; font-size: 21px; line-height: 30px; font-weight: 800">لوحة <span class="neon-t" style="color: #7ee8c7">الطلبات</span></h1>
+<span style="font-size: 12px; color: rgba(255,255,255,0.72)">بيانات تجريبية</span>
+</div>
+<button class="g-btn g-ghost g-icon" type="button" aria-label="الإشعارات"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></button>
+</div>
+<label style="position: relative; display: flex; align-items: center; margin-top: 12px">
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">بحث في الطلبات</span>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="position: absolute; right: 14px; width: 18px; height: 18px; color: rgba(255,255,255,0.7)"><path d="M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"></path></svg>
+<input type="search" value="{{q}}" onChange="{{onQ}}" placeholder="رقم الطلب أو اسم العميل" class="gl-dark" style="width: 100%; min-height: 48px; padding: 8px 42px 8px 14px; border-radius: 999px; color: #ffffff; font-size: 16px">
+</label>
+</header>
+
+<section class="anim-up" aria-label="ملخص" style="padding: 16px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button class="g-btn dk" type="button" onClick="{{pickNew}}" aria-pressed="{{newPressed}}" style="{{newStyle}}">
+<span style="display: flex; align-items: center; justify-content: space-between"><span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.82)">جديدة بانتظار المراجعة</span>
+<span aria-hidden="true" style="width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px"><path d="M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg></span></span>
+<strong style="font-size: 30px; line-height: 42px">{{nNew}}</strong></button>
+<button class="g-btn gl-light" type="button" onClick="{{pickAw}}" aria-pressed="{{awPressed}}" style="{{awStyle}}">
+<span style="display: flex; align-items: center; justify-content: space-between"><span style="font-size: 12px; font-weight: 700; color: rgba(3,9,9,0.65)">بانتظار رد العميل</span>
+<span aria-hidden="true" style="width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,rgba(220,250,240,.9),rgba(184,242,222,.45)); color: #005c58; box-shadow: 0 0 0 1px rgba(0,92,88,0.14)"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px"><path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v6l4 2"></path></svg></span></span>
+<strong style="font-size: 30px; line-height: 42px">{{nAw}}</strong></button>
+</section>
+
+<div class="anim-up d1 strip" role="group" aria-label="فلتر الحالة" style="display: flex; gap: 8px; overflow-x: auto; padding: 14px 16px 6px">
+<sc-for list="{{filters}}" as="f" hint-placeholder-count="5">
+<button class="{{f.cls}}" type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}">{{f.label}}</button>
+</sc-for>
+</div>
+
+<main class="anim-up d2" style="padding: 8px 16px 120px; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+<article class="gl-light" style="{{r.wrap}}">
+<button class="card-btn" type="button" onClick="{{r.toggle}}" aria-expanded="{{r.exp}}" style="width: 100%; display: flex; gap: 12px; align-items: center; padding: 12px; border: 0; background: transparent; color: inherit; text-align: right; cursor: pointer">
+<img src="{{r.img}}" alt="" style="width: 52px; height: 52px; border-radius: 14px; object-fit: cover; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,92,88,0.12)">
+<span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<strong style="font-size: 15px; line-height: 24px">{{r.name}}</strong>
+<span style="font-size: 12px; line-height: 18px; color: rgba(3,9,9,0.62)">{{r.product}} · {{r.when}}</span>
+<span dir="ltr" style="align-self: flex-end; font-size: 11px; color: rgba(3,9,9,0.5); letter-spacing: .5px">{{r.id}}</span>
+</span>
+<span style="{{r.badge}}">{{r.status}}</span>
+</button>
+<sc-if value="{{r.open}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="padding: 0 12px 12px; display: flex; flex-direction: column; gap: 10px">
+<dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{r.specs}}" as="x" hint-placeholder-count="4">
+<div style="padding: 8px 10px; border-radius: 14px; background: linear-gradient(135deg,rgba(184,242,222,.4),rgba(126,232,199,.14)); box-shadow: inset 0 0 0 1px rgba(0,92,88,0.1)"><dt style="font-size: 11px; font-weight: 600; color: rgba(3,9,9,0.6)">{{x.k}}</dt><dd style="margin: 0; font-size: 14px; font-weight: 800; color: #005c58">{{x.v}}</dd></div>
+</sc-for>
+</dl>
+<div style="display: flex; gap: 10px; align-items: center">
+<img src="assets/55f58d72365f99c37ffedef3b41b2aa5.png" alt="معاينة ملف التصميم" style="width: 48px; height: 48px; object-fit: contain; border-radius: 12px; background: #ffffff; box-shadow: 0 0 0 1px rgba(0,92,88,0.14)">
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span dir="ltr" style="font-size: 13px; font-weight: 700; text-align: right">{{r.file}}</span><span style="font-size: 12px; color: rgba(3,9,9,0.6)">{{r.receipt}} · {{r.date}}</span></span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: rgba(3,9,9,0.78)">{{r.notes}}</p>
+<sc-if value="{{r.decidable}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px">
+<button class="g-btn g-cta" type="button" onClick="{{r.approve}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; border-radius: 999px; font-size: 15px; font-weight: 800">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.4"><path d="M20 6 9 17l-5-5"></path></svg>موافقة…</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<button class="g-btn g-soft" type="button" onClick="{{r.info}}" style="min-height: 46px; border-radius: 999px; font-size: 14px; font-weight: 700">طلب بيانات</button>
+<button class="g-btn g-line" type="button" onClick="{{r.reject}}" style="min-height: 46px; border-radius: 999px; font-size: 14px; font-weight: 700">رفض…</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{r.closed}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; padding: 8px 12px; border-radius: 14px; background: rgba(126,232,199,0.14); font-size: 13px; color: rgba(3,9,9,0.7)">تم اتخاذ القرار في الطلب ده.</p>
+</sc-if>
+</div>
+</sc-if>
+</article>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<div class="gl-light" style="padding: 28px 16px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<strong>مفيش طلبات بالفلتر ده</strong>
+<button class="g-btn g-soft" type="button" onClick="{{clear}}" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-weight: 700">امسح الفلاتر</button>
+</div>
+</sc-if>
+<p style="margin: 0; text-align: center; font-size: 13px; color: rgba(3,9,9,0.6)">عرض {{shown}} من {{total}} طلبات</p>
+</main>
+
+<nav aria-label="تنقل الإدارة" style="position: sticky; bottom: 12px; z-index: 40; margin: -96px 12px 0; height: 72px">
+<div class="glass-nav" style="height: 72px; border-radius: 24px; padding: 6px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; color: rgba(255,255,255,0.75)">
+<a href="#" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: #7ee8c7; text-decoration: none; font-size: 11px; font-weight: 700; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>الطلبات</a>
+<a href="Admin-Traffic-Mobile.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M7 15l4-4 3 3 6-7"></path></svg>الزيارات</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>المنتجات</a>
+<a href="Home-Mobile.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>خروج</a>
+</div>
+</nav>
+
+<sc-if value="{{dlg}}" hint-placeholder-val="{{false}}">
+<div style="position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; justify-content: flex-end">
+<button class="fade" type="button" aria-label="إغلاق" onClick="{{closeDlg}}" style="position: absolute; inset: 0; border: 0; background: rgba(0,43,40,0.45); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px)"></button>
+<form role="dialog" aria-modal="true" aria-labelledby="mdlg-h" onSubmit="{{confirm}}" class="sheet" style="position: relative; max-height: 88vh; overflow-y: auto; border-radius: 28px 28px 0 0; padding: 12px 18px 24px; display: flex; flex-direction: column; gap: 14px; background: linear-gradient(180deg,rgba(255,255,255,.98),rgba(243,250,248,.96)); box-shadow: 0 -1px 0 rgba(126,232,199,0.7), 0 -10px 30px rgba(126,232,199,0.25)">
+<span aria-hidden="true" style="align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgba(0,92,88,0.25)"></span>
+<h2 id="mdlg-h" tabindex="-1" style="margin: 0; font-size: 20px; line-height: 32px; font-weight: 800">{{dlgTitle}}</h2>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(3,9,9,0.7)">{{dlgBody}}</p>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="mdlg-t" style="font-size: 14px; font-weight: 700">{{dlgLabel}}</label>
+<textarea class="fld" id="mdlg-t" rows="2" value="{{dlgText}}" onChange="{{onDlgText}}" aria-invalid="{{dlgInv}}" style="line-height: 24px"></textarea>
+<sc-if value="{{dlgErr}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; font-weight: 700; color: #6b4c10">{{dlgErr}}</span></sc-if>
+</div>
+<sc-if value="{{isApprove}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<label class="check" style="{{waCheckStyle}}"><input type="checkbox" checked="{{waOn}}" onChange="{{toggleWa}}">
+<span aria-hidden="true" style="{{waBox}}"><svg class="ic" viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke-width: 3"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="display: flex; flex-direction: column"><span>ابعت رسالة واتساب للعميل</span><span style="font-size: 12px; font-weight: 500; color: rgba(3,9,9,0.6)">برقم الطلب ولينك صفحة التتبع</span></span></label>
+<sc-if value="{{waOn}}" hint-placeholder-val="{{true}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: #005c58"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>معاينة الرسالة · {{selName}}</span>
+<div class="wa-bubble">{{waText}}<span aria-hidden="true" style="position: absolute; bottom: 5px; left: 12px; font-size: 11px; color: rgba(3,39,34,0.55)">الآن ✓✓</span></div>
+<p style="margin: 0; font-size: 12px; line-height: 20px; color: rgba(3,9,9,0.6)">في النسخة الحقيقية الرسالة بتتبعت تلقائي على رقم العميل [بانتظار ربط واتساب للأعمال].</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{saveErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 16px; background: #fbf6ec; border: 1px solid rgba(184,134,43,0.7); font-size: 13px; font-weight: 700">السيرفر ما أكدش العملية. جرّب تاني.</p></sc-if>
+<button class="{{dlgBtnCls}}" type="submit" disabled="{{saving}}" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 999px; font-size: 15px; font-weight: 800">{{confirmLabel}}</button>
+<button class="g-btn g-soft" type="button" onClick="{{closeDlg}}" disabled="{{saving}}" style="min-height: 46px; border-radius: 999px; font-size: 14px; font-weight: 700">إلغاء</button>
+</form>
+</div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+<div role="status" class="dk pop" style="position: fixed; top: 16px; left: 12px; right: 12px; z-index: 70; display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 20px; background: #01302d; color: #ffffff; font-size: 14px; font-weight: 600; border: 1px solid rgba(126,232,199,0.55); box-shadow: 0 0 26px rgba(126,232,199,0.3), 0 16px 34px rgba(0,43,40,0.35)">
+<div style="display: flex; gap: 10px; align-items: center">
+<span aria-hidden="true" style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke-width: 2.6"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1">{{toast}}</span>
+<button type="button" onClick="{{hideToast}}" aria-label="إغلاق الإشعار" style="width: 34px; height: 34px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.08); color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px; stroke-width: 2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<sc-if value="{{toastWa}}" hint-placeholder-val="{{false}}"><a class="g-btn g-cta" href="{{toastWa}}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 800"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>افتح واتساب وابعت الرسالة</a></sc-if>
+</div>
+</sc-if>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"serverFails":{"editor":"boolean","default":false,"section":"Demo"},"$preview":{"width":390,"height":1460}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    var T = 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', M = 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', H = 'assets/d4de876ef462c3e541788e94f50199e3.jpg', P = 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg', S = 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', C = 'assets/53f6eb00973f2207c9b44d73b256c3e5.jpg';
+    this.state = {
+      q: '', filter: 'all', openId: 'YZ-8K3QF7', dlg: '', dlgId: '', dlgText: '', dlgErr: '', saving: false, saveErr: false, toast: '', toastWa: '', waOn: true,
+      reqs: [
+        { id: 'YZ-8K3QF7', name: 'محمد عبد الرحيم', phone: '010•••••678', product: 'تيشيرت أبيض × 12', img: T, status: 'new', when: '10:12 ص', receipt: 'من المحل', date: 'مرغوب 2 نوفمبر', file: 'team-logo-final.png', notes: 'لوجو الفريق قدام، والاسم ورا. محتاجينهم لماتش يوم الجمعة.', specs: [{ k: 'المقاسات', v: 'S2 · M4 · L4 · XL2' }, { k: 'الطباعة', v: 'أمام + ظهر' }, { k: 'اللون', v: 'أبيض' }, { k: 'الكمية', v: '12' }] },
+        { id: 'YZ-Q2M7HP', name: 'سارة حسن', phone: '011•••••204', product: 'مج أبيض × 30', img: M, status: 'new', when: '9:01 ص', receipt: 'توصيل', date: 'مش محدد', file: 'mug-art.pdf', notes: 'هدايا لموظفين الشركة، كل مج عليه اسم.', specs: [{ k: 'النوع', v: 'مج' }, { k: 'الكمية', v: '30' }, { k: 'التخصيص', v: 'اسم على كل مج' }] },
+        { id: 'YZ-T9W4KD', name: 'منى إبراهيم', phone: '012•••••931', product: 'هودي أسود × 40', img: H, status: 'review', when: 'أمس', receipt: 'من المحل', date: 'مرغوب 10 نوفمبر', file: 'class-2026.ai', notes: 'هوديز دفعة 2026.', specs: [{ k: 'المقاسات', v: 'M15 · L15 · XL10' }, { k: 'الطباعة', v: 'ظهر' }] },
+        { id: 'YZ-B6R2NX', name: 'كريم سيد', phone: '015•••••118', product: 'كفر iPhone 13 × 1', img: P, status: 'awaiting', when: '20 أكتوبر', receipt: 'توصيل', date: 'مش محدد', file: 'photo.jpg', notes: 'صورة عيلتي على الكفر.', specs: [{ k: 'الموديل', v: 'iPhone 13' }, { k: 'الكمية', v: '1' }] },
+        { id: 'YZ-H3J8LC', name: 'نورا علي', phone: '010•••••552', product: 'استيكر دائري × 200', img: S, status: 'approved', when: '19 أكتوبر', receipt: 'من المحل', date: 'مرغوب 25 أكتوبر', file: 'brand-sticker.svg', notes: 'لتغليف منتجات.', specs: [{ k: 'المقاس', v: '5 × 5 سم' }, { k: 'الكمية', v: '200' }] },
+        { id: 'YZ-P5V1ZE', name: 'يوسف أحمد', phone: '011•••••760', product: 'كاب أسود × 5', img: C, status: 'rejected', when: '18 أكتوبر', receipt: 'توصيل', date: 'مرغوب 19 أكتوبر', file: 'cap.png', notes: 'محتاجهم بكرة.', specs: [{ k: 'الطباعة', v: 'أمام' }] }
+      ]
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.timer); }
+  renderVals() {
+    var s = this.state, self = this;
+    var ST = {
+      'new': { l: 'جديد', b: 'background: rgba(126,232,199,0.24); color: #005c58; border: 1px solid rgba(0,92,88,0.25)' },
+      review: { l: 'قيد المراجعة', b: 'background: rgba(255,255,255,0.9); color: #005c58; border: 1px solid rgba(0,92,88,0.45)' },
+      awaiting: { l: 'بانتظار العميل', b: 'background: rgba(214,174,98,0.25); color: #5c430f; border: 1px solid #d6ae62' },
+      approved: { l: 'تمت الموافقة', b: 'background: linear-gradient(180deg,#00706a,#004541); color: #ffffff; border: 1px solid rgba(126,232,199,0.6); box-shadow: 0 0 10px rgba(126,232,199,0.4)' },
+      rejected: { l: 'مرفوض', b: 'background: rgba(3,9,9,0.82); color: #ffffff; border: 1px solid rgba(3,9,9,0.82)' }
+    };
+    function badge(st) { return 'flex-shrink: 0; align-self: flex-start; padding: 2px 10px; border-radius: 999px; font-size: 11px; line-height: 20px; font-weight: 700; white-space: nowrap; ' + ST[st].b; }
+    var count = function (st) { return s.reqs.filter(function (r) { return r.status === st; }).length; };
+    var filters = [['all', 'الكل · ' + s.reqs.length], ['new', 'جديد · ' + count('new')], ['review', 'قيد المراجعة'], ['awaiting', 'بانتظار العميل'], ['approved', 'تمت الموافقة'], ['rejected', 'مرفوض']].map(function (f) {
+      var on = s.filter === f[0];
+      return { label: f[1], pressed: on ? 'true' : 'false', cls: 'g-btn chip ' + (on ? 'chip-on' : 'chip-off'), pick: function () { self.setState({ filter: f[0] }); } };
+    });
+    var q = s.q.trim().toLowerCase();
+    var list = s.reqs.filter(function (r) { return (s.filter === 'all' || r.status === s.filter) && (!q || r.id.toLowerCase().indexOf(q) >= 0 || r.name.indexOf(s.q.trim()) >= 0); });
+    function open(k, id) { return function () { self.setState({ dlg: k, dlgId: id, dlgText: '', dlgErr: '', saveErr: false, waOn: true }); self.timer = setTimeout(function () { var el = document.getElementById('mdlg-h'); if (el) el.focus(); }, 60); }; }
+    var rows = list.map(function (r) {
+      var isOpen = r.id === s.openId;
+      return { id: r.id, name: r.name, product: r.product, when: r.when, img: r.img, status: ST[r.status].l, badge: badge(r.status), specs: r.specs, file: r.file, receipt: r.receipt, date: r.date, notes: r.notes,
+        open: isOpen, exp: isOpen ? 'true' : 'false',
+        decidable: ['new', 'review', 'awaiting'].indexOf(r.status) >= 0, closed: ['approved', 'rejected'].indexOf(r.status) >= 0,
+        wrap: 'border-radius: 22px; overflow: hidden; ' + (isOpen ? 'box-shadow: 0 0 0 1.5px rgba(0,112,106,0.7), 0 0 22px rgba(126,232,199,0.35), 0 12px 28px rgba(0,92,88,0.14)' : ''),
+        toggle: function () { self.setState({ openId: isOpen ? '' : r.id }); },
+        approve: open('approve', r.id), info: open('info', r.id), reject: open('reject', r.id) };
+    });
+    var selR = s.reqs.filter(function (r) { return r.id === s.dlgId; })[0];
+    var D = {
+      approve: { t: 'تأكيد الموافقة', b: 'العميل هيعرف إن طلبه اتقبل. ده مش معناه إن التنفيذ بدأ.', label: 'السعر والموعد (اختياري)', req: false, btn: 'تأكيد الموافقة', cls: 'g-btn g-cta', status: 'approved', toast: 'اتسجلت الموافقة على ' },
+      info: { t: 'طلب بيانات من العميل', b: 'الطلب هيتحول لـ «بانتظار العميل» لحد ما يرد.', label: 'إيه المطلوب بالظبط؟', req: true, btn: 'ابعت الطلب للعميل', cls: 'g-btn g-cta', status: 'awaiting', toast: 'اتبعت طلب البيانات لـ ' },
+      reject: { t: 'رفض الطلب', b: 'القرار هيوصل للعميل ومعاه السبب.', label: 'سبب الرفض (إجباري)', req: true, btn: 'تأكيد الرفض', cls: 'g-btn g-line', status: 'rejected', toast: 'اتسجل رفض ' }
+    };
+    var d = D[s.dlg];
+    var trackUrl = '[رابط الموقع]/track?order=' + (selR ? selR.id : '');
+    var waText = selR ? 'أهلًا ' + selR.name.split(' ')[0] + '،\nطلبك رقم ' + selR.id + ' من يوزرسيف اتقبل.\n' + (s.dlgText.trim() ? s.dlgText.trim() + '\n' : '') + 'تقدر تتابع حالة طلبك من اللينك ده:\n' + trackUrl + '\nهتحتاج رقم الطلب ورقم موبايلك عشان تفتح الصفحة.' : '';
+    var nOn = s.filter === 'new', aOn = s.filter === 'awaiting';
+    var card = 'display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 22px; text-align: right; font-family: inherit; ';
+    return {
+      q: s.q, onQ: function (e) { self.setState({ q: e.target.value }); },
+      nNew: count('new'), nAw: count('awaiting'), newPressed: nOn ? 'true' : 'false', awPressed: aOn ? 'true' : 'false',
+      pickNew: function () { self.setState({ filter: nOn ? 'all' : 'new' }); }, pickAw: function () { self.setState({ filter: aOn ? 'all' : 'awaiting' }); },
+      newStyle: card + 'background: radial-gradient(ellipse 90% 90% at 80% 0%, rgba(0,92,88,0.95) 0%, rgba(0,92,88,0) 100%), #01302d; color: #ffffff; border: ' + (nOn ? '2px solid #7ee8c7; box-shadow: 0 0 22px rgba(126,232,199,0.5)' : '1px solid rgba(126,232,199,0.45); box-shadow: 0 0 18px rgba(126,232,199,0.2)'),
+      awStyle: card + 'color: #030909; ' + (aOn ? 'border: 2px solid #00706a; box-shadow: 0 0 0 4px rgba(126,232,199,0.25)' : ''),
+      filters: filters, rows: rows, empty: rows.length === 0, shown: rows.length, total: s.reqs.length,
+      clear: function () { self.setState({ q: '', filter: 'all' }); },
+      dlg: !!d, dlgTitle: d ? d.t : '', dlgBody: d ? d.b : '', dlgLabel: d ? d.label : '',
+      dlgText: s.dlgText, onDlgText: function (e) { self.setState({ dlgText: e.target.value, dlgErr: '' }); },
+      dlgErr: s.dlgErr, dlgInv: s.dlgErr ? 'true' : 'false', saving: s.saving, saveErr: s.saveErr,
+      isApprove: s.dlg === 'approve', waOn: s.waOn, toggleWa: function (e) { self.setState({ waOn: e.target.checked }); },
+      waText: waText, selName: selR ? selR.name : '',
+      waCheckStyle: s.waOn ? 'background: linear-gradient(135deg,rgba(184,242,222,.6),rgba(126,232,199,.22)); box-shadow: 0 0 0 1px rgba(0,92,88,0.25)' : 'background: rgba(255,255,255,0.7); box-shadow: 0 0 0 1px rgba(0,92,88,0.15)',
+      waBox: 'width: 22px; height: 22px; flex-shrink: 0; border-radius: 7px; display: flex; align-items: center; justify-content: center; ' + (s.waOn ? 'background: linear-gradient(180deg,#00706a,#004541); color: #ffffff; box-shadow: 0 0 10px rgba(126,232,199,0.6)' : 'background: #ffffff; color: transparent; border: 1.5px solid rgba(0,92,88,0.4)'),
+      dlgBtnCls: d ? d.cls : 'g-btn g-cta',
+      confirmLabel: s.saving ? 'جاري الحفظ…' : (d ? (s.dlg === 'approve' && s.waOn ? 'موافقة وإرسال على واتساب' : d.btn) : ''),
+      closeDlg: function () { self.setState({ dlg: '' }); },
+      confirm: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!d || self.state.saving) return;
+        if (d.req && self.state.dlgText.trim().length < 5) { self.setState({ dlgErr: 'اكتب سبب واضح (5 حروف على الأقل).' }); return; }
+        self.setState({ saving: true, saveErr: false });
+        var id = self.state.dlgId, sendWa = s.dlg === 'approve' && self.state.waOn, msg = waText;
+        setTimeout(function () {
+          if (self.props.serverFails) { self.setState({ saving: false, saveErr: true }); return; }
+          var reqs = self.state.reqs.map(function (r) { return r.id === id ? Object.assign({}, r, { status: d.status }) : r; });
+          self.setState({ reqs: reqs, saving: false, dlg: '', toast: d.toast + id + (sendWa ? ' — رسالة الواتساب جاهزة' : ''), toastWa: sendWa ? 'https://wa.me/?text=' + encodeURIComponent(msg) : '' });
+        }, 900);
+      },
+      toast: s.toast, toastWa: s.toastWa, hideToast: function () { self.setState({ toast: '', toastWa: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

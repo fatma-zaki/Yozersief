@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الخدمات والمنتجات — لوحة الإدارة (داكن)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#001412;--ink:#f2fbf8;--ink-strong:#ffffff;--muted:rgba(242,251,248,.6);--line:rgba(126,232,199,.14);--accent-ink:#7ee8c7;--card-bg:linear-gradient(160deg,rgba(5,64,57,.5),rgba(0,27,23,.55));--card-bd:rgba(126,232,199,.22);--card-sh:inset 0 1px 0 rgba(255,255,255,.08),0 16px 34px rgba(0,0,0,.35);--bar-sh:inset 0 1px 0 rgba(255,255,255,.1),0 0 22px rgba(126,232,199,.12),0 14px 34px rgba(0,0,0,.4);--field-bg:rgba(0,20,18,.6);--field-bd:rgba(126,232,199,.3);--field-ink:#ffffff;--focus:#7ee8c7;--focus-ring:rgba(126,232,199,.3);--soft-bg:rgba(126,232,199,.07);--soft-ink:#b8f2de;--soft-bd:rgba(126,232,199,.32);--cta-bg:linear-gradient(180deg,rgba(5,64,57,.8),rgba(0,27,23,.8));--chip-off-bg:rgba(126,232,199,.05);--chip-off-ink:rgba(242,251,248,.8);--chip-off-bd:rgba(126,232,199,.22);--chip-on-bg:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.12));--chip-on-ink:#fff;--tint:rgba(126,232,199,.07);--tint-bd:rgba(126,232,199,.2);--tile-bg:linear-gradient(135deg,rgba(126,232,199,.16),rgba(5,64,57,.45));--tile-ink:#7ee8c7;--side-bg:#032722;--side-glow:rgba(5,64,57,.95);--warn-bg:rgba(214,174,98,.14);--warn-ink:#e9c98a;--warn-bd:#d6ae62;--ok-bg:linear-gradient(180deg,rgba(126,232,199,.32),rgba(126,232,199,.12));--ok-ink:#fff;--off-bg:rgba(242,251,248,.08);--off-ink:rgba(242,251,248,.6);--overlay:rgba(0,8,7,.6);--sheet-bg:#032722;--toast-bg:#032722;--img-bg:#032722;--opt-bg:#032722;--opt-ink:#ffffff}
+</style>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;background:var(--bg)}
+*{box-sizing:border-box}
+a{color:var(--accent-ink)}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.side :focus-visible{outline-color:#7ee8c7}
+.page{position:relative;overflow:clip;isolation:isolate;min-height:100vh;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;padding:16px;background:var(--bg);color:var(--ink);font-family:Cairo,'Segoe UI',Tahoma,sans-serif}
+.card{background:var(--card-bg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--card-bd);box-shadow:var(--card-sh);border-radius:26px}
+.bar{border-radius:24px;padding:12px 14px 12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;box-shadow:var(--bar-sh)}
+.side{position:sticky;top:16px;overflow:hidden;isolation:isolate;flex:1 1 248px;max-width:100%;min-height:calc(100vh - 32px);background:var(--side-bg);color:#fff;border-radius:28px;padding:20px 14px;display:flex;flex-direction:column;gap:22px;border:1px solid rgba(126,232,199,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 26px rgba(126,232,199,.16),0 20px 44px rgba(0,0,0,.25)}
+.side-glow{position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse 120% 50% at 70% 0%,var(--side-glow) 0%,rgba(0,0,0,0) 100%)}
+.side-l{display:flex;align-items:center;gap:12px;min-height:48px;padding:10px 14px;border-radius:16px;font-size:15px;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid transparent}
+.side-l:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-l[aria-current="page"]{background:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.1));color:#fff;border-color:rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 18px rgba(126,232,199,.3)}
+.main-col{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.h1{margin:0;font-size:24px;line-height:36px;font-weight:800;color:var(--ink-strong)}
+.h2{margin:0;font-size:17px;line-height:28px;font-weight:800;color:var(--ink-strong)}
+.muted{color:var(--muted)}
+.g-btn{position:relative;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.g-btn[disabled]{opacity:.5;cursor:not-allowed}
+.g-cta{background:var(--cta-bg);color:#fff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.42),0 0 40px rgba(126,232,199,.18)}
+.g-soft{background:var(--soft-bg);color:var(--soft-ink);border:1px solid var(--soft-bd)}
+.chip{min-height:38px;padding:4px 16px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+.chip-off{background:var(--chip-off-bg);color:var(--chip-off-ink);border:1px solid var(--chip-off-bd)}
+.chip-on{background:var(--chip-on-bg);color:var(--chip-on-ink);border:1px solid rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 14px rgba(126,232,199,.4)}
+.fld{width:100%;min-height:46px;padding:8px 14px;border-radius:14px;border:1px solid var(--field-bd);background:var(--field-bg);color:var(--field-ink);font-size:15px}
+.fld:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-ring);outline:none}
+.fld option{background:var(--opt-bg);color:var(--opt-ink)}
+.lbl{font-size:13px;font-weight:700}
+.tint{background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);border-radius:16px}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--tile-bg);color:var(--tile-ink);box-shadow:0 0 0 1px var(--tint-bd)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.3)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.75)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.sw{position:relative;width:46px;height:26px;flex-shrink:0;border:0;padding:0;border-radius:999px;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .45s var(--ease)}
+.sw-on{background:linear-gradient(180deg,#00a08f,#00706a);box-shadow:0 0 12px rgba(126,232,199,.55)}
+.sw-on::after{transform:translateX(-20px)}
+.sw-off{background:var(--off-bg);box-shadow:inset 0 0 0 1px var(--line)}
+.sw[disabled]{opacity:.45;cursor:not-allowed}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;line-height:20px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok-ink);box-shadow:0 0 10px rgba(126,232,199,.35)}
+.b-warn{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-bd)}
+.b-off{background:var(--off-bg);color:var(--off-ink)}
+.b-glass{background:rgba(0,20,18,.6);color:#fff;border:1px solid rgba(126,232,199,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.toast{position:fixed;bottom:24px;left:24px;z-index:40;max-width:440px;display:flex;gap:10px;align-items:center;padding:12px 14px 12px 18px;border-radius:20px;background:var(--toast-bg);color:#fff;font-size:15px;font-weight:600;border:1px solid rgba(126,232,199,.55);box-shadow:0 0 26px rgba(126,232,199,.3),0 16px 34px rgba(0,0,0,.3)}
+.g-btn,.chip,.side-l,.sw,.lift{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .4s var(--ease),filter .5s var(--ease) !important}
+.g-btn:hover,.lift:hover{transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes drawerIn{from{transform:translateX(-104%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .8s var(--ease) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+.slide{animation:slideIn .6s var(--ease) both}
+.drawer{animation:drawerIn .6s var(--ease) both}
+.fade{animation:fadeIn .4s var(--ease) both}
+.pop{animation:pop .5s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+.pcard{overflow:hidden;display:flex;flex-direction:column}
+.pimg{position:relative;height:160px;overflow:hidden;background:var(--img-bg)}
+.pimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s var(--ease),filter .5s var(--ease)}
+.pcard:hover .pimg img{transform:scale(1.05)}
+.off .pimg img{filter:grayscale(1) opacity(.55)}
+.tag{display:inline-flex;align-items:center;padding:1px 9px;border-radius:999px;font-size:11px;font-weight:700;background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);color:var(--accent-ink)}
+.opt{position:relative;display:inline-flex;align-items:center;min-height:36px;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.opt:focus-within{outline:2px solid var(--focus);outline-offset:2px}
+</style>
+</helmet>
+<div class="page">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 320px; left: -240px; width: 680px; height: 680px; opacity: .2; pointer-events: none">
+
+<nav class="side slide" aria-label="قائمة الإدارة">
+<div class="side-glow" aria-hidden="true"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -170px; right: -190px; width: 460px; height: 460px; opacity: .5; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 12px; padding: 0 6px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 0 0 1px rgba(126,232,199,0.4), 0 0 18px rgba(126,232,199,0.25)">
+<span style="display: flex; flex-direction: column"><strong style="font-size: 17px">لوحة <span class="neon-t">الإدارة</span></strong><span style="font-size: 12px; color: rgba(255,255,255,0.7)">بيئة تجريبية</span></span>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+<li><a class="side-l" href="{{n.href}}" aria-current="{{n.cur}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.icon}}"></path></svg><span style="flex-grow: 1">{{n.label}}</span>
+<sc-if value="{{n.count}}" hint-placeholder-val="{{false}}"><span style="min-width: 24px; padding: 0 8px; border-radius: 999px; background: #d6ae62; color: #030909; font-size: 12px; font-weight: 800; text-align: center">{{n.count}}</span></sc-if></a></li>
+</sc-for>
+</ul>
+<div style="margin-top: auto; padding: 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(126,232,199,0.3)">
+<span aria-hidden="true" style="width: 38px; height: 38px; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center; font-weight: 800">ي</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">صاحب المحل</span><span style="font-size: 12px; color: rgba(255,255,255,0.7)">مدير</span></span>
+<a href="{{homeHref}}" style="padding: 6px 10px; border-radius: 12px; color: #b8f2de; font-size: 13px; font-weight: 700; text-decoration: none; border: 1px solid rgba(126,232,199,0.35)">خروج</a>
+</div>
+</nav>
+
+<div class="main-col">
+<header class="card bar anim-up">
+<div style="flex-grow: 1; display: flex; flex-direction: column">
+<h1 class="h1">الخدمات والمنتجات</h1>
+<span class="muted" style="font-size: 13px">اللي بيظهر للعملاء في الموقع وفي منشئ الطلب</span>
+</div>
+<label style="position: relative; display: flex; align-items: center; flex: 0 1 280px">
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">بحث في المنتجات</span>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="position: absolute; right: 14px; width: 18px; height: 18px; color: var(--muted)"><path d="M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"></path></svg>
+<input class="fld" type="search" value="{{q}}" onChange="{{onQ}}" placeholder="اسم المنتج" style="border-radius: 999px; padding-right: 42px">
+</label>
+<button class="g-btn g-cta" type="button" onClick="{{openNew}}" style="min-height: 46px; padding: 8px 22px; border-radius: 999px; font-size: 15px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.4"><path d="M12 5v14M5 12h14"></path></svg>إضافة منتج</button>
+</header>
+
+<section class="anim-up d1" aria-label="ملخص" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+<sc-for list="{{stats}}" as="t" hint-placeholder-count="3">
+<div class="card lift" style="padding: 14px 18px; display: flex; align-items: center; gap: 14px; border-radius: 22px">
+<span class="tile" aria-hidden="true" style="width: 44px; height: 44px"><svg class="ic" viewBox="0 0 24 24"><path d="{{t.icon}}"></path></svg></span>
+<span style="display: flex; flex-direction: column"><strong style="font-size: 26px; line-height: 34px; color: var(--ink-strong)">{{t.n}}</strong><span class="muted" style="font-size: 13px; font-weight: 700">{{t.label}}</span></span>
+</div>
+</sc-for>
+</section>
+
+<div class="anim-up d2" role="group" aria-label="تصنيف" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="5">
+<button class="{{c.cls}}" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.label}}</button>
+</sc-for>
+</div>
+
+<section class="anim-up d3" aria-label="المنتجات" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px">
+<sc-for list="{{items}}" as="p" hint-placeholder-count="8">
+<article class="{{p.cls}}">
+<div class="pimg">
+<img src="{{p.img}}" alt="{{p.name}}">
+<span class="badge b-glass" style="position: absolute; top: 10px; right: 10px">{{p.catLabel}}</span>
+<span class="{{p.visCls}}" style="position: absolute; top: 10px; left: 10px">{{p.visLabel}}</span>
+</div>
+<div style="padding: 14px 16px 6px; display: flex; flex-direction: column; gap: 6px; flex-grow: 1">
+<h2 class="h2" style="font-size: 16px; line-height: 26px">{{p.name}}</h2>
+<p class="muted" style="margin: 0; font-size: 13px; line-height: 21px">{{p.desc}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">
+<sc-for list="{{p.tags}}" as="g" hint-placeholder-count="3"><span class="tag">{{g}}</span></sc-for>
+</div>
+</div>
+<div style="padding: 10px 16px 14px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--line)">
+<button class="{{p.swCls}}" type="button" role="switch" aria-checked="{{p.visStr}}" aria-label="{{p.swLabel}}" onClick="{{p.toggle}}"></button>
+<span style="flex-grow: 1; font-size: 13px; font-weight: 700">ظاهر في الموقع</span>
+<button class="g-btn g-soft" type="button" onClick="{{p.edit}}" style="min-height: 36px; padding: 2px 14px; border-radius: 999px; font-size: 13px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 15px; height: 15px"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4"></path></svg>تعديل</button>
+</div>
+</article>
+</sc-for>
+</section>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<div class="card" style="padding: 36px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px"><strong>مفيش منتجات بالبحث ده</strong><button class="g-btn g-soft" type="button" onClick="{{clear}}" style="min-height: 42px; padding: 4px 18px; border-radius: 999px">امسح البحث</button></div>
+</sc-if>
+<p class="tint" style="margin: 0; padding: 10px 16px; font-size: 13px; line-height: 22px">الأسعار مش بتظهر للعملاء. كل طلب بيتسعّر بعد المراجعة حسب الكمية والتصميم.</p>
+</div>
+
+<sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+<div style="position: fixed; inset: 0; z-index: 30; display: flex; justify-content: flex-end">
+<button class="fade" type="button" aria-label="إغلاق" onClick="{{closeDrawer}}" style="position: absolute; inset: 0; border: 0; background: var(--overlay); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px)"></button>
+<form class="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-h" onSubmit="{{save}}" style="position: relative; width: min(460px, 100%); height: 100%; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 16px; background: var(--sheet-bg); color: var(--ink); border-radius: 0 28px 28px 0; box-shadow: 1px 0 0 rgba(126,232,199,0.6), 10px 0 34px rgba(0,0,0,0.25)">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 id="dr-h" tabindex="-1" class="h1" style="font-size: 21px">{{drawerTitle}}</h2>
+<button class="g-btn g-soft" type="button" onClick="{{closeDrawer}}" aria-label="إغلاق" style="width: 40px; height: 40px; border-radius: 999px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.4"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<label style="position: relative; display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 18px; border: 1.5px dashed var(--field-bd); background: var(--tint); cursor: pointer">
+<input type="file" accept="image/*" style="position: absolute; opacity: 0; width: 1px; height: 1px">
+<img src="{{draft.img}}" alt="" style="width: 72px; height: 72px; border-radius: 14px; object-fit: cover; background: var(--img-bg)">
+<span style="display: flex; flex-direction: column"><strong style="font-size: 14px">صورة المنتج</strong><span class="muted" style="font-size: 12px">اختار صورة جديدة (JPG أو PNG)</span></span>
+</label>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="d-name">اسم المنتج</label>
+<input class="fld" id="d-name" type="text" value="{{draft.name}}" onChange="{{onName}}" aria-invalid="{{nameInv}}">
+<sc-if value="{{nameErr}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 700; color: var(--warn-ink)">اكتب اسم المنتج.</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="d-cat">التصنيف</label>
+<select class="fld" id="d-cat" value="{{draft.cat}}" onChange="{{onCat}}"><option value="wear">ملابس وكابات</option><option value="mug">مجات وهدايا</option><option value="phone">كفرات موبايل</option><option value="sticker">استيكرات ومطبوعات</option><option value="service">خدمات طباعة</option></select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="d-desc">وصف قصير</label>
+<textarea class="fld" id="d-desc" rows="2" value="{{draft.desc}}" onChange="{{onDesc}}" style="line-height: 24px"></textarea>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend class="lbl" style="padding: 0; margin-bottom: 8px">الألوان المتاحة</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{colorOpts}}" as="o" hint-placeholder-count="3"><label class="{{o.cls}}"><input type="checkbox" checked="{{o.on}}" onChange="{{o.toggle}}">{{o.label}}</label></sc-for></div>
+</fieldset>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend class="lbl" style="padding: 0; margin-bottom: 8px">المقاسات</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 6px" dir="ltr"><sc-for list="{{sizeOpts}}" as="o" hint-placeholder-count="5"><label class="{{o.cls}}"><input type="checkbox" checked="{{o.on}}" onChange="{{o.toggle}}">{{o.label}}</label></sc-for></div>
+</fieldset>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+<legend class="lbl" style="padding: 0; margin-bottom: 8px">أماكن الطباعة</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{placeOpts}}" as="o" hint-placeholder-count="3"><label class="{{o.cls}}"><input type="checkbox" checked="{{o.on}}" onChange="{{o.toggle}}">{{o.label}}</label></sc-for></div>
+</fieldset>
+<div class="tint" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px">
+<button class="{{draftSw}}" type="button" role="switch" aria-checked="{{draftVisStr}}" aria-labelledby="d-vis" onClick="{{toggleDraftVis}}"></button>
+<span id="d-vis" style="display: flex; flex-direction: column"><strong style="font-size: 14px">يظهر في الموقع ومنشئ الطلب</strong><span class="muted" style="font-size: 12px">تقدر تخفيه مؤقتًا من غير ما تمسحه</span></span>
+</div>
+<div style="margin-top: auto; display: flex; gap: 10px; padding-top: 8px">
+<button class="g-btn g-cta" type="submit" style="flex: 1 1 auto; min-height: 50px; border-radius: 999px; font-size: 15px">{{saveLabel}}</button>
+<button class="g-btn g-soft" type="button" onClick="{{closeDrawer}}" style="min-height: 50px; padding: 0 22px; border-radius: 999px">إلغاء</button>
+</div>
+</form>
+</div>
+</sc-if>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+<div class="toast pop" role="status">
+<span aria-hidden="true" style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke-width: 2.6"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1">{{toast}}</span>
+<button type="button" onClick="{{hideToast}}" aria-label="إغلاق الإشعار" style="width: 32px; height: 32px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.08); color: #fff; cursor: pointer">×</button>
+</div>
+</sc-if>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.state = { q: '', cat: 'all', drawer: null, draft: null, nameErr: false, toast: '',
+      items: [
+        { id: 1, name: 'تيشيرتات', cat: 'wear', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', desc: 'طباعة على تيشيرتات قطن بتصميمك.', colors: ['أبيض', 'أسود'], sizes: ['S', 'M', 'L', 'XL', 'XXL'], places: ['أمام', 'ظهر', 'كُم'], vis: true },
+        { id: 2, name: 'هوديز وسويتشيرت', cat: 'wear', img: 'assets/d4de876ef462c3e541788e94f50199e3.jpg', desc: 'هوديز للدفعات والفرق والمناسبات.', colors: ['أسود', 'ألوان تانية'], sizes: ['M', 'L', 'XL'], places: ['أمام', 'ظهر'], vis: true },
+        { id: 3, name: 'كابات', cat: 'wear', img: 'assets/53f6eb00973f2207c9b44d73b256c3e5.jpg', desc: 'كابات مطبوعة بلوجو أو اسم.', colors: ['أسود', 'أبيض'], sizes: [], places: ['أمام'], vis: true },
+        { id: 4, name: 'الطباعة الحرارية', cat: 'service', img: 'assets/9094d6d3078b4a111c3c53e31749d141.jpg', desc: 'طباعة حرارية على قطع العميل نفسه.', colors: [], sizes: [], places: ['أمام', 'ظهر'], vis: true },
+        { id: 5, name: 'مجات ومطرات', cat: 'mug', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', desc: 'مجات بأسماء أو صور للهدايا.', colors: ['أبيض'], sizes: [], places: [], vis: true },
+        { id: 6, name: 'كفرات موبايل', cat: 'phone', img: 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg', desc: 'حسب موديل الموبايل [الموديلات المتاحة للتأكيد].', colors: [], sizes: [], places: [], vis: true },
+        { id: 7, name: 'استيكرات', cat: 'sticker', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', desc: 'استيكرات بأي مقاس وشكل.', colors: [], sizes: [], places: [], vis: true },
+        { id: 8, name: 'هدايا ولافتات مخصصة', cat: 'sticker', img: 'assets/0b3e57d34122b654cbb1f7615c9f91ac.jpg', desc: 'لافتات محلات وهدايا بتصميم خاص.', colors: [], sizes: [], places: [], vis: false }
+      ] };
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  renderVals() {
+    var s = this.state, self = this, SFX = '-Dark', PAGE = 'Admin-Products';
+    var IC = { req: 'M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01', chart: 'M3 3v18h18M7 15l4-4 3 3 6-7', grid: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', photo: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21', chat: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z', lock: 'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4', eye: 'M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12zM15 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0', eyeOff: 'M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20' };
+    IC.act = 'M22 12h-4l-3 9L9 3l-3 9H2';
+    var nav = [['الطلبات', 'req', 'Admin'], ['الزيارات والترافيك', 'chart', 'Admin-Traffic'], ['الخدمات والمنتجات', 'grid', 'Admin-Products'], ['أعمالنا', 'photo', 'Admin-Gallery'], ['التواصل والمحتوى', 'chat', 'Admin-Content'], ['نشاط الفريق', 'act', 'Admin-Team'], ['الحسابات والصلاحيات', 'lock', 'Admin-Accounts']].map(function (n) { return { label: n[0], icon: IC[n[1]], href: n[2] + SFX + '.html', cur: n[2] === PAGE ? 'page' : 'false', count: n[2] === 'Admin' ? 2 : 0 }; });
+    var CAT = { wear: 'ملابس وكابات', mug: 'مجات وهدايا', phone: 'كفرات موبايل', sticker: 'استيكرات ومطبوعات', service: 'خدمات طباعة' };
+    var q = s.q.trim();
+    var list = s.items.filter(function (p) { return (s.cat === 'all' || p.cat === s.cat) && (!q || p.name.indexOf(q) >= 0); });
+    function flash(m) { clearTimeout(self.t); self.setState({ toast: m }); self.t = setTimeout(function () { self.setState({ toast: '' }); }, 3200); }
+    function upd(id, patch) { return s.items.map(function (x) { return x.id === id ? Object.assign({}, x, patch) : x; }); }
+    var items = list.map(function (p) {
+      var tags = [];
+      if (p.colors.length) tags.push(p.colors.join(' · '));
+      if (p.sizes.length) tags.push(p.sizes[0] + '–' + p.sizes[p.sizes.length - 1]);
+      if (p.places.length) tags.push('طباعة: ' + p.places.join('، '));
+      return { name: p.name, desc: p.desc, img: p.img, catLabel: CAT[p.cat], tags: tags, cls: 'card pcard lift' + (p.vis ? '' : ' off'),
+        visCls: 'badge ' + (p.vis ? 'b-ok' : 'b-off'), visLabel: p.vis ? 'ظاهر' : 'مخفي', visStr: p.vis ? 'true' : 'false',
+        swCls: 'sw ' + (p.vis ? 'sw-on' : 'sw-off'), swLabel: 'إظهار ' + p.name + ' في الموقع',
+        toggle: function () { self.setState({ items: upd(p.id, { vis: !p.vis }) }); flash(p.vis ? 'اتخفى «' + p.name + '» من الموقع' : 'بقى «' + p.name + '» ظاهر في الموقع'); },
+        edit: function () { self.setState({ drawer: 'edit', draft: JSON.parse(JSON.stringify(p)), nameErr: false }); self.t2 = setTimeout(function () { var el = document.getElementById('dr-h'); if (el) el.focus(); }, 80); } };
+    });
+    var cats = [['all', 'الكل · ' + s.items.length]].concat(Object.keys(CAT).map(function (k) { return [k, CAT[k]]; })).map(function (c) { var on = s.cat === c[0]; return { label: c[1], pressed: on ? 'true' : 'false', cls: 'g-btn chip ' + (on ? 'chip-on' : 'chip-off'), pick: function () { self.setState({ cat: c[0] }); } }; });
+    var vis = s.items.filter(function (p) { return p.vis; }).length;
+    var d = s.draft || { colors: [], sizes: [], places: [], vis: true, img: '', name: '', desc: '', cat: 'wear' };
+    function opts(key, all) { return all.map(function (o) { var on = d[key].indexOf(o) >= 0; return { label: o, on: on, cls: 'opt g-btn ' + (on ? 'chip-on' : 'chip-off'), toggle: function () { var dd = Object.assign({}, self.state.draft); var a = dd[key].slice(); var i = a.indexOf(o); if (i >= 0) a.splice(i, 1); else a.push(o); dd[key] = a; self.setState({ draft: dd }); } }; }); }
+    function setD(k) { return function (e) { var dd = Object.assign({}, self.state.draft); dd[k] = e.target.value; self.setState({ draft: dd, nameErr: k === 'name' ? false : self.state.nameErr }); }; }
+    return {
+      nav: nav, homeHref: 'Main' + SFX + '.html',
+      q: s.q, onQ: function (e) { self.setState({ q: e.target.value }); }, clear: function () { self.setState({ q: '', cat: 'all' }); },
+      stats: [{ n: s.items.length, label: 'منتج وخدمة', icon: IC.grid }, { n: vis, label: 'ظاهرين في الموقع', icon: IC.eye }, { n: s.items.length - vis, label: 'مخفيين مؤقتًا', icon: IC.eyeOff }],
+      cats: cats, items: items, empty: items.length === 0,
+      openNew: function () { self.setState({ drawer: 'new', draft: { id: Date.now(), name: '', cat: 'wear', img: 'assets/55f58d72365f99c37ffedef3b41b2aa5.png', desc: '', colors: [], sizes: [], places: [], vis: true }, nameErr: false }); },
+      drawerOpen: !!s.drawer, drawerTitle: s.drawer === 'new' ? 'منتج جديد' : 'تعديل المنتج', saveLabel: s.drawer === 'new' ? 'إضافة المنتج' : 'حفظ التعديلات',
+      draft: d, nameErr: s.nameErr, nameInv: s.nameErr ? 'true' : 'false',
+      onName: setD('name'), onCat: setD('cat'), onDesc: setD('desc'),
+      colorOpts: opts('colors', ['أبيض', 'أسود', 'ألوان تانية']), sizeOpts: opts('sizes', ['S', 'M', 'L', 'XL', 'XXL']), placeOpts: opts('places', ['أمام', 'ظهر', 'كُم']),
+      draftSw: 'sw ' + (d.vis ? 'sw-on' : 'sw-off'), draftVisStr: d.vis ? 'true' : 'false',
+      toggleDraftVis: function () { var dd = Object.assign({}, self.state.draft); dd.vis = !dd.vis; self.setState({ draft: dd }); },
+      closeDrawer: function () { self.setState({ drawer: null, draft: null }); },
+      save: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var dd = self.state.draft; if (!dd) return;
+        if (!dd.name.trim()) { self.setState({ nameErr: true }); return; }
+        var exists = self.state.items.some(function (x) { return x.id === dd.id; });
+        var items2 = exists ? self.state.items.map(function (x) { return x.id === dd.id ? dd : x; }) : [dd].concat(self.state.items);
+        self.setState({ items: items2, drawer: null, draft: null });
+        flash(exists ? 'اتحفظت تعديلات «' + dd.name + '»' : 'اتضاف «' + dd.name + '»');
+      },
+      toast: s.toast, hideToast: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

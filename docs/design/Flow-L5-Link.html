@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تتبّع من اللينك — الطلب ظاهر</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f3faf8}
+*{box-sizing:border-box}
+a{color:#005c58}
+button,input{font-family:inherit}
+:focus-visible{outline:2px solid #005c58;outline-offset:2px}
+.dk :focus-visible,.glass-nav :focus-visible{outline-color:#7ee8c7}
+.glass-nav{background:linear-gradient(135deg,rgba(0,92,88,.38),rgba(0,43,40,.46));-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 20px rgba(126,232,199,.12),0 12px 30px rgba(0,20,18,.35)}
+.gl-dark{background:linear-gradient(135deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.03) 100%);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 22px rgba(126,232,199,.12)}
+.gl-light{background:linear-gradient(135deg,rgba(255,255,255,.88) 0%,rgba(255,255,255,.6) 100%);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,92,88,.10),inset 0 1px 0 #ffffff,0 10px 26px rgba(0,92,88,.12)}
+.pill-l{display:inline-flex;align-items:center;padding:3px 14px;border-radius:999px;background:rgba(126,232,199,.24);border:1px solid rgba(0,92,88,.22);color:#005c58;font-size:12px;line-height:20px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.pill-d{display:inline-flex;align-items:center;padding:3px 14px;border-radius:999px;background:rgba(126,232,199,.12);border:1px solid rgba(126,232,199,.5);color:#b8f2de;font-size:12px;line-height:20px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 12px rgba(126,232,199,.25)}
+.g-btn{position:relative;cursor:pointer;-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);transition:box-shadow .2s,transform .15s}
+.g-btn:active{transform:scale(.98)}
+.g-btn[disabled]{opacity:.65;cursor:progress}
+.g-cta{background:linear-gradient(180deg,rgba(0,120,112,.92) 0%,rgba(0,43,40,.92) 100%);color:#ffffff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.45),0 0 40px rgba(126,232,199,.2)}
+.g-ghost{background:rgba(255,255,255,.08);color:#ffffff;border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.g-soft{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.6));color:#005c58;border:1px solid rgba(0,92,88,.25);box-shadow:inset 0 1px 0 #ffffff,0 4px 12px rgba(0,92,88,.1)}
+.g-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.chip{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700}
+.chip-off{background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.5));color:rgba(3,9,9,.6);border:1px solid rgba(0,92,88,.16)}
+.chip-on{background:linear-gradient(180deg,#00706a,#004541);color:#ffffff;border:1px solid rgba(126,232,199,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 14px rgba(126,232,199,.45)}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.35)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.8)) drop-shadow(0 0 12px rgba(126,232,199,.35))}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.fld{width:100%;min-height:52px;padding:10px 16px;border-radius:16px;border:1px solid rgba(0,92,88,.25);background:rgba(255,255,255,.85);font-size:17px;color:#030909;box-shadow:inset 0 1px 2px rgba(0,43,40,.06);transition:border-color .15s,box-shadow .15s}
+.fld:focus{border-color:#005c58;box-shadow:0 0 0 3px rgba(126,232,199,.45);outline:none}
+.fld::placeholder{color:rgba(3,9,9,.4)}
+.lbl{font-size:14px;font-weight:700}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1800px; position: relative; background: #f3faf8; color: #030909; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif">
+
+<header style="position: sticky; top: 10px; z-index: 50; padding: 0 12px; height: 0">
+<div class="glass-nav" style="border-radius: 22px; padding: 6px 8px; display: flex; align-items: center; justify-content: space-between; color: #ffffff">
+<a href="Home-Mobile.html" aria-label="يوزرسيف — الرئيسية"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="display: block; width: 52px; height: 52px; border-radius: 14px"></a>
+<div style="display: flex; gap: 6px">
+<a class="g-btn g-ghost g-icon" href="Home-Mobile.html" aria-label="رجوع للرئيسية" style="color: #ffffff">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"></path></svg></a>
+<sc-if value="{{verified}}" hint-placeholder-val="{{false}}">
+<button class="g-btn g-ghost" type="button" onClick="{{signOut}}" style="min-height: 44px; padding: 6px 14px; border-radius: 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>خروج</button>
+</sc-if>
+</div>
+</div>
+</header>
+
+<main id="top">
+<!-- Hero -->
+<section class="dk" aria-labelledby="tr-h" style="position: relative; overflow: hidden; isolation: isolate; background: #01302d; color: #ffffff; padding: 92px 16px 76px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 90% 45% at 70% 20%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%), radial-gradient(ellipse 90% 40% at 25% 80%, rgba(0,92,88,0.6) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 30px; left: -220px; width: 400px; height: 400px; opacity: .55; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -150px; right: -220px; width: 380px; height: 380px; transform: rotate(180deg); opacity: .45; pointer-events: none">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+<span class="pill-d">تتبّع الطلب</span>
+<h1 id="tr-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800">تابع حالة <span class="neon-t" style="color: #7ee8c7">طلبك</span></h1>
+<sc-if value="{{notVerified}}" hint-placeholder-val="{{true}}">
+<p style="margin: 0; font-size: 15px; line-height: 26px; color: rgba(255,255,255,0.8)">{{introText}}</p>
+</sc-if>
+</div>
+
+<sc-if value="{{verified}}" hint-placeholder-val="{{false}}">
+<div class="gl-dark" style="margin-top: 20px; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-size: 13px; color: rgba(255,255,255,0.78)">طلب رقم <strong dir="ltr" class="neon-t" style="letter-spacing: 1px">{{orderId}}</strong></span>
+<span style="padding: 1px 10px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8)">بيانات تجريبية</span>
+</div>
+<div role="group" aria-label="عرض تجريبي: نوع الطلب" style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+<span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.65)">جرّب طلب:</span>
+<sc-for list="{{types}}" as="t" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{isBiz}}" hint-placeholder-val="{{false}}">
+<span class="fade" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: rgba(126,232,199,0.1); border: 1px solid rgba(126,232,199,0.4); color: #b8f2de; font-size: 13px; font-weight: 700"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18ZM6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4"></path></svg>{{orgName}} · طلب كبير</span>
+</sc-if>
+<div style="display: flex; align-items: center; gap: 14px">
+<span aria-hidden="true" style="{{ringStyle}}"><svg class="ic" viewBox="0 0 24 24" style="width: 28px; height: 28px; stroke-width: 1.6"><path d="{{st.icon}}"></path></svg></span>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 12px; color: rgba(255,255,255,0.72)">الحالة الحالية · {{sentOn}}</span>
+<h2 style="margin: 0; font-size: 24px; line-height: 36px; font-weight: 800">{{st.label}}</h2>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(255,255,255,0.82)">{{st.desc}}</p>
+<ol aria-label="مراحل الطلب" style="{{railOl}}">
+<span aria-hidden="true" style="position: absolute; top: 21px; right: 10%; left: 10%; height: 1px; background: linear-gradient(90deg, rgba(126,232,199,0.15), rgba(126,232,199,0.6), rgba(126,232,199,0.15)); box-shadow: 0 0 8px rgba(126,232,199,0.45)"></span>
+<sc-for list="{{rail}}" as="r" hint-placeholder-count="5">
+<li aria-current="{{r.cur}}" style="position: relative; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center">
+<span aria-hidden="true" style="{{r.tile}}"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke-width: 2"><path d="{{r.icon}}"></path></svg></span>
+<span style="{{r.text}}">{{r.label}}</span>
+</li>
+</sc-for>
+</ol>
+</div>
+</sc-if>
+<div aria-hidden="true" style="position: absolute; left: -8%; right: -8%; bottom: -1px; height: 36px; background: #f3faf8; border-radius: 50% 50% 0 0 / 100% 100% 0 0; box-shadow: 0 -1px 0 rgba(126,232,199,0.6), 0 -10px 24px rgba(126,232,199,0.22)"></div>
+</section>
+
+<!-- Verify -->
+<sc-if value="{{notVerified}}" hint-placeholder-val="{{true}}">
+<section aria-label="التحقق من الطلب" style="position: relative; overflow: hidden; isolation: isolate; padding: 12px 16px 120px; display: flex; flex-direction: column; gap: 16px">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 140px; right: -200px; width: 400px; height: 400px; pointer-events: none">
+<form class="gl-light" onSubmit="{{submit}}" style="border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 16px">
+<div role="list" aria-label="خطوات التحقق" style="display: flex; gap: 8px">
+<span role="listitem" class="{{chipA}}" aria-current="{{curA}}"><span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.22); font-size: 12px">1</span>بيانات الطلب</span>
+<span role="listitem" class="{{chipB}}" aria-current="{{curB}}"><span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: rgba(0,92,88,0.12); font-size: 12px">2</span>كود التحقق</span>
+</div>
+<sc-if value="{{stageA}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<sc-if value="{{linkBad}}" hint-placeholder-val="{{false}}"><p role="status" style="{{badStyle}}">اللينك ده ناقص أو قديم. اكتب رقم الطلب من رسالة الواتساب بنفسك.</p></sc-if>
+<sc-if value="{{hasLink}}" hint-placeholder-val="{{false}}">
+<div class="pop" style="{{linkCard}}">
+<span aria-hidden="true" style="{{linkIcWrap}}"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="{{linkSub}}">رقم الطلب · من لينك الواتساب</span><strong dir="ltr" style="{{linkRefStyle}}">{{ref}}</strong></span>
+<button type="button" onClick="{{clearLink}}" style="{{linkBtn}}">مش طلبي؟</button>
+</div>
+</sc-if>
+<sc-if value="{{noLink}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="t-ref">رقم الطلب</label>
+<input class="fld" id="t-ref" type="text" dir="ltr" autocapitalize="characters" autocomplete="off" value="{{ref}}" onChange="{{onRef}}" placeholder="YZ-XXXXXX" style="letter-spacing: 1px">
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="t-phone">رقم الموبايل اللي طلبت بيه</label>
+<input class="fld" id="t-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" value="{{phone}}" onChange="{{onPhone}}" placeholder="01xxxxxxxxx">
+</div>
+</div>
+</sc-if>
+<sc-if value="{{stageB}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: rgba(3,9,9,0.75)">بعتنالك كود من 6 أرقام على واتساب الرقم المنتهي بـ <strong dir="ltr" style="color: #030909">{{phoneTail}}</strong>.</p>
+<label class="lbl" for="t-code">كود التحقق</label>
+<input class="fld" id="t-code" type="text" inputmode="numeric" autocomplete="one-time-code" dir="ltr" maxlength="6" value="{{code}}" onChange="{{onCode}}" style="min-height: 58px; font-size: 26px; font-weight: 800; letter-spacing: 10px; text-align: center">
+<button type="button" onClick="{{backA}}" style="align-self: flex-start; min-height: 44px; padding: 6px 0; border: 0; background: transparent; color: #005c58; font-size: 14px; font-weight: 700; cursor: pointer">غيّر البيانات</button>
+</div>
+</sc-if>
+<sc-if value="{{err}}" hint-placeholder-val="{{false}}">
+<p role="alert" style="margin: 0; display: flex; gap: 8px; align-items: flex-start; padding: 10px 14px; border-radius: 16px; background: #fbf6ec; border: 1px solid rgba(184,134,43,0.6); font-size: 14px; line-height: 22px; font-weight: 700">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; color: #8a6214"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>{{err}}</p>
+</sc-if>
+<button class="g-btn g-cta" type="submit" disabled="{{busy}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; border-radius: 999px; font-size: 16px; font-weight: 800">{{submitLabel}}
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></button>
+</form>
+
+<div class="gl-light" style="border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border-style: dashed; border-color: rgba(0,92,88,0.3)">
+<span class="pill-l" style="align-self: flex-start">وضع تجريبي</span>
+<span style="font-size: 14px; line-height: 22px">طلب تجريبي: <strong dir="ltr">YZ-8K3QF7</strong> · موبايل <strong dir="ltr">01012345678</strong> · كود <strong dir="ltr">246810</strong></span>
+<button class="g-btn g-soft" type="button" onClick="{{fillDemo}}" style="align-self: flex-start; min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px; font-weight: 700">املا البيانات التجريبية</button>
+</div>
+<p style="margin: 0; text-align: center; font-size: 13px; line-height: 22px; color: rgba(3,9,9,0.7)">نسيت رقم الطلب؟ <a href="https://wa.me/201116891025" style="font-weight: 700">كلّمنا واتساب</a> من نفس رقم الموبايل.</p>
+</section>
+</sc-if>
+
+<!-- Verified details -->
+<sc-if value="{{verified}}" hint-placeholder-val="{{false}}">
+<section aria-label="تفاصيل الطلب" style="position: relative; overflow: hidden; isolation: isolate; padding: 12px 16px 120px; display: flex; flex-direction: column; gap: 16px">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 360px; left: -210px; width: 420px; height: 420px; pointer-events: none">
+
+<sc-if value="{{st.awaiting}}" hint-placeholder-val="{{true}}">
+<section aria-labelledby="need-h" class="gl-light" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px; border: 1.5px solid rgba(214,174,98,0.9); box-shadow: 0 0 0 4px rgba(214,174,98,0.14), 0 10px 26px rgba(0,92,88,0.1)">
+<div style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(214,174,98,0.2); color: #8a6214"><svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg></span>
+<h2 id="need-h" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">المطلوب منك</h2>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.78)">ملف التصميم اللي رفعته دقته قليلة وهيطلع مش واضح على مقاس الظهر. ابعت نسخة بدقة أعلى (PNG أو PDF).</p>
+<label class="g-btn g-cta" style="display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; border-radius: 999px; font-size: 15px; font-weight: 800">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg>ارفع الملف الجديد
+<input type="file" style="position: absolute; opacity: 0; width: 1px; height: 1px"></label>
+</section>
+</sc-if>
+<sc-if value="{{st.rejected}}" hint-placeholder-val="{{false}}">
+<section class="gl-light" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 10px; border: 1.5px solid rgba(3,9,9,0.35)">
+<h2 style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">سبب الرفض</h2>
+<p style="margin: 0; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.78)">الكمية المطلوبة أقل من الحد الأدنى لطباعة الهوديز بالتطريز. [سبب تجريبي]</p>
+<a class="g-btn g-cta" href="Request-Mobile.html" style="display: flex; align-items: center; justify-content: center; min-height: 50px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 800">ابدأ طلب معدّل</a>
+</section>
+</sc-if>
+<sc-if value="{{st.approved}}" hint-placeholder-val="{{false}}">
+<section class="gl-light" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">تفاصيل الموافقة</h2>
+<dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 15px">
+<dt style="font-weight: 700">السعر</dt><dd style="margin: 0; color: rgba(3,9,9,0.75)">[يحدده يوزرسيف]</dd>
+<dt style="font-weight: 700">الموعد المتوقع</dt><dd style="margin: 0; color: rgba(3,9,9,0.75)">[يحدده يوزرسيف]</dd>
+</dl>
+<p style="margin: 0; font-size: 13px; line-height: 22px; color: rgba(3,9,9,0.7)">الموافقة مش معناها إن التنفيذ بدأ. هنبلغك أول ما نبدأ.</p>
+</section>
+</sc-if>
+
+<sc-if value="{{bizAct}}" hint-placeholder-val="{{false}}">
+<section aria-labelledby="act-h" class="gl-light pop" style="{{actBox}}">
+<div style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="{{actIcWrap}}"><svg class="ic" viewBox="0 0 24 24"><path d="{{act.icon}}"></path></svg></span>
+<h2 id="act-h" style="{{h2Style}}">{{act.title}}</h2>
+</div>
+<p style="{{pStyle}}">{{act.body}}</p>
+<sc-if value="{{act.quote}}" hint-placeholder-val="{{false}}">
+<dl style="{{qBox}}">
+<sc-for list="{{quoteRows}}" as="q" hint-placeholder-count="4"><dt style="font-weight: 700">{{q.k}}</dt><dd style="margin: 0">{{q.v}}</dd></sc-for>
+</dl>
+</sc-if>
+<sc-if value="{{act.mock}}" hint-placeholder-val="{{false}}">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 6px">
+<div style="height: 180px; border-radius: 18px; overflow: hidden; background: #f0f0f0; box-shadow: 0 0 0 1px rgba(126,232,199,0.45), 0 0 18px rgba(126,232,199,0.2)"><img src="assets/d4608fce7a780ebb4635192b39c5e23f.jpg" alt="موكاب التيشيرت باللوجو" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<figcaption style="{{capStyle}}">موكاب — نسخة 1 · العينة جاهزة تشوفها في المحل [بانتظار التأكيد]</figcaption>
+</figure>
+</sc-if>
+<sc-if value="{{act.prog}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700"><span>اتطبع 36 من 60 قطعة</span><span>60%</span></div>
+<div role="progressbar" aria-label="تقدم الإنتاج" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" style="{{progTrack}}"><div style="height: 100%; width: 60%; border-radius: 999px; background: linear-gradient(90deg,#00706a,#7ee8c7); box-shadow: 0 0 10px rgba(126,232,199,0.7)"></div></div>
+<span style="{{capStyle}}">رقم تجريبي — بيتحدث من لوحة الإدارة.</span>
+</div>
+</sc-if>
+<sc-if value="{{actNote}}" hint-placeholder-val="{{false}}"><p role="status" class="fade" style="{{noteBox}}">{{actNote}}</p></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-if value="{{act.primary}}" hint-placeholder-val="{{false}}"><button class="g-btn g-cta" type="button" onClick="{{actGo}}" style="flex: 1 1 160px; min-height: 50px; border-radius: 999px; font-size: 15px; font-weight: 800">{{act.primary}}</button></sc-if>
+<a class="g-btn g-soft" href="https://wa.me/201116891025" style="flex: 1 1 140px; display: flex; align-items: center; justify-content: center; min-height: 50px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 700">{{act.secondary}}</a>
+</div>
+</section>
+</sc-if>
+<section aria-labelledby="tl-h" class="gl-light" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px">
+<h2 id="tl-h" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">التحديثات</h2>
+<span class="pill-l">الأحدث أولًا</span>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{timeline}}" as="t" hint-placeholder-count="3">
+<li style="display: flex; gap: 12px">
+<div aria-hidden="true" style="display: flex; flex-direction: column; align-items: center"><span style="{{t.dot}}"></span><span style="{{t.line}}"></span></div>
+<div style="padding-bottom: 18px; display: flex; flex-direction: column">
+<time style="font-size: 12px; line-height: 20px; font-weight: 600; color: rgba(3,9,9,0.6)">{{t.date}}</time>
+<strong style="font-size: 15px; line-height: 24px">{{t.title}}</strong>
+<span style="font-size: 14px; line-height: 22px; color: rgba(3,9,9,0.7)">{{t.note}}</span>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section aria-labelledby="sum-h" class="gl-light" style="border-radius: 24px; padding: 12px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 12px; align-items: stretch">
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 6px 6px 0">
+<h2 id="sum-h" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">تفاصيل الطلب</h2>
+<strong style="font-size: 15px">{{dProduct}}</strong>
+<span style="font-size: 13px; color: rgba(3,9,9,0.7)">{{dPrint}}</span>
+</div>
+<div style="flex: 0 0 38%; height: 110px; border-radius: 18px; overflow: hidden; background: #f0f0f0"><img src="assets/d4608fce7a780ebb4635192b39c5e23f.jpg" alt="تيشيرت أبيض مطبوع" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+</div>
+<dl style="margin: 0; padding: 12px 10px 6px; border-top: 1px solid rgba(0,92,88,0.12); display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 14px; line-height: 22px">
+<dt style="font-weight: 700">المقاسات</dt><dd style="margin: 0; direction: ltr; text-align: right; color: rgba(3,9,9,0.75)">{{dSizes}}</dd>
+<dt style="font-weight: 700">الاستلام</dt><dd style="margin: 0; color: rgba(3,9,9,0.75)">استلام من المحل</dd>
+<dt style="font-weight: 700">التاريخ المرغوب</dt><dd style="margin: 0; color: rgba(3,9,9,0.75)">{{dDate}}</dd>
+<sc-if value="{{isBiz}}" hint-placeholder-val="{{false}}">
+<dt style="font-weight: 700">الجهة</dt><dd style="{{ddStyle}}">{{orgName}}</dd>
+<dt style="font-weight: 700">فاتورة</dt><dd style="{{ddStyle}}">مطلوبة باسم الجهة</dd>
+<dt style="font-weight: 700">خيارات</dt><dd style="{{ddStyle}}">عينة قبل الإنتاج · اسم لكل موظف</dd>
+</sc-if>
+</dl>
+</section>
+
+<section class="dk" aria-labelledby="help-h" style="position: relative; overflow: hidden; isolation: isolate; border-radius: 26px; background: #01302d; color: #ffffff; padding: 22px 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; border: 1px solid rgba(126,232,199,0.5); box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 0 26px rgba(126,232,199,0.25)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 70% at 75% 20%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -120px; left: -140px; width: 300px; height: 300px; opacity: .5; pointer-events: none">
+<h2 id="help-h" style="margin: 0; font-size: 22px; line-height: 34px; font-weight: 800">عندك سؤال عن <span class="neon-t" style="color: #7ee8c7">طلبك؟</span></h2>
+<p style="margin: 0; font-size: 14px; line-height: 22px; color: rgba(255,255,255,0.8)">كلّمنا من نفس رقم الموبايل اللي طلبت بيه.</p>
+<a class="g-btn g-cta" href="https://wa.me/201116891025" style="margin-top: 4px; display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 10px 24px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 800">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>واتساب <span dir="ltr">01116891025</span></a>
+</section>
+</section>
+</sc-if>
+</main>
+
+<nav aria-label="التنقل السفلي" style="position: sticky; bottom: 12px; z-index: 40; margin: -96px 12px 0; height: 72px">
+<div class="glass-nav" style="height: 72px; border-radius: 24px; padding: 6px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; color: rgba(255,255,255,0.75)">
+<a href="Home-Mobile.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"></path></svg>الرئيسية</a>
+<a href="Home-Mobile.html#products" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>المنتجات</a>
+<a class="g-btn g-cta" href="Request-Mobile.html" aria-label="ابدأ طلبك" style="justify-self: center; width: 56px; height: 56px; margin-top: -26px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 26px; height: 26px; stroke-width: 2.2"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="Home-Mobile.html#gallery" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>أعمالنا</a>
+<a href="#top" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: #7ee8c7; text-decoration: none; font-size: 11px; font-weight: 700; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>طلباتي</a>
+</div>
+</nav>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1800}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); var LINK = '', LINKBAD = false; this.state = { linkRef: LINK, linkBad: LINKBAD, otype: 'person', bstage: parseInt(p.bizStage || '2', 10), actNote: '', verified: true, stage: 'A', ref: LINK, phone: '', code: '', err: '', busy: false }; }
+  componentDidUpdate(pp) { if (pp.startVerified !== this.props.startVerified) this.setState({ verified: this.props.startVerified !== false, stage: 'A', err: '' }); }
+  renderVals() {
+    var s = this.state, self = this, key = 'approved', DK = false;
+    var isBiz = s.otype === 'biz', bs = s.bstage;
+    var IC = {
+      sent: 'M22 2 11 13M22 2l-7 20-4-9-9-4Z',
+      review: 'M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3',
+      warn: 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
+      ok: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
+      no: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M15 9l-6 6M9 9l6 6',
+      work: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0',
+      box: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12',
+      check: 'M20 6 9 17l-5-5'
+    };
+    var S = {
+      submitted: { label: 'تم الإرسال', desc: 'طلبك وصلنا وهيتراجع قريب. مفيش حاجة مطلوبة منك دلوقتي.', icon: IC.sent, idx: 0 },
+      review: { label: 'قيد المراجعة', desc: 'يوزرسيف بيراجع التفاصيل والملفات.', icon: IC.review, idx: 1 },
+      awaiting: { label: 'محتاجين بيانات منك', desc: 'المراجعة وقفت لحد ما تبعت المطلوب تحت.', icon: IC.warn, idx: 1 },
+      approved: { label: 'تمت الموافقة', desc: 'طلبك اتقبل. هنبلغك أول ما التنفيذ يبدأ.', icon: IC.ok, idx: 2 },
+      rejected: { label: 'الطلب اترفض', desc: 'للأسف مش هنقدر ننفذ الطلب ده بشكله الحالي. شوف السبب تحت.', icon: IC.no, idx: 1 },
+      progress: { label: 'جاري التنفيذ', desc: 'طلبك في مرحلة الطباعة.', icon: IC.work, idx: 3 },
+      completed: { label: 'جاهز / تم التسليم', desc: 'طلبك خلص. شكرًا إنك اخترت يوزرسيف.', icon: IC.box, idx: 4 }
+    };
+    var st = Object.assign({}, S[key] || S.awaiting, { awaiting: key === 'awaiting', rejected: key === 'rejected', approved: key === 'approved' });
+    var flagged = key === 'awaiting' || key === 'rejected';
+    var BZ = [
+      { label: 'بنجهّز عرض السعر', desc: 'طلب كافيه النخيل وصلنا، وبنراجعه عشان نبعتلك عرض سعر رسمي.', icon: IC.review },
+      { label: 'عرض السعر وصلك', desc: 'راجع العرض تحت، ولو تمام وافق عليه عشان نجهّز الموكاب.', icon: IC.warn },
+      { label: 'اعتمد الموكاب', desc: 'جهزنا شكل التصميم على التيشيرت والعينة. اعتمده أو اطلب تعديل.', icon: IC.warn },
+      { label: 'مستنيين العربون', desc: 'الإنتاج هيبدأ أول ما العربون يوصل.', icon: IC.warn },
+      { label: 'جاري الإنتاج', desc: 'بنطبع الـ 60 قطعة دلوقتي، وكل قطعة باسم الموظف بتاعها.', icon: IC.work },
+      { label: 'فحص الجودة', desc: 'بنراجع كل قطعة واسمها ومقاسها قبل التسليم.', icon: IC.review },
+      { label: 'جاهز للتسليم', desc: 'طلبك جاهز للاستلام من المحل، ومعاه الفاتورة.', icon: IC.box },
+      { label: 'اتسلم الطلب', desc: 'شكرًا لثقتكم في يوزرسيف!', icon: IC.ok }
+    ];
+    if (isBiz) { st = Object.assign({}, BZ[bs], { idx: bs, awaiting: false, rejected: false, approved: false }); flagged = bs >= 1 && bs <= 3; }
+    var railL = [['اتبعت', IC.sent], ['مراجعة', IC.review], ['موافقة', IC.ok], ['تنفيذ', IC.work], ['جاهز', IC.box]];
+    if (isBiz) railL = [['العرض', IC.sent], ['موافقتك', IC.ok], ['الموكاب', IC.review], ['العربون', IC.warn], ['الإنتاج', IC.work], ['الفحص', IC.review], ['التسليم', IC.box]];
+    var base = 'position: relative; width: ' + (isBiz ? '36px; height: 36px; border-radius: 12px;' : '42px; height: 42px;') + ' border-radius: 14px; display: flex; align-items: center; justify-content: center; ';
+    var rail = railL.map(function (l, i) {
+      var done = i < st.idx || (i === st.idx && key === 'completed'), cur = i === st.idx;
+      var tile = done ? base + 'background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; box-shadow: 0 0 14px rgba(126,232,199,0.55)'
+        : (cur && flagged ? base + 'background: rgba(214,174,98,0.22); color: #f0d39a; border: 1.5px solid #d6ae62; box-shadow: 0 0 16px rgba(214,174,98,0.45)'
+        : (cur ? base + 'background: #01302d; color: #7ee8c7; border: 1.5px solid #7ee8c7; box-shadow: 0 0 16px rgba(126,232,199,0.55), inset 0 0 10px rgba(126,232,199,0.2)'
+        : base + 'background: #01302d; color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.2)'));
+      return { label: l[0], icon: done && !cur ? IC.check : l[1], tile: tile, cur: cur ? 'step' : 'false',
+        text: 'font-size: 11px; line-height: 16px; font-weight: ' + (cur ? '800; color: #ffffff' : (done ? '700; color: #b8f2de' : '600; color: rgba(255,255,255,0.55)')) };
+    });
+    var ringStyle = 'width: 56px; height: 56px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; ' + ((isBiz ? flagged : key === 'awaiting')
+      ? 'color: #f0d39a; border: 1.5px solid #d6ae62; background: rgba(214,174,98,0.16); box-shadow: 0 0 18px rgba(214,174,98,0.45)'
+      : (!isBiz && key === 'rejected' ? 'color: #ffffff; border: 1.5px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.08)'
+      : 'color: #7ee8c7; border: 1.5px solid rgba(126,232,199,0.85); background: radial-gradient(circle, rgba(126,232,199,0.16) 0%, rgba(126,232,199,0) 70%); box-shadow: 0 0 18px rgba(126,232,199,0.4)'));
+    var basetl = [
+      { date: '18 أكتوبر · 2:40 م', title: 'تم إرسال الطلب', note: 'وصلنا طلبك ومعاه ملف واحد.' },
+      { date: '19 أكتوبر · 11:05 ص', title: 'بدأت المراجعة', note: '' }
+    ];
+    var extra = {
+      submitted: [], review: [],
+      awaiting: [{ date: '19 أكتوبر · 1:20 م', title: 'محتاجين ملف بدقة أعلى', note: 'اتبعتلك رسالة على واتساب بالتفاصيل.' }],
+      approved: [{ date: '20 أكتوبر · 10:00 ص', title: 'تمت الموافقة', note: 'السعر والموعد اتبعتوا على واتساب.' }],
+      rejected: [{ date: '20 أكتوبر · 10:00 ص', title: 'تم رفض الطلب', note: 'السبب مكتوب فوق.' }],
+      progress: [{ date: '20 أكتوبر · 10:00 ص', title: 'تمت الموافقة', note: '' }, { date: '21 أكتوبر · 9:30 ص', title: 'بدأ التنفيذ', note: '' }],
+      completed: [{ date: '20 أكتوبر · 10:00 ص', title: 'تمت الموافقة', note: '' }, { date: '21 أكتوبر · 9:30 ص', title: 'بدأ التنفيذ', note: '' }, { date: '23 أكتوبر · 5:00 م', title: 'الطلب جاهز', note: 'تقدر تستلمه من المحل.' }]
+    };
+    var BT = ['اتبعتلك عرض السعر', 'وافقت على العرض', 'اعتمدت الموكاب والعينة', 'وصل العربون وبدأ الإنتاج', 'الإنتاج خلص', 'الفحص تمام — الطلب جاهز', 'اتسلم الطلب'];
+    var BD = ['19 أكتوبر · 1:00 م', '19 أكتوبر · 6:30 م', '20 أكتوبر · 12:10 م', '20 أكتوبر · 3:00 م', '22 أكتوبر · 4:00 م', '23 أكتوبر · 11:00 ص', '23 أكتوبر · 5:00 م'];
+    var tl = isBiz ? [{ date: '18 أكتوبر · 2:40 م', title: 'وصل طلب كافيه النخيل', note: '60 تيشيرت + شيت الأسماء.' }].concat(BT.slice(0, bs).map(function (t, i) { return { date: BD[i], title: t, note: i === 0 ? 'اتبعت على واتساب ومعاه لينك التتبع.' : '' }; })) : basetl.concat(extra[key] || []);
+    if (!isBiz && key === 'submitted') tl = tl.slice(0, 1);
+    tl = tl.reverse();
+    tl = tl.map(function (t, i) {
+      return Object.assign({ note: '' }, t, {
+        dot: 'width: 16px; height: 16px; border-radius: 999px; margin-top: 4px; flex-shrink: 0; ' + (i === 0 ? 'background: linear-gradient(180deg,#7ee8c7,#00706a); box-shadow: 0 0 0 4px rgba(126,232,199,0.28), 0 0 14px rgba(126,232,199,0.7)' : 'background: #ffffff; border: 2px solid rgba(0,92,88,0.55)'),
+        line: 'flex-grow: 1; width: 2px; margin-top: 4px; border-radius: 2px; background: ' + (i < tl.length - 1 ? 'linear-gradient(180deg, rgba(0,92,88,0.35), rgba(0,92,88,0.1))' : 'transparent')
+      });
+    });
+    var digits = function (x) { return String(x || '').replace(/[٠-٩]/g, function (d) { return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)); }).replace(/[\s-]/g, ''); };
+    return {
+      verified: s.verified, notVerified: !s.verified, stageA: s.stage === 'A', stageB: s.stage === 'B',
+      chipA: 'chip ' + (s.stage === 'A' ? 'chip-on' : 'chip-off'), chipB: 'chip ' + (s.stage === 'B' ? 'chip-on' : 'chip-off'),
+      curA: s.stage === 'A' ? 'step' : 'false', curB: s.stage === 'B' ? 'step' : 'false',
+      hasLink: !!s.linkRef, noLink: !s.linkRef, linkBad: s.linkBad,
+      introText: s.linkRef ? 'فتحت لينك تتبّع طلبك. أكّد رقم موبايلك وهيوصلك كود، عشان محدش غيرك يشوف تفاصيل الطلب.' : 'عشان نحمي بياناتك، هنتأكد إنك صاحب الطلب برقم الطلب ورقم الموبايل، وبعدين كود بيوصلك.',
+      clearLink: function () { self.setState({ linkRef: '', ref: '', err: '' }); },
+      linkCard: 'display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; ' + (false ? 'background: rgba(126,232,199,0.08); border: 1px solid rgba(126,232,199,0.35)' : 'background: linear-gradient(135deg,rgba(184,242,222,.55),rgba(126,232,199,.2)); border: 1px solid rgba(0,92,88,0.18)'),
+      linkIcWrap: 'width: 40px; height: 40px; flex-shrink: 0; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: #01302d; color: #7ee8c7; border: 1px solid rgba(126,232,199,0.6); box-shadow: 0 0 12px rgba(126,232,199,0.4)',
+      linkSub: 'font-size: 12px; font-weight: 700; color: ' + (false ? 'rgba(242,251,248,0.65)' : 'rgba(3,9,9,0.6)'),
+      linkRefStyle: 'align-self: flex-end; font-size: 20px; font-weight: 800; letter-spacing: 1px; color: ' + (false ? '#7ee8c7' : '#005c58'),
+      linkBtn: 'flex-shrink: 0; min-height: 40px; padding: 4px 12px; border: 0; border-radius: 999px; background: transparent; font-family: inherit; font-size: 13px; font-weight: 700; text-decoration: underline; cursor: pointer; color: ' + (false ? '#b8f2de' : '#005c58'),
+      badStyle: 'margin: 0; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 22px; font-weight: 700; ' + (false ? 'background: rgba(214,174,98,0.14); border: 1px solid #d6ae62; color: #e9c98a' : 'background: #fbf3e2; border: 1px solid #d6ae62; color: #5c430f'),
+      ref: s.ref, phone: s.phone, code: s.code, err: s.err, busy: s.busy,
+      phoneTail: digits(s.phone).slice(-3),
+      submitLabel: s.busy ? 'جاري التحقق…' : (s.stage === 'A' ? 'ابعتلي كود التحقق' : 'تأكيد وعرض الطلب'),
+      onRef: function (e) { self.setState({ ref: e.target.value.toUpperCase(), err: '', linkBad: false }); },
+      onPhone: function (e) { self.setState({ phone: e.target.value, err: '' }); },
+      onCode: function (e) { self.setState({ code: digits(e.target.value).replace(/[^0-9]/g, '').slice(0, 6), err: '' }); },
+      backA: function () { self.setState({ stage: 'A', code: '', err: '' }); },
+      fillDemo: function () { self.setState(self.state.stage === 'A' ? { ref: 'YZ-8K3QF7', phone: '01012345678', err: '' } : { code: '246810', err: '' }); },
+      signOut: function () { self.setState({ verified: false, stage: 'A', code: '', err: '' }); },
+      submit: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (self.state.busy) return;
+        self.setState({ busy: true });
+        setTimeout(function () {
+          var c = self.state;
+          if (c.stage === 'A') {
+            if (c.ref.trim() === 'YZ-8K3QF7' && digits(c.phone) === '01012345678') self.setState({ stage: 'B', busy: false, err: '' });
+            else self.setState({ busy: false, err: 'مش لاقيين طلب بالبيانات دي. راجع رقم الطلب والموبايل.' });
+          } else {
+            if (c.code === '246810') self.setState({ verified: true, busy: false, err: '' });
+            else self.setState({ busy: false, err: 'الكود مش صحيح أو انتهت صلاحيته.' });
+          }
+        }, 700);
+      },
+      orderId: isBiz ? 'YZ-W4N8TS' : 'YZ-8K3QF7', sentOn: 'اتبعت 18 أكتوبر', isBiz: isBiz, orgName: 'كافيه النخيل (تجريبي)',
+      types: [['person', 'فرد'], ['biz', 'شركة أو محل']].map(function (t) { var on = s.otype === t[0]; return { label: t[1], pressed: on ? 'true' : 'false', pick: function () { self.setState({ otype: t[0], actNote: '' }); }, style: 'min-height: 32px; padding: 2px 12px; border-radius: 999px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; ' + (on ? 'background: linear-gradient(180deg,rgba(126,232,199,0.3),rgba(126,232,199,0.12)); color: #ffffff; border: 1px solid rgba(126,232,199,0.75); box-shadow: 0 0 10px rgba(126,232,199,0.35)' : 'background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.22)') }; }),
+      railOl: 'list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(' + (isBiz ? 7 : 5) + ', minmax(0, 1fr)); gap: ' + (isBiz ? '2px' : '4px'),
+      bizAct: isBiz && bs <= 6,
+      act: !isBiz ? {} : [
+        { icon: IC.review, title: 'بنجهّز عرض السعر', body: 'هيوصلك على واتساب خلال [المدة بانتظار تأكيد يوزرسيف]. مفيش حاجة مطلوبة منك دلوقتي.', secondary: 'عندي سؤال' },
+        { icon: IC.sent, title: 'عرض السعر', body: 'ده ملخص العرض اللي اتبعتلك. موافقتك هنا بتبدأ تجهيز الموكاب، ومش بتلزمك بدفع غير بعد اعتماده.', quote: true, primary: 'موافق على العرض', secondary: 'عندي استفسار' },
+        { icon: IC.review, title: 'اعتمد الموكاب', body: 'اتأكد من مكان اللوجو والأسماء والألوان. بعد الاعتماد مش هنقدر نغيّر التصميم.', mock: true, primary: 'اعتمد الموكاب', secondary: 'اطلب تعديل' },
+        { icon: IC.warn, title: 'العربون', body: 'الإنتاج بيبدأ بعد العربون. [نسبة العربون وطرق الدفع بانتظار تأكيد يوزرسيف]', secondary: 'تواصل معانا للدفع' },
+        { icon: IC.work, title: 'تقدم الإنتاج', body: 'بنحدّث الرقم ده أول بأول.', prog: true, secondary: 'عندي سؤال' },
+        { icon: IC.review, title: 'فحص الجودة', body: 'بنراجع كل قطعة: الاسم، المقاس، ووضوح الطباعة.', secondary: 'عندي سؤال' },
+        { icon: IC.box, title: 'جاهز للتسليم', body: 'تقدر تستلم من المحل [العنوان والمواعيد بانتظار التأكيد]. هات رقم الطلب معاك.', secondary: 'رتّب الاستلام' }
+      ][bs] || {},
+      actGo: function () { var n = self.state.bstage; self.setState({ bstage: n + 1, actNote: n === 1 ? 'اتسجلت موافقتك على العرض. الموكاب جاهز تحت للاعتماد.' : 'اتسجل اعتمادك للموكاب. الخطوة الجاية: العربون.' }); },
+      actNote: isBiz ? s.actNote : '',
+      quoteRows: [{ k: 'سعر القطعة', v: '[من عرض يوزرسيف]' }, { k: 'الإجمالي (60 قطعة)', v: '[من عرض يوزرسيف]' }, { k: 'مدة التنفيذ', v: '[من عرض يوزرسيف]' }, { k: 'صلاحية العرض', v: '[من عرض يوزرسيف]' }],
+      actBox: 'border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px; ' + (bs >= 1 && bs <= 3 ? 'border: 1.5px solid rgba(214,174,98,0.9); box-shadow: 0 0 0 4px rgba(214,174,98,0.14)' : ''),
+      actIcWrap: 'width: 40px; height: 40px; flex-shrink: 0; border-radius: 14px; display: flex; align-items: center; justify-content: center; ' + (bs >= 1 && bs <= 3 ? 'background: rgba(214,174,98,0.2); color: ' + (DK ? '#f0d39a' : '#8a6214') : (DK ? 'background: rgba(126,232,199,0.14); color: #7ee8c7' : 'background: linear-gradient(135deg,rgba(220,250,240,.9),rgba(184,242,222,.45)); color: #005c58')),
+      h2Style: 'margin: 0; font-size: 18px; line-height: 28px; font-weight: 800; color: #030909',
+      pStyle: 'margin: 0; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.75)',
+      ddStyle: 'margin: 0; color: rgba(3,9,9,0.75)',
+      capStyle: 'font-size: 12px; line-height: 18px; color: rgba(3,9,9,0.75)',
+      qBox: 'margin: 0; padding: 12px 14px; border-radius: 16px; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; line-height: 22px; color: #030909; ' + (DK ? 'background: rgba(126,232,199,0.07); box-shadow: inset 0 0 0 1px rgba(126,232,199,0.2)' : 'background: linear-gradient(135deg,rgba(184,242,222,.4),rgba(126,232,199,.14)); box-shadow: inset 0 0 0 1px rgba(0,92,88,0.12)'),
+      progTrack: 'height: 10px; border-radius: 999px; overflow: hidden; background: ' + (DK ? 'rgba(126,232,199,0.12)' : 'rgba(0,92,88,0.1)'),
+      noteBox: 'margin: 0; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 22px; font-weight: 700; ' + (DK ? 'background: rgba(126,232,199,0.12); color: #b8f2de' : 'background: rgba(126,232,199,0.25); color: #005c58'),
+      dProduct: isBiz ? 'تيشيرت يونيفورم أسود · 60 قطعة' : 'تيشيرت أبيض · 12 قطعة',
+      dPrint: isBiz ? 'لوجو على الصدر + اسم كل موظف على الضهر' : 'طباعة أمام وظهر',
+      dSizes: isBiz ? 'M: 20 · L: 25 · XL: 15' : 'S: 2 · M: 4 · L: 4 · XL: 2',
+      dDate: isBiz ? '5 نوفمبر (غير مؤكد)' : '2 نوفمبر (غير مؤكد)',
+      st: st, rail: rail, timeline: tl, ringStyle: ringStyle
+    };
+  }
+}
+</script>
+</body>
+</html>

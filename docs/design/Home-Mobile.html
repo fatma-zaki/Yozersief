@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>يوزرسيف — الرئيسية على الموبايل</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#f3faf8}
+*{box-sizing:border-box}
+a{color:#005c58}
+button{font-family:inherit}
+:focus-visible{outline:2px solid #005c58;outline-offset:2px}
+.dk :focus-visible,.glass-nav :focus-visible,.gl-dark :focus-visible{outline-color:#7ee8c7}
+.glass-nav{background:linear-gradient(135deg,rgba(0,92,88,.38),rgba(0,43,40,.46));-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 20px rgba(126,232,199,.12),0 12px 30px rgba(0,20,18,.35)}
+.gl-dark{background:linear-gradient(135deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.03) 100%);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 22px rgba(126,232,199,.12)}
+.gl-light{background:linear-gradient(135deg,rgba(255,255,255,.85) 0%,rgba(255,255,255,.55) 100%);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,92,88,.10),inset 0 1px 0 #ffffff,0 10px 26px rgba(0,92,88,.12)}
+.pill-l{display:inline-flex;align-items:center;padding:3px 14px;border-radius:999px;background:rgba(126,232,199,.24);border:1px solid rgba(0,92,88,.22);color:#005c58;font-size:12px;line-height:20px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.pill-d{display:inline-flex;align-items:center;padding:3px 14px;border-radius:999px;background:rgba(126,232,199,.12);border:1px solid rgba(126,232,199,.5);color:#b8f2de;font-size:12px;line-height:20px;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 12px rgba(126,232,199,.25)}
+.g-btn{position:relative;cursor:pointer;-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);transition:box-shadow .2s,transform .15s}
+.g-btn:active{transform:scale(.98)}
+.g-cta{background:linear-gradient(180deg,rgba(0,120,112,.55) 0%,rgba(0,43,40,.55) 100%);color:#ffffff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.45),0 0 40px rgba(126,232,199,.2)}
+.g-ghost{background:rgba(255,255,255,.08);color:#ffffff;border:1px solid rgba(255,255,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.g-arrow{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(184,242,222,.75),rgba(126,232,199,.45));border:1px solid rgba(0,92,88,.25);color:#005c58;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px rgba(0,92,88,.18)}
+.g-round{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#00706a,#004541);color:#ffffff;border:1px solid rgba(126,232,199,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 16px rgba(126,232,199,.4)}
+.chip{flex-shrink:0;min-height:44px;padding:8px 18px;border-radius:999px;font-size:14px;font-weight:700;cursor:pointer}
+.chip-off{background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.5));color:#005c58;border:1px solid rgba(0,92,88,.18);box-shadow:inset 0 1px 0 #fff,0 4px 10px rgba(0,92,88,.08)}
+.chip-on{background:linear-gradient(180deg,#00706a,#004541);color:#ffffff;border:1px solid rgba(126,232,199,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 14px rgba(126,232,199,.45)}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.35)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.8)) drop-shadow(0 0 12px rgba(126,232,199,.35))}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ring{display:flex;align-items:center;justify-content:center;border-radius:999px;border:1.5px solid rgba(126,232,199,.8);color:#7ee8c7;box-shadow:0 0 14px rgba(126,232,199,.35),inset 0 0 10px rgba(126,232,199,.15)}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:20px;color:#005c58;background:linear-gradient(135deg,rgba(220,250,240,.9),rgba(184,242,222,.45));border:1px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(0,92,88,.14),inset 0 1px 0 #fff,0 8px 20px rgba(0,92,88,.16)}
+.scene{-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 85%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 16%,#000 85%,transparent 100%)}
+.strip{scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+/* smooth motion */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth}
+.g-btn,.chip,.g-arrow,.g-round{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .35s var(--ease) !important}
+.g-btn:active{transform:scale(.97)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+main > section{animation:fadeUp .9s var(--ease) both}
+main > section:nth-of-type(2){animation-delay:.08s}main > section:nth-of-type(n+3){animation-delay:.16s}
+@supports (animation-timeline: view()){main > section:not(:first-of-type){animation:fadeUp linear both;animation-timeline:view();animation-range:entry 0% cover 20%;animation-delay:0s}}
+.scene{animation:floaty 7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}html{scroll-behavior:auto}}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 4300px; position: relative; background: #f3faf8; color: #030909; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif">
+
+<header style="position: sticky; top: 10px; z-index: 50; padding: 0 12px; height: 0">
+<div class="glass-nav" style="border-radius: 22px; padding: 6px 8px; display: flex; align-items: center; justify-content: space-between; color: #ffffff">
+<a href="#top" aria-label="يوزرسيف — الرئيسية"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="display: block; width: 52px; height: 52px; border-radius: 14px"></a>
+<div style="display: flex; gap: 6px">
+<a class="g-btn g-ghost" href="Track.html" aria-label="طلباتي" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #ffffff">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"></path></svg></a>
+<button class="g-btn g-ghost" type="button" aria-label="بحث" onClick="{{toggleSearch}}" aria-expanded="{{searchOpenStr}}" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"></path></svg></button>
+</div>
+</div>
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
+<form role="search" class="glass-nav" onSubmit="{{onSearch}}" style="margin-top: 8px; border-radius: 20px; padding: 8px; display: flex; gap: 6px">
+<label for="m-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">ابحث في المنتجات</label>
+<input id="m-q" type="search" placeholder="تيشيرت، مج، استيكر…" style="flex-grow: 1; min-width: 0; min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #ffffff; font-family: inherit; font-size: 16px">
+<button class="g-btn g-cta" type="submit" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px; font-weight: 800">بحث</button>
+</form>
+</sc-if>
+</header>
+
+<main id="top">
+<section class="dk" aria-labelledby="mh-h" style="position: relative; overflow: hidden; isolation: isolate; background: #01302d; color: #ffffff; padding: 92px 16px 64px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 90% 40% at 70% 18%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%), radial-gradient(ellipse 90% 40% at 30% 65%, rgba(0,92,88,0.6) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 40px; left: -200px; width: 400px; height: 400px; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 380px; right: -220px; width: 380px; height: 380px; transform: rotate(180deg); opacity: .7; pointer-events: none">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 14px">
+<span class="pill-d">مطبوعات مميزة</span>
+<h1 id="mh-h" style="margin: 0; font-size: 44px; line-height: 60px; font-weight: 800">مطبوعات<br><span class="neon-t" style="color: #7ee8c7">تحكي قصتك</span></h1>
+<p style="margin: 0; font-size: 15px; line-height: 26px; font-weight: 500; color: rgba(255,255,255,0.85)">تيشرتات، هوديز، كابات، مجات، استيكرات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.</p>
+<a class="g-btn g-cta" href="Request-Mobile.html" style="align-self: stretch; display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 54px; border-radius: 999px; text-decoration: none; font-size: 17px; font-weight: 800">ابدأ طلبك الآن
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+</div>
+<img class="scene" src="assets/0f74f4cd0ed72ba9584b3c1394971e2f.jpg" alt="تيشيرت وهودي وكاب ومج وكفر موبايل مطبوع عليهم شعار يوزرسيف" style="display: block; width: calc(100% + 32px); margin: 8px -16px 0; height: auto">
+<ul class="gl-dark" style="list-style: none; margin: -24px 0 0; padding: 14px 4px; border-radius: 22px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative">
+<sc-for list="{{heroFeatures}}" as="f" hint-placeholder-count="4">
+<li style="{{f.style}}">
+<span class="ring" aria-hidden="true" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="{{f.d}}"></path></svg></span>
+<span style="font-size: 12px; line-height: 18px; font-weight: 700">{{f.t}}</span>
+</li>
+</sc-for>
+</ul>
+<div aria-hidden="true" style="position: absolute; left: -10%; right: -10%; bottom: -1px; height: 36px; background: #f3faf8; border-radius: 50% 50% 0 0 / 100% 100% 0 0; box-shadow: 0 -1px 0 rgba(126,232,199,0.6), 0 -10px 24px rgba(126,232,199,0.2)"></div>
+</section>
+
+<section id="products" aria-labelledby="mp-h" style="position: relative; overflow: hidden; isolation: isolate; padding: 28px 16px 64px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(circle at 10% 20%, rgba(126,232,199,0.35) 0, rgba(126,232,199,0) 40%), radial-gradient(circle at 90% 80%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 40%)"></div>
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 60px; left: -200px; width: 420px; height: 420px; pointer-events: none">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 24px">
+<span class="pill-l">منتجاتنا</span>
+<h2 id="mp-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">كل ما تحتاجه في مكان واحد</h2>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(3,9,9,0.7)">مطبوعات وهدايا مخصصة لكل احتياجاتك.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{products}}" as="p" hint-placeholder-count="4">
+<article class="gl-light" style="border-radius: 22px; padding: 10px; display: flex; align-items: stretch; gap: 12px; min-height: 140px">
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 8px 6px 4px">
+<h3 style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 800">{{p.t}}</h3>
+<p style="margin: 0; font-size: 13px; line-height: 21px; color: rgba(3,9,9,0.7); flex-grow: 1">{{p.d}}</p>
+<a class="g-btn g-arrow" href="{{p.href}}" aria-label="{{p.label}}" style="margin-top: 8px; text-decoration: none">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+</div>
+<div style="flex: 0 0 42%; border-radius: 16px; overflow: hidden; background: #f0f0f0"><img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+</article>
+</sc-for>
+</div>
+</section>
+
+<section class="dk" aria-labelledby="mw-h" style="position: relative; overflow: hidden; isolation: isolate; background: #01302d; color: #ffffff; padding: 64px 16px 72px">
+<div aria-hidden="true" style="position: absolute; left: -10%; right: -10%; top: -1px; height: 36px; background: #f3faf8; border-radius: 0 0 50% 50% / 0 0 100% 100%; box-shadow: 0 1px 0 rgba(126,232,199,0.6), 0 10px 24px rgba(126,232,199,0.2)"></div>
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 90% 50% at 50% 50%, rgba(0,92,88,0.85) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 20px; right: -220px; width: 400px; height: 400px; pointer-events: none">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 24px">
+<span class="pill-d">مميزاتنا</span>
+<h2 id="mw-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">لماذا يختارنا <span class="neon-t" style="color: #7ee8c7">عملاؤنا؟</span></h2>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(255,255,255,0.78)">الجودة، السرعة، والتصميم الاحترافي.</p>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{why}}" as="w" hint-placeholder-count="4">
+<li class="gl-dark" style="border-radius: 22px; padding: 20px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px">
+<span class="ring" aria-hidden="true" style="width: 54px; height: 54px"><svg class="ic" viewBox="0 0 24 24" style="width: 26px; height: 26px; stroke-width: 1.5"><path d="{{w.d}}"></path></svg></span>
+<h3 style="margin: 0; font-size: 16px; line-height: 26px; font-weight: 800">{{w.t}}</h3>
+<p style="margin: 0; font-size: 12px; line-height: 20px; color: rgba(255,255,255,0.78)">{{w.s}}</p>
+</li>
+</sc-for>
+</ul>
+<div aria-hidden="true" style="position: absolute; left: -10%; right: -10%; bottom: -1px; height: 36px; background: #f3faf8; border-radius: 50% 50% 0 0 / 100% 100% 0 0; box-shadow: 0 -1px 0 rgba(126,232,199,0.6), 0 -10px 24px rgba(126,232,199,0.2)"></div>
+</section>
+
+<section aria-labelledby="mhw-h" style="position: relative; overflow: hidden; isolation: isolate; padding: 32px 16px 56px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(circle at 85% 50%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 45%)"></div>
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 26px">
+<span class="pill-l">خطوات بسيطة</span>
+<h2 id="mhw-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">كيف يعمل طلبك؟</h2>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<li style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px">
+<div style="position: relative">
+<span class="tile" aria-hidden="true" style="width: 72px; height: 72px"><svg class="ic" viewBox="0 0 24 24" style="width: 30px; height: 30px; stroke-width: 1.5"><path d="{{s.d}}"></path></svg></span>
+<span aria-hidden="true" style="position: absolute; bottom: -6px; left: -6px; width: 26px; height: 26px; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #002b28; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; border: 2px solid #ffffff; box-shadow: 0 0 12px rgba(126,232,199,0.7)">{{s.n}}</span>
+</div>
+<h3 style="margin: 6px 0 0; font-size: 16px; line-height: 26px; font-weight: 800"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">الخطوة {{s.n}}: </span>{{s.t}}</h3>
+<p style="margin: 0; font-size: 12px; line-height: 20px; color: rgba(3,9,9,0.7)">{{s.s}}</p>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section id="gallery" aria-labelledby="mg-h" style="position: relative; overflow: hidden; isolation: isolate; padding: 24px 0 56px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(circle at 50% 60%, rgba(126,232,199,0.28) 0, rgba(126,232,199,0) 55%)"></div>
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 18px; padding: 0 16px">
+<span class="pill-l">معرض الأعمال</span>
+<h2 id="mg-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">تصاميم حقيقية لعملائنا</h2>
+<p style="margin: 0; font-size: 12px; line-height: 20px; font-weight: 600; color: rgba(3,9,9,0.7)">الصور الحالية نماذج عرض لحين إضافة أعمال العملاء بموافقتهم</p>
+</div>
+<div role="group" aria-label="تصفية المعرض" class="strip" style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 16px 14px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+<button type="button" class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 0 12px">
+<button class="g-btn g-round" type="button" onClick="{{galPrev}}" aria-label="الصور السابقة" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg></button>
+<ul aria-live="polite" style="list-style: none; margin: 0; padding: 0; flex-grow: 1; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{gal}}" as="g" hint-placeholder-count="2">
+<li class="gl-light" style="position: relative; height: 190px; border-radius: 20px; overflow: hidden; padding: 5px">
+<img src="{{g.img}}" alt="{{g.alt}}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 16px">
+<span style="position: absolute; bottom: 12px; right: 12px; padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,0.8); font-size: 10px; font-weight: 700; color: #030909">نموذج عرض</span>
+</li>
+</sc-for>
+</ul>
+<button class="g-btn g-round" type="button" onClick="{{galNext}}" aria-label="الصور التالية" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></button>
+</div>
+<div style="display: flex; justify-content: center; gap: 6px; margin-top: 16px">
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="4">
+<button type="button" onClick="{{d.go}}" aria-label="{{d.label}}" aria-current="{{d.cur}}" style="{{d.style}}"></button>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="mt-h" style="position: relative; overflow: hidden; isolation: isolate; padding: 16px 16px 56px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; top: 70px; right: 8%; font-size: 140px; line-height: 1; font-weight: 800; color: rgba(126,232,199,0.35); font-family: Georgia, serif">”</div>
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 20px">
+<span class="pill-l">آراء عملائنا</span>
+<h2 id="mt-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">ماذا يقول عملاؤنا؟</h2>
+</div>
+<figure class="gl-light" aria-live="polite" style="margin: 0; border-radius: 24px; padding: 22px 20px; display: flex; flex-direction: column; gap: 12px">
+<div aria-label="التقييم: بانتظار رأي حقيقي" style="display: flex; gap: 3px; color: #005c58">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+</div>
+<blockquote style="margin: 0; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.7)">{{rev.q}}</blockquote>
+<figcaption style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 38px; height: 38px; border-radius: 999px; background: linear-gradient(135deg,#e6f7f1,#c9efe2); border: 1px solid rgba(0,92,88,0.25)"></span>
+<strong style="font-size: 14px; color: rgba(3,9,9,0.7)">{{rev.n}}</strong>
+</figcaption>
+</figure>
+<div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 14px">
+<button class="g-btn g-arrow" type="button" onClick="{{revPrev}}" aria-label="الرأي السابق"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M9 18l6-6-6-6"></path></svg></button>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{revDots}}" as="d" hint-placeholder-count="3">
+<button type="button" onClick="{{d.go}}" aria-label="{{d.label}}" aria-current="{{d.cur}}" style="{{d.style}}"></button>
+</sc-for>
+</div>
+<button class="g-btn g-arrow" type="button" onClick="{{revNext}}" aria-label="الرأي التالي"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+</div>
+</section>
+
+<section aria-labelledby="mi-h" style="padding: 0 16px 56px">
+<div class="dk" style="position: relative; overflow: hidden; isolation: isolate; border-radius: 26px; background: #01302d; color: #ffffff; border: 1px solid rgba(126,232,199,0.5); box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 0 26px rgba(126,232,199,0.25)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"></div>
+<div style="padding: 26px 22px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px">
+<h2 id="mi-h" style="margin: 0; font-size: 26px; line-height: 40px; font-weight: 800">لديك فكرة <span class="neon-t" style="color: #7ee8c7">مميزة؟</span></h2>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(255,255,255,0.85)">حوّلها إلى مطبوعات فريدة مع يوزرسيف</p>
+<a class="g-btn g-cta" href="Request-Mobile.html" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 10px 26px; border-radius: 999px; text-decoration: none; font-size: 16px; font-weight: 800">ابدأ طلبك الآن
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+</div>
+<img src="assets/c8049162e0dd61f1eab9f6729f80a06b.jpg" alt="" aria-hidden="true" style="display: block; width: 100%; height: 160px; object-fit: cover; object-position: 50% 70%; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 40%); mask-image: linear-gradient(to bottom, transparent, #000 40%)">
+</div>
+</section>
+</main>
+
+<footer id="contact" class="dk" style="position: relative; overflow: hidden; isolation: isolate; background: #002b28; color: #ffffff; padding: 40px 16px 120px; border-top: 1px solid rgba(126,232,199,0.35)">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -140px; left: -160px; width: 400px; height: 400px; transform: rotate(180deg); opacity: .5; pointer-events: none">
+<div id="about" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 96px; height: 96px; border-radius: 22px; display: block">
+<p style="margin: 0; font-size: 13px; line-height: 22px; color: rgba(255,255,255,0.78)">يوزرسيف للطباعة والتخصيص في أسوان.</p>
+</div>
+<div style="margin-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+<nav aria-label="روابط سريعة" style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<h2 class="neon-t" style="margin: 0 0 4px; font-size: 15px; font-weight: 800; color: #7ee8c7">روابط سريعة</h2>
+<a href="#products" style="color: rgba(255,255,255,0.78); text-decoration: none; padding: 4px 0">المنتجات</a>
+<a href="#gallery" style="color: rgba(255,255,255,0.78); text-decoration: none; padding: 4px 0">معرض الأعمال</a>
+<a href="Track.html" style="color: rgba(255,255,255,0.78); text-decoration: none; padding: 4px 0">تتبّع طلبك</a>
+</nav>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<h2 class="neon-t" style="margin: 0 0 4px; font-size: 15px; font-weight: 800; color: #7ee8c7">تواصل معنا</h2>
+<a href="https://wa.me/201116891025" style="color: rgba(255,255,255,0.78); text-decoration: none; padding: 4px 0" dir="ltr">01116891025</a>
+<span style="color: rgba(255,255,255,0.78)">[الإيميل — للتأكيد]</span>
+<span style="color: rgba(255,255,255,0.78)">أسوان، مصر</span>
+</div>
+</div>
+<div style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px">
+<a class="g-btn g-ghost" href="https://wa.me/201116891025" style="display: inline-flex; align-items: center; min-height: 40px; padding: 4px 14px; border-radius: 999px; text-decoration: none; font-size: 12px; font-weight: 700; color: #ffffff">واتساب</a>
+<a class="g-btn g-ghost" href="https://www.instagram.com/youzersef" style="display: inline-flex; align-items: center; min-height: 40px; padding: 4px 14px; border-radius: 999px; text-decoration: none; font-size: 12px; font-weight: 700; color: #ffffff">انستجرام</a>
+<span class="g-ghost" style="display: inline-flex; align-items: center; min-height: 40px; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700">فيسبوك · تيك توك</span>
+</div>
+<p style="margin: 20px 0 0; text-align: center; font-size: 12px; color: rgba(255,255,255,0.6)">جميع الحقوق محفوظة © 2026 يوزرسيف</p>
+</footer>
+
+<nav aria-label="التنقل السفلي" style="position: sticky; bottom: 12px; z-index: 40; margin: -96px 12px 0; height: 72px">
+<div class="glass-nav" style="height: 72px; border-radius: 24px; padding: 6px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; color: rgba(255,255,255,0.75)">
+<a href="#top" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: #7ee8c7; text-decoration: none; font-size: 11px; font-weight: 700; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"></path></svg>الرئيسية</a>
+<a href="#products" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>المنتجات</a>
+<a class="g-btn g-cta" href="Request-Mobile.html" aria-label="ابدأ طلبك" style="justify-self: center; width: 56px; height: 56px; margin-top: -26px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 26px; height: 26px; stroke-width: 2.2"><path d="M12 5v14M5 12h14"></path></svg></a>
+<a href="#gallery" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>أعمالنا</a>
+<a href="Track.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; text-decoration: none; font-size: 11px; font-weight: 600; padding: 6px 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path></svg>طلباتي</a>
+</div>
+</nav>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":4700}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { menuOpen: false, searchOpen: false, gal: 0, cat: 'all', rev: 0 }; }
+  renderVals() {
+    var s = this.state, self = this;
+    var D = {
+      gem: 'M6 3h12l4 6-10 13L2 9ZM11 3 8 9l4 13 4-13-3-6M2 9h20',
+      truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14M19 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0M9 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0',
+      pen: 'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4',
+      gift: 'M4 8h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5',
+      gear: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0',
+      headset: 'M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3',
+      image: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21',
+      shirt: 'M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z'
+    };
+    var feats = [{ t: 'جودة عالية', d: D.gem }, { t: 'توصيل سريع', d: D.truck }, { t: 'تصاميم مخصصة', d: D.pen }, { t: 'هدايا مميزة', d: D.gift }];
+    var heroFeatures = feats.map(function (f, i) { return Object.assign({}, f, { style: 'display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 2px 4px; ' + (i > 0 ? 'border-right: 1px solid rgba(126,232,199,0.25)' : '') }); });
+    var all = [
+      { cat: 'wear', img: 'assets/d4de876ef462c3e541788e94f50199e3.jpg', alt: 'هودي مطبوع' },
+      { cat: 'mug', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', alt: 'مج مطبوع' },
+      { cat: 'cap', img: 'assets/53f6eb00973f2207c9b44d73b256c3e5.jpg', alt: 'كاب مطبوع' },
+      { cat: 'sticker', img: 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg', alt: 'كفرات موبايل' },
+      { cat: 'wear', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', alt: 'تيشيرت مطبوع' },
+      { cat: 'sticker', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', alt: 'استيكر مطبوع' }
+    ];
+    var images = all.filter(function (x) { return s.cat === 'all' || x.cat === s.cat; });
+    var n = images.length, start = n ? s.gal % n : 0, gal = [];
+    for (var i = 0; i < Math.min(2, n); i++) gal.push(images[(start + i) % n]);
+    var pages = Math.max(1, Math.ceil(n / 2)), page = Math.floor(start / 2) % pages;
+    function dot(on) { return 'width: ' + (on ? '24px' : '8px') + '; height: 8px; padding: 0; border-radius: 999px; border: 0; background: ' + (on ? '#005c58' : 'rgba(0,92,88,0.25)') + (on ? '; box-shadow: 0 0 8px rgba(126,232,199,0.8)' : ''); }
+    var dots = []; for (var j = 0; j < Math.min(pages, 4); j++) (function (j) { dots.push({ label: 'صفحة ' + (j + 1), cur: j === page ? 'true' : 'false', style: dot(j === page), go: function () { self.setState({ gal: j * 2 }); } }); })(j);
+    var chips = [['all', 'الكل'], ['wear', 'تيشرتات'], ['mug', 'مجات'], ['cap', 'كابات'], ['sticker', 'استيكرات']].map(function (c) { var on = s.cat === c[0]; return { label: c[1], pressed: on ? 'true' : 'false', cls: 'chip ' + (on ? 'chip-on' : 'chip-off'), pick: function () { self.setState({ cat: c[0], gal: 0 }); } }; });
+    var reviews = [{ q: '[رأي عميل حقيقي — يُضاف بعد موافقته]', n: '[اسم العميل]' }, { q: '[رأي عميل حقيقي ثاني — يُضاف بعد موافقته]', n: '[اسم العميل]' }, { q: '[رأي عميل حقيقي ثالث — يُضاف بعد موافقته]', n: '[اسم العميل]' }];
+    var r = s.rev % reviews.length;
+    return {
+      menuOpen: s.menuOpen, menuOpenStr: s.menuOpen ? 'true' : 'false', toggleMenu: function () { self.setState({ menuOpen: !self.state.menuOpen, searchOpen: false }); },
+      searchOpen: s.searchOpen, searchOpenStr: s.searchOpen ? 'true' : 'false', toggleSearch: function () { self.setState({ searchOpen: !self.state.searchOpen, menuOpen: false }); },
+      onSearch: function (e) { if (e && e.preventDefault) e.preventDefault(); self.setState({ searchOpen: false }); },
+      heroFeatures: heroFeatures,
+      products: [
+        { t: 'طباعة الملابس', d: 'تيشرتات، هوديز، كابات بجودة عالية.', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', alt: 'تيشيرت مطبوع', href: 'Service-Tablet.html', label: 'تفاصيل طباعة الملابس' },
+        { t: 'المجات والكاسات', d: 'مجات بتصميماتك للمناسبات والهدايا.', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', alt: 'مج مطبوع', href: 'Request-Mobile.html', label: 'اطلب المجات' },
+        { t: 'الهدايا المخصصة', d: 'هدايا فريدة تناسب كل مناسبة.', img: 'assets/0b3e57d34122b654cbb1f7615c9f91ac.jpg', alt: 'هدية مطبوعة', href: 'Request-Mobile.html', label: 'اطلب الهدايا' },
+        { t: 'الاستيكرات والمطبوعات', d: 'استيكرات بجودة عالية لكل الاستخدامات.', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', alt: 'استيكرات', href: 'Request-Mobile.html', label: 'اطلب الاستيكرات' }
+      ],
+      why: [
+        { t: 'جودة عالية', s: 'خامات مميزة وطباعة احترافية.', d: D.gem },
+        { t: 'توصيل سريع', s: '[المناطق والمدة للتأكيد]', d: D.truck },
+        { t: 'تصاميم مخصصة', s: 'للمناسبات والطلبات الخاصة.', d: D.pen },
+        { t: 'دعم مستمر', s: 'معاك في كل خطوة.', d: D.headset }
+      ],
+      steps: [
+        { n: '1', t: 'اختر المنتج', s: 'حدد النوع والمواصفات.', d: D.shirt },
+        { n: '2', t: 'أرسل تصميمك', s: 'أو اطلب مساعدة.', d: D.image },
+        { n: '3', t: 'نقوم بالطباعة', s: 'بعد مراجعة طلبك.', d: D.gear },
+        { n: '4', t: 'استلم طلبك', s: 'من المحل أو توصيل.', d: D.truck }
+      ],
+      chips: chips, gal: gal, dots: dots,
+      galPrev: function () { if (n) self.setState({ gal: (self.state.gal - 1 + n) % n }); },
+      galNext: function () { if (n) self.setState({ gal: (self.state.gal + 1) % n }); },
+      rev: reviews[r],
+      revDots: reviews.map(function (x, k) { return { label: 'رأي ' + (k + 1), cur: k === r ? 'true' : 'false', style: dot(k === r), go: function () { self.setState({ rev: k }); } }; }),
+      revPrev: function () { self.setState({ rev: (self.state.rev - 1 + reviews.length) % reviews.length }); },
+      revNext: function () { self.setState({ rev: (self.state.rev + 1) % reviews.length }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

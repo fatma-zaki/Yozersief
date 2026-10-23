@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>يوزرسيف — دورة حياة الطلب</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#f3faf8;--ink:#030909;--ink-strong:#030909;--muted:rgba(3,9,9,.62);--line:rgba(0,92,88,.14);--accent-ink:#005c58;--card-bg:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.62));--card-bd:rgba(255,255,255,.95);--card-sh:0 0 0 1px rgba(0,92,88,.1),inset 0 1px 0 #fff,0 14px 34px rgba(0,92,88,.12);--tint:linear-gradient(135deg,rgba(184,242,222,.45),rgba(126,232,199,.16));--tint-bd:rgba(0,92,88,.12);--tile-bg:linear-gradient(135deg,rgba(220,250,240,.9),rgba(184,242,222,.45));--tile-ink:#005c58;--hero-bg:#01302d;--hero-glow:rgba(0,92,88,.95);--warn-bg:#fbf3e2;--warn-ink:#5c430f;--warn-bd:#d6ae62;--arc:#f3faf8;--row-alt:rgba(126,232,199,.08)}
+</style>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;background:var(--bg)}
+*{box-sizing:border-box}
+a{color:var(--accent-ink)}
+.page{position:relative;overflow:clip;isolation:isolate;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Cairo,'Segoe UI',Tahoma,sans-serif}
+.card{background:var(--card-bg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--card-bd);box-shadow:var(--card-sh)}
+.glass-d{background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.03));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 22px rgba(126,232,199,.12)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.3)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.75)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.muted{color:var(--muted)}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--tile-bg);color:var(--tile-ink);box-shadow:0 0 0 1px var(--tint-bd)}
+.tint{background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);border-radius:18px}
+.h2{margin:0;font-size:26px;line-height:38px;font-weight:800;color:var(--ink-strong)}
+.who{display:inline-flex;align-items:center;gap:5px;padding:1px 10px;border-radius:999px;font-size:12px;line-height:20px;font-weight:800;white-space:nowrap}
+.who-c{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-bd)}
+.who-y{background:linear-gradient(180deg,#00706a,#004541);color:#fff;border:1px solid rgba(126,232,199,.6);box-shadow:0 0 10px rgba(126,232,199,.35)}
+.who-b{background:linear-gradient(90deg,#00706a 0 50%,#d6ae62 50% 100%);color:#fff;border:1px solid rgba(126,232,199,.5)}
+.step{position:relative;display:grid;grid-template-columns:44px 1fr;gap:14px}
+.step .rail{display:flex;flex-direction:column;align-items:center}
+.step .num{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;background:var(--hero-bg);color:#7ee8c7;border:1.5px solid #7ee8c7;box-shadow:0 0 14px rgba(126,232,199,.5)}
+.step .num.c{background:rgba(214,174,98,.2);color:var(--warn-ink);border-color:#d6ae62;box-shadow:0 0 14px rgba(214,174,98,.4)}
+.step .ln{flex-grow:1;width:2px;margin:6px 0;border-radius:2px;background:linear-gradient(180deg,#7ee8c7,rgba(126,232,199,.15));box-shadow:0 0 8px rgba(126,232,199,.5)}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:4px 10px;font-size:13px;line-height:21px}
+.kv dt{font-weight:800;color:var(--muted)}
+.kv dd{margin:0}
+.grid-t{display:grid;grid-template-columns:200px 1fr 1fr}
+.grid-t > div{padding:12px 16px;font-size:14px;line-height:23px;border-top:1px solid var(--line)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .8s var(--ease) both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</helmet>
+<div class="page">
+<header style="position: relative; overflow: hidden; isolation: isolate; background: var(--hero-bg); color: #ffffff; padding: 40px 40px 90px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 55% 90% at 78% 10%, var(--hero-glow) 0%, rgba(0,0,0,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -200px; left: -180px; width: 600px; height: 600px; opacity: .5; pointer-events: none">
+<div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
+<span style="align-self: flex-start; padding: 3px 14px; border-radius: 999px; background: rgba(126,232,199,0.12); border: 1px solid rgba(126,232,199,0.5); color: #b8f2de; font-size: 13px; font-weight: 700">خريطة التدفق · مرجع للفريق</span>
+<h1 style="margin: 0; font-size: 46px; line-height: 64px; font-weight: 800">دورة حياة <span class="neon-t">الطلب</span></h1>
+<p style="margin: 0; font-size: 17px; line-height: 30px; color: rgba(255,255,255,0.82)">كل طلب بيبدأ من نفس المكان، وبعد ما العميل يحدد الطلب لمين بيمشي في واحد من مسارين: مسار الأفراد السريع، أو مسار الشركات والمحلات والفرق اللي فيه عرض سعر واعتماد قبل الإنتاج.</p>
+</div>
+<div class="glass-d" style="border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.75)">مين عليه الدور؟</span>
+<span style="display: flex; gap: 8px; flex-wrap: wrap"><span class="who who-y">يوزرسيف</span><span class="who who-c">العميل</span><span class="who who-b">الاتنين</span></span>
+</div>
+</div>
+<div aria-hidden="true" style="position: absolute; left: -6%; right: -6%; bottom: -1px; height: 48px; background: var(--arc); border-radius: 50% 50% 0 0 / 100% 100% 0 0; box-shadow: 0 -1px 0 rgba(126,232,199,0.6), 0 -12px 28px rgba(126,232,199,0.22)"></div>
+</header>
+
+<main style="position: relative; isolation: isolate; max-width: 1280px; margin: 0 auto; padding: 8px 40px 72px; display: flex; flex-direction: column; gap: 40px">
+<img src="{{motif}}" alt="" aria-hidden="true" style="{{motifStyle}}">
+
+<!-- Branch -->
+<section class="anim-up" aria-labelledby="br-h" style="display: flex; flex-direction: column; align-items: center; gap: 0">
+<h2 id="br-h" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">نقطة التفرع</h2>
+<div class="card" style="border-radius: 22px; padding: 14px 22px; display: flex; align-items: center; gap: 12px">
+<span class="tile" aria-hidden="true" style="width: 42px; height: 42px"><svg class="ic" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"></path></svg></span>
+<span style="display: flex; flex-direction: column"><strong style="font-size: 17px; color: var(--ink-strong)">العميل بيفتح «ابدأ طلبك»</strong><span class="muted" style="font-size: 13px">الخطوة 1: الطلب ده لمين؟</span></span>
+</div>
+<span aria-hidden="true" style="width: 2px; height: 34px; background: #7ee8c7; box-shadow: 0 0 10px rgba(126,232,199,0.8)"></span>
+<div aria-hidden="true" style="width: 74px; height: 74px; transform: rotate(45deg); border-radius: 16px; background: var(--hero-bg); border: 1.5px solid #7ee8c7; box-shadow: 0 0 22px rgba(126,232,199,0.55); display: flex; align-items: center; justify-content: center"><span style="transform: rotate(-45deg); color: #7ee8c7; font-size: 28px; font-weight: 800">؟</span></div>
+<div aria-hidden="true" style="position: relative; width: 52%; height: 40px">
+<span style="position: absolute; top: 0; right: 0; left: 0; height: 22px; border: 2px solid #7ee8c7; border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 12px rgba(126,232,199,0.35)"></span>
+</div>
+<div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; text-align: center">
+<p style="margin: 0; font-size: 15px; font-weight: 800; color: var(--accent-ink)">فرد ← مسار سريع (6 مراحل)</p>
+<p style="margin: 0; font-size: 15px; font-weight: 800; color: var(--accent-ink)">شركة أو محل أو فريق ← مسار الطلبات الكبيرة (9 مراحل)</p>
+</div>
+</section>
+
+<!-- Two lanes -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start">
+<sc-for list="{{lanes}}" as="lane" hint-placeholder-count="2">
+<section class="card anim-up d1" aria-label="{{lane.title}}" style="border-radius: 30px; padding: 26px 24px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; gap: 14px">
+<span class="tile" aria-hidden="true" style="width: 52px; height: 52px; border-radius: 16px"><svg class="ic" viewBox="0 0 24 24" style="width: 26px; height: 26px"><path d="{{lane.icon}}"></path></svg></span>
+<div style="display: flex; flex-direction: column"><h2 class="h2" style="font-size: 22px; line-height: 32px">{{lane.title}}</h2><span class="muted" style="font-size: 14px">{{lane.sub}}</span></div>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{lane.steps}}" as="s" hint-placeholder-count="6">
+<li class="step">
+<div class="rail"><span class="{{s.numCls}}" aria-hidden="true">{{s.n}}</span><span class="ln" aria-hidden="true" style="{{s.lnStyle}}"></span></div>
+<div style="padding-bottom: 18px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><strong style="font-size: 17px; line-height: 28px; color: var(--ink-strong)">{{s.title}}</strong><span class="{{s.whoCls}}">{{s.who}}</span></div>
+<dl class="kv tint" style="margin: 0; padding: 10px 12px">
+<dt>العميل بيشوف</dt><dd>{{s.sees}}</dd>
+<dt>واتساب</dt><dd>{{s.wa}}</dd>
+<dt>لوحة الإدارة</dt><dd>{{s.admin}}</dd>
+</dl>
+</div>
+</li>
+</sc-for>
+</ol>
+</section>
+</sc-for>
+</div>
+
+<!-- Differences -->
+<section class="card anim-up d2" aria-labelledby="df-h" style="border-radius: 30px; overflow: hidden">
+<div style="padding: 22px 24px 14px"><h2 id="df-h" class="h2">الفرق بين المسارين</h2><p class="muted" style="margin: 4px 0 0; font-size: 14px">القيم اللي بين [ ] لسه محتاجة قرار من يوزرسيف.</p></div>
+<div role="table" aria-label="الفرق بين المسارين">
+<div role="row" class="grid-t" style="background: var(--hero-bg); color: #ffffff; font-weight: 800">
+<div role="columnheader" style="border-top: 0">البند</div><div role="columnheader" style="border-top: 0">فرد</div><div role="columnheader" style="border-top: 0; color: #7ee8c7">شركة أو محل أو فريق</div>
+</div>
+<sc-for list="{{diffs}}" as="r" hint-placeholder-count="7">
+<div role="row" class="grid-t" style="{{r.bg}}">
+<div role="rowheader" style="font-weight: 800; color: var(--ink-strong)">{{r.k}}</div><div role="cell">{{r.a}}</div><div role="cell">{{r.b}}</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<!-- Exceptions -->
+<section class="anim-up d3" aria-labelledby="ex-h" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="ex-h" class="h2">الحالات الاستثنائية</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{exceptions}}" as="x" hint-placeholder-count="4">
+<article class="card" style="border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--warn-bg); color: var(--warn-ink); box-shadow: inset 0 0 0 1px var(--warn-bd)"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="{{x.icon}}"></path></svg></span>
+<strong style="font-size: 16px; line-height: 26px; color: var(--ink-strong)">{{x.t}}</strong>
+<span style="font-size: 14px; line-height: 23px">{{x.d}}</span>
+</article>
+</sc-for>
+</div>
+</section>
+
+<!-- Where -->
+<section class="tint anim-up d3" style="padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+<strong style="font-size: 15px; color: var(--ink-strong)">فين ده في التصميم:</strong>
+<sc-for list="{{where}}" as="w" hint-placeholder-count="4">
+<a href="{{w.href}}" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--card-bg); box-shadow: 0 0 0 1px var(--tint-bd); font-size: 14px; font-weight: 700; text-decoration: none">{{w.t}}</a>
+</sc-for>
+</section>
+</main>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var SFX = '', DARK = false;
+    var W = { y: ['يوزرسيف', 'who who-y'], c: ['العميل', 'who who-c'], b: ['الاتنين', 'who who-b'] };
+    function lane(steps) {
+      return steps.map(function (s, i) {
+        return { n: i + 1, title: s[0], who: W[s[1]][0], whoCls: W[s[1]][1], numCls: 'num' + (s[1] === 'c' ? ' c' : ''), sees: s[2], wa: s[3], admin: s[4], lnStyle: i === steps.length - 1 ? 'visibility: hidden' : '' };
+      });
+    }
+    var person = lane([
+      ['العميل بيبعت الطلب', 'c', 'رقم الطلب وحالة «تم الإرسال»', '—', 'طلب جديد بشارة «فرد»'],
+      ['المراجعة', 'y', '«قيد المراجعة»، أو «محتاجين بيانات منك» لو فيه ناقص', 'لو محتاجين بيانات: رسالة بالمطلوب', 'موافقة · طلب بيانات · رفض'],
+      ['الموافقة والسعر', 'y', '«تمت الموافقة» ومعاها السعر والموعد', 'رقم الطلب + السعر + لينك التتبع', 'زرار «موافقة» بيجهّز الرسالة'],
+      ['التنفيذ', 'y', '«جاري التنفيذ»', 'تحديث اختياري', 'تحديث الحالة'],
+      ['جاهز', 'y', '«جاهز للاستلام» أو «في الطريق»', 'طلبك جاهز + طريقة الاستلام', 'تحديث الحالة'],
+      ['اتسلم', 'b', '«تم التسليم»', 'شكر + طلب تقييم بموافقته', 'إقفال الطلب']
+    ]);
+    var biz = lane([
+      ['العميل بيبعت الطلب', 'c', 'رقم الطلب + خطوات المسار الكبير', '—', 'شارة «شركة» أو «فريق» + اسم الجهة'],
+      ['المراجعة', 'y', '«بنجهّز عرض السعر»', 'لو محتاجين بيانات أو شيت الأسماء', 'فلتر «شركات وجهات»'],
+      ['عرض سعر رسمي', 'y', 'ملخص العرض في صفحة التتبع', 'العرض + لينك التتبع', '«موافقة» = إرسال عرض السعر (إجباري)'],
+      ['موافقة العميل على العرض', 'c', 'زرار «موافق على العرض» أو «عندي استفسار»', 'تأكيد الموافقة', 'تتسجل تلقائي أو يدوي'],
+      ['الموكاب والعينة', 'b', 'صورة الموكاب + «اعتمد» أو «اطلب تعديل»', 'الموكاب جاهز للاعتماد', 'رفع الموكاب وتسجيل الاعتماد'],
+      ['العربون', 'c', 'تعليمات الدفع [بانتظار التأكيد]', 'تأكيد استلام العربون', 'تسجيل استلام العربون'],
+      ['الإنتاج', 'y', 'تقدم الإنتاج: «36 من 60 قطعة»', 'بدأ الإنتاج', 'تحديث عدد القطع'],
+      ['فحص الجودة', 'y', '«فحص الجودة»', '—', 'تأكيد الفحص'],
+      ['التسليم والفاتورة', 'b', 'مرة واحدة أو على دفعات، والفاتورة لو مطلوبة', 'جاهز + تفاصيل الدفعة', 'تسجيل كل دفعة وإقفال الطلب']
+    ]);
+    var diffs = [
+      ['بيانات العميل', 'الاسم والموبايل', 'اسم الجهة، المسؤول وصفته، وبيانات الفاتورة لو مطلوبة'],
+      ['السعر', 'بيوصل مع الموافقة', 'عرض سعر رسمي لازم العميل يوافق عليه'],
+      ['اعتماد التصميم', 'المراجعة الداخلية كفاية', 'موكاب إلزامي، وعينة لو العميل اختارها'],
+      ['الدفع', '[بانتظار تأكيد يوزرسيف]', 'عربون قبل الإنتاج والباقي عند التسليم [النسبة بانتظار التأكيد]'],
+      ['أسماء أو أرقام لكل قطعة', 'غير متاح', 'شيت Excel أو CSV في خطوة التصميم'],
+      ['التسليم', 'مرة واحدة', 'مرة واحدة أو على دفعات'],
+      ['الفاتورة', 'غير متاحة [بانتظار التأكيد]', 'باسم الجهة لو اتطلبت']
+    ].map(function (r, i) { return { k: r[0], a: r[1], b: r[2], bg: i % 2 ? 'background: var(--row-alt)' : '' }; });
+    var WARN = 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01';
+    var exceptions = [
+      { t: 'محتاجين بيانات', d: 'ممكن تحصل في أي مرحلة قبل الإنتاج. المسار بيقف والعميل بيشوف المطلوب منه بلون دهبي لحد ما يرد.', icon: WARN },
+      { t: 'طلب تعديل على الموكاب', d: 'الطلب بيرجع لمرحلة الموكاب بنسخة جديدة. عدد مرات التعديل المجانية [بانتظار التأكيد].', icon: 'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4' },
+      { t: 'العميل ما ردّش على العرض', d: 'العرض ليه صلاحية [المدة بانتظار التأكيد]. بعدها بيتبعت تذكير، ولو انتهى بيتعمل عرض جديد.', icon: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v6l4 2' },
+      { t: 'رفض الطلب', d: 'في المسارين: السبب بيتكتب إجباري ويوصل للعميل، ومعاه اقتراح بديل لو فيه.', icon: 'M18 6 6 18M6 6l12 12' }
+    ];
+    return {
+      motif: DARK ? 'assets/7e9c2bf666d78520c5029e5857437282.svg' : 'assets/09db2274cf741cc3e59da087108d65f1.svg',
+      motifStyle: 'position: absolute; z-index: -1; top: 700px; right: -360px; width: 760px; height: 760px; pointer-events: none; opacity: ' + (DARK ? '.18' : '1'),
+      lanes: [
+        { title: 'فرد', sub: 'لنفسه أو هدية · مسار سريع', icon: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0', steps: person },
+        { title: 'شركة أو محل أو فريق', sub: 'كميات كبيرة · عرض سعر واعتماد قبل الإنتاج', icon: 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18ZM6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4', steps: biz }
+      ],
+      diffs: diffs, exceptions: exceptions,
+      where: [
+        { t: 'منشئ الطلب — اختيار نوع العميل', href: 'Request' + SFX + '.html' },
+        { t: 'تتبّع الطلب — جرّب «شركة أو محل»', href: 'Track' + SFX + '.html' },
+        { t: 'لوحة الإدارة — مسار الطلب الكبير', href: 'Admin' + SFX + '.html' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

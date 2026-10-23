@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>منشئ الطلب — الفرد 1: نوع الطلب والمنتج (داكن)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#001412;--ink:#f2fbf8;--ink-strong:#ffffff;--muted:rgba(242,251,248,.62);--line:rgba(126,232,199,.14);--accent-ink:#7ee8c7;--card-bg:linear-gradient(160deg,rgba(5,64,57,.5),rgba(0,27,23,.55));--card-bd:rgba(126,232,199,.22);--card-sh:inset 0 1px 0 rgba(255,255,255,.08),0 16px 34px rgba(0,0,0,.35);--field-bg:rgba(0,20,18,.6);--field-bd:rgba(126,232,199,.3);--field-ink:#ffffff;--focus:#7ee8c7;--focus-ring:rgba(126,232,199,.3);--soft-bg:rgba(126,232,199,.07);--soft-ink:#b8f2de;--soft-bd:rgba(126,232,199,.32);--cta-bg:linear-gradient(180deg,rgba(5,64,57,.85),rgba(0,27,23,.85));--chip-off-bg:rgba(126,232,199,.05);--chip-off-ink:rgba(242,251,248,.85);--chip-off-bd:rgba(126,232,199,.22);--chip-on-bg:linear-gradient(180deg,rgba(126,232,199,.3),rgba(126,232,199,.12));--chip-on-ink:#fff;--tint:rgba(126,232,199,.07);--tint-bd:rgba(126,232,199,.2);--tile-bg:linear-gradient(135deg,rgba(126,232,199,.16),rgba(5,64,57,.45));--tile-ink:#7ee8c7;--hero-bg:#001b17;--hero-glow:rgba(5,64,57,.95);--panel-bg:#032722;--warn-bg:rgba(214,174,98,.14);--warn-ink:#e9c98a;--warn-bd:#d6ae62;--ok-tint:linear-gradient(135deg,rgba(126,232,199,.2),rgba(5,64,57,.5));--img-bg:#032722;--opt-bg:#032722;--opt-ink:#ffffff;--arc:#001412;--sel-ring:0 0 0 1.5px #7ee8c7,0 0 22px rgba(126,232,199,.35)}
+</style>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;background:var(--bg)}
+*{box-sizing:border-box}
+a{color:var(--accent-ink)}
+input,select,textarea,button{font-family:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.dk :focus-visible{outline-color:#7ee8c7}
+.page{position:relative;overflow:clip;isolation:isolate;min-height:100vh;background:var(--bg);color:var(--ink);font-family:Cairo,'Segoe UI',Tahoma,sans-serif}
+.card{background:var(--card-bg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--card-bd);box-shadow:var(--card-sh)}
+.glass-d{background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.03));-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(126,232,199,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 22px rgba(126,232,199,.12)}
+.h1{margin:0;font-weight:800;color:var(--ink-strong)}
+.muted{color:var(--muted)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.3)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.75)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.g-btn{position:relative;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.g-btn[disabled]{opacity:.55;cursor:not-allowed}
+.g-cta{background:var(--cta-bg);color:#fff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.42),0 0 40px rgba(126,232,199,.18)}
+.g-cta:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 26px rgba(126,232,199,.6),0 0 56px rgba(126,232,199,.26)}
+.g-soft{background:var(--soft-bg);color:var(--soft-ink);border:1px solid var(--soft-bd)}
+.g-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.fld{width:100%;min-height:50px;padding:10px 14px;border-radius:16px;border:1px solid var(--field-bd);background:var(--field-bg);color:var(--field-ink);font-size:16px;line-height:26px;box-shadow:inset 0 1px 2px rgba(0,43,40,.06)}
+.fld:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-ring);outline:none}
+.fld[aria-invalid="true"]{border:2px solid var(--warn-bd);background:var(--warn-bg)}
+.fld option{background:var(--opt-bg);color:var(--opt-ink)}
+.lbl{font-size:15px;font-weight:700;color:var(--ink-strong)}
+.hint{font-size:13px;line-height:20px;color:var(--muted)}
+.err{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--warn-ink)}
+.tint{background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);border-radius:18px}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--tile-bg);color:var(--tile-ink);box-shadow:0 0 0 1px var(--tint-bd)}
+.opt{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:8px 20px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.opt:focus-within,.ocard:focus-within,.cat:focus-within,.drop:focus-within{outline:2px solid var(--focus);outline-offset:3px}
+.chip-off{background:var(--chip-off-bg);color:var(--chip-off-ink);border:1px solid var(--chip-off-bd);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 3px 8px rgba(0,92,88,.06)}
+.chip-on{background:var(--chip-on-bg);color:var(--chip-on-ink);border:1px solid rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 16px rgba(126,232,199,.45)}
+.ocard{position:relative;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-radius:20px;cursor:pointer;background:var(--chip-off-bg);border:1px solid var(--chip-off-bd)}
+.ocard input{position:absolute;opacity:0;width:1px;height:1px}
+.ocard.on{background:var(--ok-tint);border-color:transparent;box-shadow:var(--sel-ring)}
+.cat{position:relative;display:flex;flex-direction:column;gap:6px;padding:10px 10px 14px;border-radius:22px;cursor:pointer;background:var(--chip-off-bg);border:1px solid var(--chip-off-bd);box-shadow:0 8px 20px rgba(0,0,0,.06)}
+.cat input{position:absolute;opacity:0;width:1px;height:1px}
+.cat .cimg{height:130px;border-radius:16px;overflow:hidden;background:var(--img-bg)}
+.cat .cimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s var(--ease)}
+.cat:hover .cimg img{transform:scale(1.06)}
+.cat.on{background:var(--ok-tint);border-color:transparent;box-shadow:var(--sel-ring)}
+.cat .tick{position:absolute;top:18px;left:18px;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#b8f2de,#7ee8c7);color:#01302d;box-shadow:0 0 14px rgba(126,232,199,.8);opacity:0;transform:scale(.6);transition:opacity .4s var(--ease),transform .5s var(--ease)}
+.cat.on .tick{opacity:1;transform:none}
+.sum{margin:14px 0 0;display:flex;gap:8px;align-items:center;padding:10px 14px;border-radius:16px;font-size:15px;line-height:24px;font-weight:700}
+.sum.ok{background:var(--ok-tint);color:var(--accent-ink);box-shadow:0 0 0 1px var(--tint-bd),0 0 16px rgba(126,232,199,.25)}
+.sum.warn{background:var(--warn-bg);color:var(--warn-ink);box-shadow:inset 0 0 0 1px var(--warn-bd)}
+.alert{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn-ink);font-size:15px;font-weight:700}
+.sw{position:relative;width:46px;height:26px;flex-shrink:0;border-radius:999px}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .45s var(--ease)}
+.sw-on{background:linear-gradient(180deg,#00a08f,#00706a);box-shadow:0 0 12px rgba(126,232,199,.55)}
+.sw-on::after{transform:translateX(-20px)}
+.sw-off{background:rgba(242,251,248,.12);box-shadow:inset 0 0 0 1px var(--line)}
+.step{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;padding:4px;border:0;background:transparent;color:#fff;cursor:pointer;font-family:inherit}
+.step[disabled]{cursor:default}
+.drop{position:relative;cursor:pointer}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.g-btn,.opt,.ocard,.cat,.step span,.sw,.lift{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .4s var(--ease) !important}
+.g-btn:hover,.cat:hover,.lift:hover{transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes ring{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.anim-up{animation:fadeUp .8s var(--ease) both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}
+.fade{animation:fadeIn .5s var(--ease) both}
+.pop{animation:pop .55s var(--ease) both}
+.ring-in{animation:ring .8s var(--ease) both}
+.floaty{animation:floaty 6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+</style>
+</helmet>
+<div class="page">
+
+<!-- Hero band with nav + stepper -->
+<header class="dk" style="position: relative; overflow: hidden; isolation: isolate; background: var(--hero-bg); color: #ffffff; padding: 16px 24px 70px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 55% 90% at 78% 10%, var(--hero-glow) 0%, rgba(0,0,0,0) 100%), radial-gradient(ellipse 40% 80% at 15% 90%, rgba(0,92,88,0.45) 0%, rgba(0,0,0,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -180px; left: -200px; width: 560px; height: 560px; opacity: .5; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -60px; right: -240px; width: 480px; height: 480px; transform: rotate(180deg); opacity: .35; pointer-events: none">
+<div class="glass-d" style="max-width: 1280px; margin: 0 auto; border-radius: 26px; padding: 8px 12px 8px 16px; display: flex; align-items: center; gap: 14px">
+<a href="{{homeHref}}" aria-label="يوزرسيف — الرئيسية"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="display: block; width: 56px; height: 56px; border-radius: 16px"></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column">
+<span style="font-size: 20px; line-height: 30px; font-weight: 800">ابدأ <span class="neon-t">طلبك</span></span>
+<span style="font-size: 13px; color: rgba(255,255,255,0.75)">بياناتك محفوظة وإنت بتنقل بين الخطوات</span>
+</div>
+<span style="display: inline-flex; align-items: center; padding: 3px 14px; border-radius: 999px; background: rgba(126,232,199,0.12); border: 1px solid rgba(126,232,199,0.5); color: #b8f2de; font-size: 12px; font-weight: 700">وضع تجريبي — الطلب مش بيتبعت فعليًا</span>
+<a class="g-btn g-ghost" href="{{homeHref}}" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg>رجوع للموقع</a>
+</div>
+
+<sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+<nav aria-label="خطوات الطلب" style="max-width: 900px; margin: 30px auto 0; position: relative">
+<span aria-hidden="true" style="position: absolute; top: 22px; right: 10%; left: 10%; height: 2px; border-radius: 2px; background: rgba(255,255,255,0.14)"></span>
+<span aria-hidden="true" style="{{railFill}}"></span>
+<ol style="list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr))">
+<sc-for list="{{stepper}}" as="s" hint-placeholder-count="5">
+<li><button class="step" type="button" onClick="{{s.go}}" disabled="{{s.locked}}" aria-current="{{s.current}}" aria-label="{{s.aria}}" style="width: 100%">
+<span aria-hidden="true" style="{{s.dot}}">{{s.mark}}</span>
+<span style="{{s.text}}">{{s.label}}</span>
+</button></li>
+</sc-for>
+</ol>
+</nav>
+</sc-if>
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<div style="height: 40px"></div>
+</sc-if>
+<div aria-hidden="true" style="position: absolute; left: -6%; right: -6%; bottom: -1px; height: 44px; background: var(--arc); border-radius: 50% 50% 0 0 / 100% 100% 0 0; box-shadow: 0 -1px 0 rgba(126,232,199,0.6), 0 -12px 28px rgba(126,232,199,0.22)"></div>
+</header>
+
+<main style="position: relative; isolation: isolate; max-width: 1280px; margin: 0 auto; padding: 8px 24px 64px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<img src="{{motif}}" alt="" aria-hidden="true" style="{{motifStyle}}">
+
+<sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+<form class="card anim-up" novalidate="{{yes}}" aria-labelledby="step-h" onSubmit="{{onSubmitForm}}" style="flex: 999 1 560px; min-width: 0; border-radius: 30px; padding: 30px 32px; display: flex; flex-direction: column; gap: 26px">
+<div style="display: flex; align-items: center; gap: 14px">
+<span class="tile" aria-hidden="true" style="width: 52px; height: 52px; border-radius: 16px"><svg class="ic" viewBox="0 0 24 24" style="width: 26px; height: 26px"><path d="{{stepIcon}}"></path></svg></span>
+<div style="display: flex; flex-direction: column">
+<span class="muted" style="font-size: 13px; font-weight: 700">الخطوة {{stepNum}} من 5</span>
+<h1 id="step-h" class="h1" tabindex="-1" style="font-size: 28px; line-height: 40px">{{stepTitle}}</h1>
+</div>
+</div>
+<p class="muted" style="margin: -14px 0 0; font-size: 15px; line-height: 26px">{{stepHint}}</p>
+
+<sc-if value="{{stepErrors}}" hint-placeholder-val="{{false}}">
+<div class="alert pop" role="alert">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>
+<span>{{stepErrorText}}</span>
+</div>
+</sc-if>
+
+<!-- STEP 1 -->
+<sc-if value="{{is1}}" hint-placeholder-val="{{true}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 26px">
+<fieldset id="f-ctype" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 14px">الطلب ده لمين؟</legend>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px">
+<sc-for list="{{ctypes}}" as="t" hint-placeholder-count="3">
+<label class="{{t.cls}}"><input type="radio" name="ctype" checked="{{t.checked}}" onChange="{{t.pick}}">
+<span class="tile" aria-hidden="true" style="width: 46px; height: 46px"><svg class="ic" viewBox="0 0 24 24"><path d="{{t.icon}}"></path></svg></span>
+<span style="display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 800; color: var(--ink-strong)">{{t.label}}</span><span class="muted" style="font-size: 13px; line-height: 20px">{{t.desc}}</span></span></label>
+</sc-for>
+</div>
+<sc-if value="{{e.ctype}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 8px 0 0">{{e.ctype}}</p></sc-if>
+</fieldset>
+<sc-if value="{{isOrg}}" hint-placeholder-val="{{false}}">
+<div class="tint pop" style="padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start">
+<span class="tile" aria-hidden="true" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12l2 2 4-4"></path></svg></span>
+<span style="font-size: 14px; line-height: 24px"><strong style="color: var(--ink-strong)">طلبات {{orgWord}} ليها مسار خاص:</strong> عرض سعر رسمي، موكاب أو عينة تعتمدها قبل الإنتاج، وتسليم مرة واحدة أو على دفعات، مع فاتورة لو محتاجها.</span>
+</div>
+</sc-if>
+<fieldset id="f-cat" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 14px">إنت عايز تطبع على إيه؟</legend>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="5">
+<label class="{{c.cls}}">
+<input type="radio" name="cat" value="{{c.id}}" checked="{{c.checked}}" onChange="{{c.pick}}">
+<span class="cimg"><img src="{{c.img}}" alt=""></span>
+<span class="tick" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke-width: 3"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="padding: 4px 6px 0; font-size: 16px; line-height: 26px; font-weight: 800; color: var(--ink-strong)">{{c.label}}</span>
+<span class="muted" style="padding: 0 6px; font-size: 13px; line-height: 20px">{{c.desc}}</span>
+</label>
+</sc-for>
+</div>
+</fieldset>
+<p class="tint" style="margin: 0; padding: 12px 16px; font-size: 14px; line-height: 24px">عاجبك شغل من <a href="{{galleryHref}}" style="font-weight: 700">أعمالنا</a>؟ اختار «استخدمه كمرجع» من هناك وهيتضاف لطلبك تلقائيًا.</p>
+</div>
+</sc-if>
+
+<!-- STEP 2 -->
+<sc-if value="{{is2}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 24px">
+
+<sc-if value="{{hasProds}}" hint-placeholder-val="{{true}}">
+<fieldset id="f-prod" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 12px">نوع المنتج</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{prods}}" as="p" hint-placeholder-count="4">
+<label class="{{p.cls}}"><input type="radio" name="prod" checked="{{p.checked}}" onChange="{{p.pick}}">{{p.label}}</label>
+</sc-for>
+</div>
+<sc-if value="{{e.prod}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 8px 0 0">{{e.prod}}</p></sc-if>
+</fieldset>
+</sc-if>
+
+<sc-if value="{{isWear}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-color">اللون</label>
+<select class="fld" id="f-color" value="{{v.color}}" onChange="{{on.color}}" aria-invalid="{{inv.color}}" aria-describedby="h-color">
+<option value="">اختار اللون</option><option value="white">أبيض</option><option value="black">أسود</option><option value="other">لون تاني (اكتبه في الملاحظات)</option>
+</select>
+<span id="h-color" class="hint">الألوان المتاحة بتتأكد مع يوزرسيف.</span>
+<sc-if value="{{e.color}}" hint-placeholder-val="{{false}}"><span class="err">{{e.color}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-qty">الكمية الكلية</label>
+<input class="fld" id="f-qty" type="text" inputmode="numeric" autocomplete="off" value="{{v.qty}}" onChange="{{on.qty}}" aria-invalid="{{inv.qty}}" aria-describedby="h-qty">
+<span id="h-qty" class="hint">عدد القطع كلها، بكل المقاسات.</span>
+<sc-if value="{{e.qty}}" hint-placeholder-val="{{false}}"><span class="err">{{e.qty}}</span></sc-if>
+</div>
+</div>
+<sc-if value="{{hasSizes}}" hint-placeholder-val="{{true}}">
+<fieldset id="f-sizes" tabindex="-1" aria-describedby="h-sizes" class="tint" style="margin: 0; padding: 18px 20px 20px; border: 0">
+<legend class="lbl" style="padding: 0; float: right; width: 100%; margin-bottom: 14px">توزيع المقاسات</legend>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; clear: both">
+<sc-for list="{{sizeFields}}" as="z" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 6px; align-items: stretch">
+<label for="{{z.id}}" style="align-self: center; display: flex; align-items: center; justify-content: center; min-width: 46px; height: 30px; padding: 0 10px; border-radius: 10px; background: var(--chip-on-bg); color: #fff; font-size: 14px; font-weight: 800; direction: ltr; box-shadow: 0 0 10px rgba(126,232,199,0.35)">{{z.k}}</label>
+<input class="fld" id="{{z.id}}" type="text" inputmode="numeric" value="{{z.v}}" onChange="{{z.on}}" style="text-align: center; font-size: 20px; font-weight: 800">
+</div>
+</sc-for>
+</div>
+<p id="h-sizes" aria-live="polite" class="{{sumCls}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="{{sumIcon}}"></path></svg>
+<span>{{sumText}}</span></p>
+</fieldset>
+</sc-if>
+<fieldset id="f-place" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 12px">مكان الطباعة <span class="muted" style="font-weight: 500">(تقدر تختار أكتر من مكان)</span></legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{placesF}}" as="p" hint-placeholder-count="3">
+<label class="{{p.cls}}"><input type="checkbox" checked="{{p.checked}}" onChange="{{p.toggle}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2"><path d="{{p.icon}}"></path></svg>{{p.label}}</label>
+</sc-for>
+</div>
+<sc-if value="{{e.place}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 8px 0 0">{{e.place}}</p></sc-if>
+</fieldset>
+</div>
+</sc-if>
+
+<sc-if value="{{isMug}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-qty">الكمية</label>
+<input class="fld" id="f-qty" type="text" inputmode="numeric" value="{{v.qty}}" onChange="{{on.qty}}" aria-invalid="{{inv.qty}}">
+<sc-if value="{{e.qty}}" hint-placeholder-val="{{false}}"><span class="err">{{e.qty}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-text">نص التخصيص <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-text" type="text" value="{{v.text}}" onChange="{{on.text}}" placeholder="مثلًا: اسم أو جملة قصيرة">
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isPhone}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-model">موديل الموبايل</label>
+<input class="fld" id="f-model" type="text" autocomplete="off" value="{{v.model}}" onChange="{{on.model}}" placeholder="مثلًا: iPhone 13 أو Samsung A54" aria-invalid="{{inv.model}}" aria-describedby="h-model">
+<span id="h-model" class="hint">اكتب الموديل بالظبط عشان الكفر يركب صح. الموديلات المتاحة بتتأكد بعد المراجعة.</span>
+<sc-if value="{{e.model}}" hint-placeholder-val="{{false}}"><span class="err">{{e.model}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-qty">الكمية</label>
+<input class="fld" id="f-qty" type="text" inputmode="numeric" value="{{v.qty}}" onChange="{{on.qty}}" aria-invalid="{{inv.qty}}">
+<sc-if value="{{e.qty}}" hint-placeholder-val="{{false}}"><span class="err">{{e.qty}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; grid-column: 1 / -1">
+<label class="lbl" for="f-text">نص أو اسم على الكفر <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-text" type="text" value="{{v.text}}" onChange="{{on.text}}">
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isSticker}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<fieldset id="f-dims" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 12px">المقاس</legend>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="f-w" style="font-size: 14px; font-weight: 700">العرض</label><input class="fld" id="f-w" type="text" inputmode="decimal" value="{{v.w}}" onChange="{{on.w}}" aria-invalid="{{inv.dims}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="f-h" style="font-size: 14px; font-weight: 700">الطول</label><input class="fld" id="f-h" type="text" inputmode="decimal" value="{{v.h}}" onChange="{{on.h}}" aria-invalid="{{inv.dims}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="f-unit" style="font-size: 14px; font-weight: 700">الوحدة</label>
+<select class="fld" id="f-unit" value="{{v.unit}}" onChange="{{on.unit}}" aria-invalid="{{inv.unit}}"><option value="">اختار</option><option value="cm">سم</option><option value="mm">مم</option></select></div>
+</div>
+<sc-if value="{{e.dims}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 8px 0 0">{{e.dims}}</p></sc-if>
+</fieldset>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-shape">الشكل</label>
+<select class="fld" id="f-shape" value="{{v.shape}}" onChange="{{on.shape}}" aria-invalid="{{inv.shape}}"><option value="">اختار الشكل</option><option value="circle">دائري</option><option value="square">مربع</option><option value="rect">مستطيل</option><option value="cut">مقصوص على شكل التصميم</option></select>
+<sc-if value="{{e.shape}}" hint-placeholder-val="{{false}}"><span class="err">{{e.shape}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-qty">الكمية</label>
+<input class="fld" id="f-qty" type="text" inputmode="numeric" value="{{v.qty}}" onChange="{{on.qty}}" aria-invalid="{{inv.qty}}">
+<sc-if value="{{e.qty}}" hint-placeholder-val="{{false}}"><span class="err">{{e.qty}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; grid-column: 1 / -1">
+<label class="lbl" for="f-use">هتستخدمه في إيه؟ <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-use" type="text" value="{{v.use}}" onChange="{{on.use}}" placeholder="مثلًا: تغليف منتجات، لابتوب، عربية">
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isCustom}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-desc">احكيلنا فكرتك</label>
+<textarea class="fld" id="f-desc" rows="5" value="{{v.desc}}" onChange="{{on.desc}}" aria-invalid="{{inv.desc}}" aria-describedby="h-desc" style="resize: vertical"></textarea>
+<span id="h-desc" class="hint">المنتج، الكمية التقريبية، والمناسبة. كل ما تفاصيلك أوضح، ردنا أسرع.</span>
+<sc-if value="{{e.desc}}" hint-placeholder-val="{{false}}"><span class="err">{{e.desc}}</span></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{bigQtyHint}}" hint-placeholder-val="{{false}}">
+<div class="tint fade" style="padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 14px; line-height: 24px">
+<span style="flex: 1 1 260px">كمية كبيرة؟ لو الطلب ده لشركة أو محل أو فريق، اختار ده عشان تاخد مسار الطلبات الكبيرة (عرض سعر رسمي وعينة قبل الإنتاج).</span>
+<button class="g-btn g-soft" type="button" onClick="{{switchToBiz}}" style="min-height: 40px; padding: 4px 16px; border-radius: 999px; font-size: 13px">الطلب لشركة أو محل</button>
+</div>
+</sc-if>
+<sc-if value="{{isOrg}}" hint-placeholder-val="{{false}}">
+<fieldset id="f-bulk" class="tint" style="margin: 0; padding: 18px 20px 20px; border: 0">
+<legend class="lbl" style="padding: 0; float: right; width: 100%; margin-bottom: 4px">خيارات الطلبات الكبيرة</legend>
+<p class="hint" style="clear: both; margin: 0 0 14px">اختار اللي يناسبك، وتقدر تغيّره بعدين مع فريق يوزرسيف.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+<sc-for list="{{bulkOpts}}" as="b" hint-placeholder-count="3">
+<label class="{{b.cls}}"><input type="checkbox" checked="{{b.checked}}" onChange="{{b.toggle}}">
+<span aria-hidden="true" class="{{b.sw}}" style="margin-top: 2px"></span>
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 800; color: var(--ink-strong)">{{b.label}}</span><span class="muted" style="font-size: 13px; line-height: 20px">{{b.desc}}</span></span></label>
+</sc-for>
+</div>
+<sc-if value="{{v.batches}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
+<label class="lbl" for="f-batch">إزاي تحب تقسّم الدفعات؟</label>
+<textarea class="fld" id="f-batch" rows="2" value="{{v.batchNotes}}" onChange="{{on.batchNotes}}" aria-invalid="{{inv.batch}}" placeholder="مثلًا: 100 قطعة قبل يوم 10، والباقي بعدها بأسبوعين" style="resize: vertical"></textarea>
+<sc-if value="{{e.batch}}" hint-placeholder-val="{{false}}"><span class="err">{{e.batch}}</span></sc-if>
+</div>
+</sc-if>
+</fieldset>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-notes">ملاحظات إضافية <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<textarea class="fld" id="f-notes" rows="3" value="{{v.notes}}" onChange="{{on.notes}}" style="resize: vertical"></textarea>
+</div>
+</div>
+</sc-if>
+
+<!-- STEP 3 -->
+<sc-if value="{{is3}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 18px">
+<label id="f-files" class="drop" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 34px 24px; border-radius: 24px; border: 2px dashed var(--field-bd); background: var(--tint); text-align: center">
+<input type="file" multiple="{{yes}}" accept="{{acceptExt}}" onChange="{{onFiles}}" aria-describedby="h-files">
+<span class="tile floaty" aria-hidden="true" style="width: 64px; height: 64px; border-radius: 999px; box-shadow: 0 0 0 1px var(--tint-bd), 0 0 22px rgba(126,232,199,0.45)"><svg class="ic" viewBox="0 0 24 24" style="width: 30px; height: 30px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg></span>
+<span style="font-size: 18px; font-weight: 800; color: var(--ink-strong)">اختار ملفات التصميم أو الصور المرجعية</span>
+<span id="h-files" class="hint" style="font-size: 14px">{{extText}} — حتى 20 ميجا للملف [الحد بانتظار التأكيد]</span>
+</label>
+<sc-if value="{{v.perPiece}}" hint-placeholder-val="{{false}}">
+<div class="alert fade" style="font-weight: 600">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h2M14 13h2M8 17h2M14 17h2"></path></svg>
+<span style="flex-grow: 1">إنت اخترت أسماء أو أرقام مختلفة على كل قطعة: ارفع شيت (Excel أو CSV أو PDF) فيه الاسم أو الرقم والمقاس لكل قطعة. <span style="{{sheetState}}">{{sheetText}}</span></span>
+</div>
+</sc-if>
+<button class="g-btn g-soft" type="button" onClick="{{addDemoFile}}" style="align-self: flex-start; min-height: 42px; padding: 6px 18px; border-radius: 999px; font-size: 14px">أضف ملف تجريبي</button>
+<sc-if value="{{v.perPiece}}" hint-placeholder-val="{{false}}"><button class="g-btn g-soft" type="button" onClick="{{addDemoSheet}}" style="align-self: flex-start; min-height: 42px; padding: 6px 18px; border-radius: 999px; font-size: 14px">أضف شيت أسماء تجريبي</button></sc-if>
+<sc-if value="{{hasFiles}}" hint-placeholder-val="{{false}}">
+<ul aria-label="الملفات المرفوعة" aria-live="polite" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{files}}" as="f" hint-placeholder-count="2">
+<li class="card pop" style="display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 20px">
+<sc-if value="{{f.thumb}}" hint-placeholder-val="{{false}}"><img src="{{f.thumb}}" alt="" style="width: 56px; height: 56px; border-radius: 14px; object-fit: cover; background: var(--img-bg)"></sc-if>
+<sc-if value="{{f.noThumb}}" hint-placeholder-val="{{true}}"><span class="tile" aria-hidden="true" style="width: 56px; height: 56px"><svg class="ic" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8"></path></svg></span></sc-if>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: ltr; text-align: right; color: var(--ink-strong)">{{f.name}}</span>
+<span style="{{f.statusStyle}}">{{f.statusText}}</span>
+<sc-if value="{{f.uploading}}" hint-placeholder-val="{{false}}"><div role="progressbar" aria-label="{{f.progLabel}}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{f.progress}}" style="height: 6px; border-radius: 999px; background: var(--line); overflow: hidden"><div style="{{f.barStyle}}"></div></div></sc-if>
+</div>
+<sc-if value="{{f.canRetry}}" hint-placeholder-val="{{false}}"><button class="g-btn g-soft" type="button" onClick="{{f.retry}}" style="min-height: 40px; padding: 4px 14px; border-radius: 999px; font-size: 13px">إعادة المحاولة</button></sc-if>
+<button class="g-btn g-soft" type="button" onClick="{{f.remove}}" aria-label="{{f.removeLabel}}" style="width: 40px; height: 40px; border-radius: 999px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+</li>
+</sc-for>
+</ul>
+</sc-if>
+<p class="tint" style="margin: 0; padding: 12px 16px; font-size: 14px; line-height: 24px">رفع الملف بنجاح مش معناه إنه جاهز للطباعة. يوزرسيف هيراجع الدقة والمقاس ويبلغك لو محتاج تعديل.</p>
+<label id="f-help" class="{{helpCls}}">
+<input type="checkbox" checked="{{v.help}}" onChange="{{on.help}}">
+<span aria-hidden="true" class="{{helpSw}}" style="margin-top: 2px"></span>
+<span style="display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 800; color: var(--ink-strong)">محتاج مساعدة في التصميم</span><span class="muted" style="font-size: 13px; line-height: 20px">مفيش تصميم جاهز؟ اوصف فكرتك تحت وإحنا نساعدك.</span></span>
+</label>
+<sc-if value="{{e.art}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 0">{{e.art}}</p></sc-if>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-artnotes">ملاحظات عن التصميم <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<textarea class="fld" id="f-artnotes" rows="3" value="{{v.artNotes}}" onChange="{{on.artNotes}}" placeholder="الألوان، الخط، المقاس على المنتج…" style="resize: vertical"></textarea>
+</div>
+</div>
+</sc-if>
+
+<!-- STEP 4 -->
+<sc-if value="{{is4}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 24px">
+<sc-if value="{{isOrg}}" hint-placeholder-val="{{false}}">
+<fieldset class="tint" style="margin: 0; padding: 18px 20px 20px; border: 0">
+<legend class="lbl" style="padding: 0; float: right; width: 100%; margin-bottom: 14px">بيانات {{orgWordOne}}</legend>
+<div style="clear: both; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-org">{{orgLabel}}</label>
+<input class="fld" id="f-org" type="text" autocomplete="organization" value="{{v.org}}" onChange="{{on.org}}" aria-invalid="{{inv.org}}">
+<sc-if value="{{e.org}}" hint-placeholder-val="{{false}}"><span class="err">{{e.org}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-role">صفتك <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-role" type="text" autocomplete="organization-title" value="{{v.role}}" onChange="{{on.role}}" placeholder="{{rolePh}}">
+</div>
+<label class="{{invCls}}" style="grid-column: 1 / -1">
+<input type="checkbox" checked="{{v.invoice}}" onChange="{{on.invoice}}">
+<span aria-hidden="true" class="{{invSw}}" style="margin-top: 2px"></span>
+<span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 800; color: var(--ink-strong)">محتاج فاتورة باسم {{orgWordOne}}</span><span class="muted" style="font-size: 13px; line-height: 20px">بيانات الفاتورة بتتأكد معاك قبل إصدارها. [نوع الفاتورة بانتظار تأكيد يوزرسيف]</span></span>
+</label>
+<sc-if value="{{v.invoice}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 8px; grid-column: 1 / -1">
+<label class="lbl" for="f-tax">رقم البطاقة الضريبية أو السجل التجاري <span class="muted" style="font-weight: 500">(اختياري دلوقتي)</span></label>
+<input class="fld" id="f-tax" type="text" inputmode="numeric" dir="ltr" value="{{v.taxId}}" onChange="{{on.taxId}}" style="text-align: right">
+</div>
+</sc-if>
+</div>
+</fieldset>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-name">{{nameLabel}}</label>
+<input class="fld" id="f-name" type="text" autocomplete="name" value="{{v.name}}" onChange="{{on.name}}" aria-invalid="{{inv.name}}">
+<sc-if value="{{e.name}}" hint-placeholder-val="{{false}}"><span class="err">{{e.name}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-phone">رقم الموبايل</label>
+<input class="fld" id="f-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" value="{{v.phone}}" onChange="{{on.phone}}" placeholder="01xxxxxxxxx" aria-invalid="{{inv.phone}}" aria-describedby="h-phone" style="text-align: right">
+<span id="h-phone" class="hint">هنستخدمه للتواصل معاك وللتأكد من هويتك وإنت بتتابع الطلب.</span>
+<sc-if value="{{e.phone}}" hint-placeholder-val="{{false}}"><span class="err">{{e.phone}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-email">الإيميل <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-email" type="email" inputmode="email" autocomplete="email" dir="ltr" value="{{v.email}}" onChange="{{on.email}}" aria-invalid="{{inv.email}}" style="text-align: right">
+<sc-if value="{{e.email}}" hint-placeholder-val="{{false}}"><span class="err">{{e.email}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label class="lbl" for="f-date">التاريخ اللي تحب تستلم فيه <span class="muted" style="font-weight: 500">(اختياري)</span></label>
+<input class="fld" id="f-date" type="date" min="{{today}}" value="{{v.date}}" onChange="{{on.date}}" aria-invalid="{{inv.date}}" aria-describedby="h-date">
+<span id="h-date" class="hint">ده تاريخ مرغوب، مش موعد مؤكد. الموعد بيتحدد بعد المراجعة.</span>
+<sc-if value="{{e.date}}" hint-placeholder-val="{{false}}"><span class="err">{{e.date}}</span></sc-if>
+</div>
+</div>
+<fieldset id="f-receipt" tabindex="-1" style="margin: 0; padding: 0; border: 0">
+<legend class="lbl" style="padding: 0; margin-bottom: 12px">طريقة الاستلام</legend>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+<sc-for list="{{receipts}}" as="r" hint-placeholder-count="2">
+<label class="{{r.cls}}"><input type="radio" name="receipt" checked="{{r.checked}}" onChange="{{r.pick}}">
+<span class="tile" aria-hidden="true" style="width: 44px; height: 44px"><svg class="ic" viewBox="0 0 24 24"><path d="{{r.icon}}"></path></svg></span>
+<span style="display: flex; flex-direction: column"><span style="font-size: 16px; font-weight: 800; color: var(--ink-strong)">{{r.label}}</span><span class="muted" style="font-size: 13px; line-height: 20px">{{r.desc}}</span></span></label>
+</sc-for>
+</div>
+<sc-if value="{{e.receipt}}" hint-placeholder-val="{{false}}"><p class="err" style="margin: 8px 0 0">{{e.receipt}}</p></sc-if>
+</fieldset>
+</div>
+</sc-if>
+
+<!-- STEP 5 -->
+<sc-if value="{{is5}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{review}}" as="r" hint-placeholder-count="4">
+<section class="tint" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 style="margin: 0; display: flex; align-items: center; gap: 10px; font-size: 18px; line-height: 28px; font-weight: 800; color: var(--ink-strong)"><span aria-hidden="true" style="{{r.dot}}">{{r.n}}</span>{{r.title}}</h2>
+<button class="g-btn g-soft" type="button" onClick="{{r.edit}}" aria-label="{{r.editLabel}}" style="min-height: 40px; padding: 4px 16px; border-radius: 999px; font-size: 14px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4"></path></svg>تعديل</button>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: minmax(120px, auto) 1fr; gap: 8px 16px; font-size: 15px; line-height: 24px">
+<sc-for list="{{r.rows}}" as="x" hint-placeholder-count="3">
+<dt class="muted" style="font-weight: 700">{{x.k}}</dt><dd style="{{x.style}}">{{x.v}}</dd>
+</sc-for>
+</dl>
+</section>
+</sc-for>
+<p class="tint" style="margin: 0; padding: 12px 16px; font-size: 14px; line-height: 24px">بإرسال الطلب، يوزرسيف هيراجعه ويرد عليك بالقرار والسعر والموعد. الإرسال مش معناه إن الطلب اتقبل أو اتسعّر.</p>
+<sc-if value="{{submitError}}" hint-placeholder-val="{{false}}">
+<div class="alert pop" role="alert">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>
+<span style="flex-grow: 1">ما قدرناش نبعت الطلب: الاتصال اتقطع. بياناتك لسه محفوظة، جرّب تاني.</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding-top: 20px; border-top: 1px solid var(--line)">
+<sc-if value="{{canBack}}" hint-placeholder-val="{{false}}">
+<button class="g-btn g-soft" type="button" onClick="{{back}}" style="min-height: 50px; padding: 10px 24px; border-radius: 999px; font-size: 15px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg>السابق</button>
+</sc-if>
+<span style="flex-grow: 1"></span>
+<sc-if value="{{notReview}}" hint-placeholder-val="{{true}}">
+<button class="g-btn g-cta" type="button" onClick="{{next}}" style="min-height: 52px; padding: 10px 34px; border-radius: 999px; font-size: 16px; font-weight: 800">{{nextLabel}}
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></button>
+</sc-if>
+<sc-if value="{{is5}}" hint-placeholder-val="{{false}}">
+<button class="g-btn g-cta" type="submit" disabled="{{submitting}}" aria-busy="{{submittingStr}}" style="min-height: 56px; padding: 12px 40px; border-radius: 999px; font-size: 17px; font-weight: 800">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"></path></svg>{{submitLabel}}</button>
+</sc-if>
+</div>
+</form>
+
+<aside aria-labelledby="ra-h" class="dk anim-up d1" style="flex: 1 1 320px; min-width: 0; position: sticky; top: 16px; overflow: hidden; isolation: isolate; background: var(--panel-bg); color: #ffffff; border-radius: 30px; padding: 24px; display: flex; flex-direction: column; gap: 16px; border: 1px solid rgba(126,232,199,0.45); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 0 30px rgba(126,232,199,0.2), 0 20px 44px rgba(0,0,0,0.2)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 90% 50% at 70% 0%, var(--hero-glow) 0%, rgba(0,0,0,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -150px; right: -160px; width: 380px; height: 380px; opacity: .35; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 16px">
+<span class="ring-in" aria-hidden="true" style="{{rdRing}}"><span style="width: 66px; height: 66px; border-radius: 999px; background: var(--panel-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1"><strong style="font-size: 20px">{{rdDone}}</strong><span style="font-size: 11px; color: rgba(255,255,255,0.7)">من {{rdTotal}}</span></span></span>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="ra-h" style="margin: 0; font-size: 20px; line-height: 30px; font-weight: 800">جاهزية <span class="neon-t">الطلب</span></h2>
+<p aria-live="polite" style="margin: 0; font-size: 14px; line-height: 22px; color: rgba(255,255,255,0.82)">{{rdSummary}}</p>
+</div>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="6">
+<li class="glass-d" style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 18px">
+<span aria-hidden="true" style="{{k.wrap}}"><svg class="ic" viewBox="0 0 24 24" style="width: 17px; height: 17px; stroke-width: 2"><path d="{{k.icon}}"></path></svg></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="font-size: 14px; line-height: 22px; font-weight: 700">{{k.label}} <span style="{{k.tagStyle}}">{{k.tag}}</span></span>
+<span style="font-size: 12px; line-height: 18px; color: rgba(255,255,255,0.72); overflow: hidden; text-overflow: ellipsis">{{k.msg}}</span>
+</div>
+<sc-if value="{{k.fixable}}" hint-placeholder-val="{{false}}">
+<button class="g-btn" type="button" onClick="{{k.fix}}" aria-label="{{k.fixLabel}}" style="flex-shrink: 0; min-height: 34px; padding: 2px 12px; border-radius: 999px; border: 1px solid #d6ae62; background: rgba(214,174,98,0.14); color: #f0d39a; font-size: 12px">صلّحها</button>
+</sc-if>
+</li>
+</sc-for>
+</ul>
+<p style="margin: 0; font-size: 12px; line-height: 20px; color: rgba(255,255,255,0.7)">المساعد بيتأكد إن البيانات كاملة ومتسقة بس. مدى صلاحية التصميم للطباعة، الألوان، السعر والتوفر بيتأكدوا بعد مراجعة يوزرسيف.</p>
+</aside>
+</sc-if>
+
+<!-- Confirmation -->
+<sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+<section class="card pop" aria-labelledby="ok-h" style="flex: 1 1 100%; max-width: 780px; margin: 0 auto; border-radius: 32px; padding: 40px; display: flex; flex-direction: column; gap: 24px; align-items: stretch">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<span class="ring-in" aria-hidden="true" style="width: 92px; height: 92px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; box-shadow: 0 0 0 8px rgba(126,232,199,0.2), 0 0 40px rgba(126,232,199,0.7)"><svg class="ic" viewBox="0 0 24 24" style="width: 46px; height: 46px; stroke-width: 2.6"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<h1 id="ok-h" class="h1" tabindex="-1" style="font-size: 38px; line-height: 54px">طلبك <span style="color: var(--accent-ink)">وصلنا</span></h1>
+<p class="muted" style="margin: 0; font-size: 16px; line-height: 28px">احفظ رقم الطلب. هتحتاجه مع رقم موبايلك عشان تتابع حالته.</p>
+</div>
+<div class="dk" style="position: relative; overflow: hidden; isolation: isolate; padding: 24px; border-radius: 24px; background: var(--panel-bg); color: #ffffff; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid rgba(126,232,199,0.5); box-shadow: 0 0 28px rgba(126,232,199,0.25)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 70% 120% at 80% 0%, var(--hero-glow) 0%, rgba(0,0,0,0) 100%)"></div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 13px; color: rgba(255,255,255,0.75)">رقم الطلب</span>
+<span class="neon-t" style="font-size: 34px; line-height: 46px; font-weight: 800; letter-spacing: 2px; direction: ltr; unicode-bidi: isolate">{{ref}}</span>
+</div>
+<span style="padding: 6px 16px; border-radius: 999px; background: rgba(126,232,199,0.12); border: 1px solid rgba(126,232,199,0.5); color: #b8f2de; font-size: 14px; font-weight: 700">الحالة: تم الإرسال — في انتظار المراجعة</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; line-height: 32px; font-weight: 800; color: var(--ink-strong)">إيه اللي هيحصل بعد كده؟</h2>
+<sc-if value="{{doneOrg}}" hint-placeholder-val="{{false}}"><p class="muted" style="margin: 0; font-size: 14px; line-height: 24px">طلبك ماشي في مسار الطلبات الكبيرة ({{doneOrgWord}}).</p></sc-if>
+<ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
+<sc-for list="{{nextSteps}}" as="n" hint-placeholder-count="3">
+<li class="tint" style="padding: 14px; display: flex; flex-direction: column; gap: 8px"><span style="display: flex; align-items: center; gap: 8px"><span class="tile" aria-hidden="true" style="width: 40px; height: 40px"><svg class="ic" viewBox="0 0 24 24" style="width: 20px; height: 20px"><path d="{{n.icon}}"></path></svg></span><span class="muted" style="font-size: 12px; font-weight: 800">{{n.n}}</span></span><span style="font-size: 14px; line-height: 23px">{{n.text}}</span></li>
+</sc-for>
+</ol>
+<p class="muted" style="margin: 0; font-size: 13px; line-height: 22px">{{doneNote}}</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<a class="g-btn g-cta" href="{{trackHref}}" style="flex: 1 1 200px; min-height: 54px; border-radius: 999px; font-size: 16px; font-weight: 800">تتبّع طلبك</a>
+<a class="g-btn g-soft" href="https://wa.me/201116891025" style="flex: 1 1 200px; min-height: 54px; border-radius: 999px; font-size: 16px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>تواصل واتساب</a>
+</div>
+<button type="button" onClick="{{restart}}" style="align-self: center; min-height: 44px; padding: 8px 16px; border: 0; background: transparent; color: var(--accent-ink); font-size: 15px; font-weight: 700; text-decoration: underline; cursor: pointer">ابدأ طلب جديد</button>
+</section>
+</sc-if>
+</main>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"simulateFailure":{"editor":"boolean","default":false,"section":"Demo"},"$preview":{"width":1440,"height":1450}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    var PRESET = 'p1';
+    this.state = this.fresh();
+    if (PRESET) Object.assign(this.state, this.preset(PRESET));
+    this.timers = [];
+  }
+  preset(k) {
+    var biz = k.charAt(0) === 'b', n = parseInt(k.slice(1), 10);
+    var o = { ctype: biz ? 'biz' : 'person', cat: 'wear', step: Math.min(n, 6), maxStep: Math.min(n, 5) };
+    if (n >= 2) Object.assign(o, biz
+      ? { prod: 'tshirt', color: 'black', qty: '60', sizes: { S: '', M: '20', L: '25', XL: '15', XXL: '' }, places: ['front', 'back'], sample: true, perPiece: true, notes: 'يونيفورم لفريق الكافيه.' }
+      : { prod: 'tshirt', color: 'white', qty: '12', sizes: { S: '2', M: '4', L: '4', XL: '2', XXL: '' }, places: ['front', 'back'], notes: 'لوجو الفريق قدام والاسم ورا.' });
+    if (n >= 3) o.files = [{ id: 'f1', name: biz ? 'cafe-logo.png' : 'team-logo-final.png', size: 2516582, thumb: 'assets/55f58d72365f99c37ffedef3b41b2aa5.png', progress: 100, status: 'done', err: '', retryable: false }].concat(biz ? [{ id: 'f2', name: 'cafe-staff-names.xlsx', size: 48211, thumb: '', progress: 100, status: 'done', err: '', retryable: false }] : []);
+    if (n >= 4) Object.assign(o, biz
+      ? { org: 'كافيه النخيل (تجريبي)', role: 'صاحب المحل', invoice: true, name: 'أحمد فتحي', phone: '01012345678', receipt: 'pickup' }
+      : { name: 'محمد عبد الرحيم', phone: '01012345678', receipt: 'pickup' });
+    if (n >= 6) o.ref = biz ? 'YZ-W4N8TS' : 'YZ-8K3QF7';
+    return o;
+  }
+  fresh() {
+    return { step: 1, maxStep: 1, ctype: '', org: '', role: '', invoice: false, taxId: '', sample: false, perPiece: false, batches: false, batchNotes: '', cat: '', prod: '', color: '', qty: '', sizes: { S: '', M: '', L: '', XL: '', XXL: '' }, places: [], text: '', model: '', w: '', h: '', unit: '', shape: '', use: '', desc: '', notes: '', files: [], help: false, artNotes: '', name: '', phone: '', email: '', date: '', receipt: '', showErr: {}, submitting: false, submitError: false, failedOnce: false, ref: '' };
+  }
+  componentWillUnmount() { this.timers.forEach(function (t) { clearInterval(t); clearTimeout(t); }); }
+  digits(s) { return String(s || '').replace(/[٠-٩]/g, function (d) { return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)); }); }
+  num(s) { var n = parseInt(this.digits(s), 10); return isNaN(n) ? 0 : n; }
+  focusField(id) { this.timers.push(setTimeout(function () { var el = document.getElementById(id); if (el) { el.focus(); if (el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, 60)); }
+  startUpload(id) {
+    var self = this;
+    var fail = self.props.simulateFailure && !self.state.failedOnce;
+    var t = setInterval(function () {
+      var files = self.state.files.map(function (f) {
+        if (f.id !== id || f.status !== 'uploading') return f;
+        var p = Math.min(100, f.progress + 25);
+        if (fail && p >= 50) { clearInterval(t); return Object.assign({}, f, { status: 'failed', err: 'انقطع الاتصال أثناء الرفع', retryable: true, progress: p }); }
+        if (p >= 100) { clearInterval(t); return Object.assign({}, f, { status: 'done', progress: 100 }); }
+        return Object.assign({}, f, { progress: p });
+      });
+      self.setState({ files: files, failedOnce: self.state.failedOnce || fail });
+    }, 300);
+    this.timers.push(t);
+  }
+  addFile(name, size, thumb) {
+    var ext = (name.split('.').pop() || '').toLowerCase();
+    var ok = ['png', 'jpg', 'jpeg', 'pdf', 'ai', 'psd', 'svg'].concat(this.state.perPiece ? ['xlsx', 'xls', 'csv'] : []).indexOf(ext) >= 0;
+    var id = 'f' + Date.now() + Math.random().toString(36).slice(2, 6);
+    var f = { id: id, name: name, size: size, thumb: thumb || '', progress: 0, status: 'uploading', err: '', retryable: false };
+    if (!ok) { f.status = 'failed'; f.err = 'الصيغة دي مش مدعومة. استخدم ' + (this.state.perPiece ? 'PNG أو JPG أو PDF أو AI أو PSD أو SVG أو Excel أو CSV.' : 'PNG أو JPG أو PDF أو AI أو PSD أو SVG.'); }
+    else if (size > 20 * 1024 * 1024) { f.status = 'failed'; f.err = 'الملف أكبر من 20 ميجا. صغّره أو ابعته واتساب.'; }
+    this.setState({ files: this.state.files.concat([f]) });
+    if (f.status === 'uploading') this.startUpload(id);
+  }
+  buildChecks() {
+    var s = this.state, self = this, C = [];
+    function add(id, label, status, msg, step, field) { C.push({ id: id, label: label, status: status, msg: msg, step: step, field: field }); }
+    var isOrg = s.ctype === 'biz' || s.ctype === 'group';
+    add('ctype', 'نوع الطلب', s.ctype ? 'ok' : 'attn', s.ctype ? ({ person: 'فرد', biz: 'شركة أو محل', group: 'فريق أو جهة أو مناسبة' })[s.ctype] : 'اختار الطلب لمين: فرد، شركة أو محل، أو فريق وجهة', 1, 'f-ctype');
+    var catNames = { wear: 'ملابس وكابات', mug: 'مجات وهدايا', phone: 'كفرات موبايل', sticker: 'استيكرات وملصقات', custom: 'فكرة خاصة' };
+    add('cat', 'المنتج', s.cat ? 'ok' : 'attn', s.cat ? catNames[s.cat] : 'اختار المنتج اللي عايز تطبع عليه', 1, 'f-cat');
+    var qty = this.num(s.qty);
+    var qtyCheck = function () { add('qty', 'الكمية', qty > 0 ? 'ok' : 'attn', qty > 0 ? qty + ' قطعة' : 'اكتب الكمية المطلوبة (رقم أكبر من صفر)', 2, 'f-qty'); };
+    if (s.cat === 'wear') {
+      add('prod', 'نوع المنتج', s.prod ? 'ok' : 'attn', s.prod ? self.prodLabel(s.prod) : 'اختار تيشيرت، هودي، سويتشيرت أو كاب', 2, 'f-prod');
+      add('color', 'اللون', s.color ? 'ok' : 'attn', s.color ? ({ white: 'أبيض', black: 'أسود', other: 'لون تاني' })[s.color] : 'اختار لون المنتج', 2, 'f-color');
+      qtyCheck();
+      if (s.prod !== 'cap') {
+        var sum = this.sizeSum();
+        var st = qty > 0 && sum === qty ? 'ok' : 'attn';
+        var m = qty === 0 ? 'حدد الكمية الكلية الأول' : (sum === qty ? 'مجموع المقاسات مطابق للكمية' : (sum < qty ? 'مجموع المقاسات ' + sum + ' من ' + qty + ': ناقص ' + (qty - sum) : 'مجموع المقاسات ' + sum + ' أكتر من الكمية بـ ' + (sum - qty)));
+        add('sizes', 'توزيع المقاسات', st, m, 2, 'f-size-S');
+      }
+      add('place', 'مكان الطباعة', s.places.length ? 'ok' : 'attn', s.places.length ? s.places.map(function (p) { return self.placeLabel(p); }).join('، ') : 'اختار مكان واحد على الأقل', 2, 'f-place');
+    } else if (s.cat === 'mug') {
+      add('prod', 'نوع المنتج', s.prod ? 'ok' : 'attn', s.prod ? self.prodLabel(s.prod) : 'اختار مج أو مطرة', 2, 'f-prod');
+      qtyCheck();
+      add('text', 'نص التخصيص', s.text ? 'ok' : 'opt', s.text ? '«' + s.text + '»' : 'اختياري', 2, 'f-text');
+    } else if (s.cat === 'phone') {
+      add('model', 'موديل الموبايل', s.model.trim() ? 'ok' : 'attn', s.model.trim() ? s.model : 'اكتب موديل الموبايل بالظبط', 2, 'f-model');
+      qtyCheck();
+    } else if (s.cat === 'sticker') {
+      var w = parseFloat(this.digits(s.w)), h = parseFloat(this.digits(s.h));
+      var dOk = w > 0 && h > 0 && !!s.unit;
+      var dMsg = dOk ? w + ' × ' + h + ' ' + (s.unit === 'cm' ? 'سم' : 'مم') : (!(w > 0 && h > 0) ? 'اكتب العرض والطول' : 'اختار وحدة القياس (سم أو مم)');
+      add('dims', 'المقاس', dOk ? 'ok' : 'attn', dMsg, 2, !(w > 0) ? 'f-w' : (!(h > 0) ? 'f-h' : 'f-unit'));
+      add('shape', 'الشكل', s.shape ? 'ok' : 'attn', s.shape ? 'تم الاختيار' : 'اختار شكل الاستيكر', 2, 'f-shape');
+      qtyCheck();
+    } else if (s.cat === 'custom') {
+      add('desc', 'وصف الفكرة', s.desc.trim().length >= 10 ? 'ok' : 'attn', s.desc.trim().length >= 10 ? 'تم' : 'اكتب وصف لفكرتك (10 حروف على الأقل)', 2, 'f-desc');
+    }
+    if (isOrg && s.batches) add('batch', 'تقسيم الدفعات', s.batchNotes.trim().length >= 5 ? 'ok' : 'attn', s.batchNotes.trim().length >= 5 ? 'تم' : 'اكتب إزاي تحب تقسّم الدفعات', 2, 'f-batch');
+    var done = s.files.filter(function (f) { return f.status === 'done'; }).length;
+    var up = s.files.filter(function (f) { return f.status === 'uploading'; }).length;
+    var bad = s.files.filter(function (f) { return f.status === 'failed'; }).length;
+    var aSt = 'attn', aMsg = 'ارفع تصميمك أو اختار «محتاج مساعدة في التصميم»';
+    if (up) aMsg = 'استنى لحد ما رفع الملفات يخلص';
+    else if (bad) aMsg = 'فيه ملف ما اترفعش: أعد المحاولة أو امسحه';
+    else if (done || s.help) { aSt = 'ok'; aMsg = done ? done + ' ملف مرفوع' + (s.help ? ' + طلب مساعدة' : '') : 'هنساعدك في التصميم'; }
+    add('art', 'التصميم والملفات', aSt, aMsg, 3, 'f-files');
+    if (isOrg && s.perPiece) { var sheet = s.files.some(function (f) { return f.status === 'done' && /\.(xlsx|xls|csv|pdf)$/i.test(f.name); }); add('sheet', 'شيت الأسماء والأرقام', sheet ? 'ok' : 'attn', sheet ? 'الشيت اترفع' : 'ارفع شيت الأسماء أو الأرقام والمقاسات', 3, 'f-files'); }
+    if (isOrg) add('org', s.ctype === 'biz' ? 'اسم الشركة أو المحل' : 'اسم الجهة أو الفريق', s.org.trim().length >= 2 ? 'ok' : 'attn', s.org.trim().length >= 2 ? s.org : 'اكتب الاسم عشان عرض السعر والفاتورة', 4, 'f-org');
+    add('name', isOrg ? 'اسم المسؤول' : 'الاسم', s.name.trim().length >= 2 ? 'ok' : 'attn', s.name.trim().length >= 2 ? s.name : 'اكتب اسمك', 4, 'f-name');
+    var ph = this.digits(s.phone).replace(/[\s-]/g, '');
+    var phOk = /^01[0125][0-9]{8}$/.test(ph);
+    add('phone', 'رقم الموبايل', phOk ? 'ok' : 'attn', phOk ? ph : (ph ? 'الرقم لازم يكون 11 رقم ويبدأ بـ 010 أو 011 أو 012 أو 015' : 'اكتب رقم موبايلك'), 4, 'f-phone');
+    if (s.email) { var eOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email); add('email', 'الإيميل', eOk ? 'ok' : 'attn', eOk ? s.email : 'الإيميل مكتوب غلط، راجعه أو امسحه', 4, 'f-email'); }
+    add('receipt', 'طريقة الاستلام', s.receipt ? 'ok' : 'attn', s.receipt ? (s.receipt === 'pickup' ? 'استلام من المحل' : 'توصيل') : 'اختار استلام أو توصيل', 4, 'f-receipt');
+    var today = this.todayStr();
+    add('date', 'تاريخ الاستلام', s.date ? (s.date < today ? 'attn' : 'ok') : 'opt', s.date ? (s.date < today ? 'التاريخ ده عدّى، اختار تاريخ جاي' : s.date + ' (مرغوب، مش مؤكد)') : 'اختياري', 4, 'f-date');
+    return C;
+  }
+  prodLabel(p) { return ({ tshirt: 'تيشيرت', hoodie: 'هودي', sweat: 'سويتشيرت', cap: 'كاب', mug: 'مج', bottle: 'مطرة' })[p] || p; }
+  placeLabel(p) { return ({ front: 'أمام', back: 'ظهر', sleeve: 'كُم' })[p] || p; }
+  sizeSum() { var s = this.state.sizes, n = 0, self = this; Object.keys(s).forEach(function (k) { n += self.num(s[k]); }); return n; }
+  todayStr() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  goStep(n) { this.setState({ step: n, maxStep: Math.max(this.state.maxStep, n) }); this.focusField('step-h'); }
+  renderVals() {
+    var s = this.state, self = this, SFX = '-Dark', DARK = true;
+    var IC = {
+      ok: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
+      warn: 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
+      opt: 'M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0',
+      box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
+      boxOn: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 12l3 3 5-6',
+      grid: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',
+      sliders: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+      upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12',
+      user: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0',
+      list: 'M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12l2 2 4-4',
+      store: 'M3 9l1-5h16l1 5M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-6h6v6',
+      truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14M19 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0M9 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0'
+    };
+    var checks = this.buildChecks();
+    var step = s.step;
+    var stepErrs = checks.filter(function (c) { return c.step === step && c.status === 'attn'; });
+    var showErr = !!s.showErr[step];
+    var errMap = {};
+    if (showErr) stepErrs.forEach(function (c) { errMap[c.id] = c.msg; });
+    var isOrg = s.ctype === 'biz' || s.ctype === 'group';
+    var e = { ctype: errMap.ctype || '', org: errMap.org || '', batch: errMap.batch || '', prod: errMap.prod || '', color: errMap.color || '', qty: errMap.qty || '', place: errMap.place || '', model: errMap.model || '', dims: errMap.dims || '', shape: errMap.shape || '', desc: errMap.desc || '', art: errMap.art || '', name: errMap.name || '', phone: errMap.phone || '', email: errMap.email || '', receipt: errMap.receipt || '', date: errMap.date || '' };
+    var inv = {};
+    ['color', 'qty', 'model', 'shape', 'desc', 'name', 'phone', 'email', 'date', 'org', 'batch'].forEach(function (k) { inv[k] = e[k] ? 'true' : 'false'; });
+    inv.dims = e.dims && !(parseFloat(self.digits(s.w)) > 0 && parseFloat(self.digits(s.h)) > 0) ? 'true' : 'false';
+    inv.unit = e.dims && !s.unit ? 'true' : 'false';
+    function set(k, conv) { return function (ev) { var o = {}; o[k] = conv ? conv(ev.target.value) : ev.target.value; self.setState(o); }; }
+    var on = {
+      color: set('color'), qty: set('qty', function (x) { return self.digits(x).replace(/[^0-9]/g, ''); }), text: set('text'), model: set('model'),
+      w: set('w', function (x) { return self.digits(x).replace(/[^0-9.]/g, ''); }), h: set('h', function (x) { return self.digits(x).replace(/[^0-9.]/g, ''); }),
+      unit: set('unit'), shape: set('shape'), use: set('use'), desc: set('desc'), notes: set('notes'), artNotes: set('artNotes'),
+      name: set('name'), phone: set('phone'), email: set('email'), date: set('date'),
+      help: function (ev) { self.setState({ help: ev.target.checked }); },
+      org: set('org'), role: set('role'), taxId: set('taxId', function (x) { return self.digits(x); }), batchNotes: set('batchNotes'),
+      invoice: function (ev) { self.setState({ invoice: ev.target.checked }); }
+    };
+    function optCls(onn) { return 'opt g-btn ' + (onn ? 'chip-on' : 'chip-off'); }
+    IC.person = 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0';
+    IC.biz = 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18ZM6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4';
+    IC.group = 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75';
+    var ctypes = [['person', 'فرد', 'لنفسك أو هدية لحد', IC.person], ['biz', 'شركة أو محل', 'يونيفورم، براند، منتجات للبيع', IC.biz], ['group', 'فريق أو جهة أو مناسبة', 'مدرسة، فريق رياضي، فرح، إيفنت', IC.group]].map(function (t) {
+      var onn = s.ctype === t[0];
+      return { label: t[1], desc: t[2], icon: t[3], checked: onn, cls: 'ocard' + (onn ? ' on' : ''), pick: function () { var o = { ctype: t[0] }; if (t[0] === 'person') { o.sample = false; o.perPiece = false; o.batches = false; o.invoice = false; } self.setState(o); } };
+    });
+    var bulkDefs = [['sample', 'عينة قبل الإنتاج الكامل', 'بنطبع قطعة أو اتنين تعتمدهم الأول'], ['perPiece', 'اسم أو رقم مختلف على كل قطعة', 'زي تيشيرتات الفرق أو يونيفورم الموظفين'], ['batches', 'تسليم على دفعات', 'لو محتاج جزء من الكمية بدري']].filter(function (b) { return b[0] !== 'perPiece' || s.cat === 'wear' || s.cat === 'mug'; });
+    var bulkOpts = bulkDefs.map(function (b) {
+      var onn = !!s[b[0]];
+      return { label: b[1], desc: b[2], checked: onn, cls: 'ocard' + (onn ? ' on' : ''), sw: 'sw ' + (onn ? 'sw-on' : 'sw-off'), toggle: function (ev) { var o = {}; o[b[0]] = ev.target.checked; self.setState(o); } };
+    });
+    var hasSheet = s.files.some(function (f) { return f.status === 'done' && /\.(xlsx|xls|csv|pdf)$/i.test(f.name); });
+    var orgWordOne = s.ctype === 'biz' ? 'الشركة أو المحل' : 'الجهة أو الفريق';
+    var catDefs = [
+      { id: 'wear', label: 'تيشيرتات وهوديز وكابات', desc: 'ملابس مطبوعة بتصميمك', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg' },
+      { id: 'mug', label: 'مجات وهدايا', desc: 'أكواب ومطرات', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg' },
+      { id: 'phone', label: 'كفرات الموبايل', desc: 'حسب موديل موبايلك', img: 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg' },
+      { id: 'sticker', label: 'استيكرات وملصقات', desc: 'بالمقاس والشكل اللي تحبه', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg' },
+      { id: 'custom', label: 'فكرة خاصة', desc: 'مش لاقي اللي عايزه؟ اوصفه', img: 'assets/0b3e57d34122b654cbb1f7615c9f91ac.jpg' }
+    ];
+    var cats = catDefs.map(function (c) {
+      var onn = s.cat === c.id;
+      return Object.assign({}, c, { checked: onn, cls: 'cat' + (onn ? ' on' : ''), pick: function () { if (self.state.cat !== c.id) self.setState({ cat: c.id, prod: '' }); } });
+    });
+    var prodDefs = s.cat === 'mug' ? [['mug', 'مج'], ['bottle', 'مطرة']] : [['tshirt', 'تيشيرت'], ['hoodie', 'هودي'], ['sweat', 'سويتشيرت'], ['cap', 'كاب']];
+    var prods = prodDefs.map(function (p) { var onn = s.prod === p[0]; return { label: p[1], checked: onn, cls: optCls(onn), pick: function () { self.setState({ prod: p[0] }); } }; });
+    var sizeFields = Object.keys(s.sizes).map(function (k) {
+      return { k: k, id: 'f-size-' + k, v: s.sizes[k], on: function (ev) { var z = Object.assign({}, self.state.sizes); z[k] = self.digits(ev.target.value).replace(/[^0-9]/g, ''); self.setState({ sizes: z }); } };
+    });
+    var qty = this.num(s.qty), sum = this.sizeSum();
+    var sumOk = qty > 0 && sum === qty;
+    var sumText = qty === 0 ? 'اكتب الكمية الكلية الأول، وبعدين وزّعها هنا.' : (sumOk ? 'تمام: مجموع المقاسات ' + sum + ' مطابق للكمية.' : (sum < qty ? 'مجموع المقاسات ' + sum + ' من ' + qty + '. ناقص ' + (qty - sum) + ' قطعة.' : 'مجموع المقاسات ' + sum + '، أكتر من الكمية (' + qty + ') بـ ' + (sum - qty) + '. قلّل مقاس أو زوّد الكمية.'));
+    var placesF = [['front', 'أمام'], ['back', 'ظهر'], ['sleeve', 'كُم']].map(function (p) {
+      var onn = s.places.indexOf(p[0]) >= 0;
+      return { label: p[1], checked: onn, icon: onn ? IC.boxOn : IC.box, cls: optCls(onn), toggle: function () { var arr = self.state.places.slice(); var i = arr.indexOf(p[0]); if (i >= 0) arr.splice(i, 1); else arr.push(p[0]); self.setState({ places: arr }); } };
+    });
+    var receipts = [['pickup', 'استلام من المحل', 'في أسوان [العنوان بانتظار التأكيد]', IC.store], ['delivery', 'توصيل', '[مناطق التوصيل وتكلفته بانتظار التأكيد]', IC.truck]].map(function (r) {
+      var onn = s.receipt === r[0];
+      return { label: r[1], desc: r[2], icon: r[3], checked: onn, cls: 'ocard' + (onn ? ' on' : ''), pick: function () { self.setState({ receipt: r[0] }); } };
+    });
+    var files = s.files.map(function (f) {
+      var sz = f.size > 1048576 ? (f.size / 1048576).toFixed(1) + ' ميجا' : Math.max(1, Math.round(f.size / 1024)) + ' كيلوبايت';
+      var txt = f.status === 'uploading' ? 'جاري الرفع… ' + f.progress + '%' : (f.status === 'done' ? 'اترفع (' + sz + ') — في انتظار مراجعة يوزرسيف' : f.err);
+      return {
+        name: f.name, thumb: f.thumb, noThumb: !f.thumb, uploading: f.status === 'uploading', progress: f.progress, progLabel: 'رفع ' + f.name,
+        statusText: txt, statusStyle: 'font-size: 13px; line-height: 20px; font-weight: ' + (f.status === 'failed' ? '700; color: var(--warn-ink)' : (f.status === 'done' ? '600; color: var(--accent-ink)' : '500; color: var(--muted)')),
+        barStyle: 'height: 100%; border-radius: 999px; background: linear-gradient(90deg,#00706a,#7ee8c7); box-shadow: 0 0 10px rgba(126,232,199,0.7); transition: width .35s cubic-bezier(.22,1,.36,1); width: ' + f.progress + '%',
+        canRetry: f.status === 'failed' && f.retryable, removeLabel: 'امسح ' + f.name,
+        retry: function () { self.setState({ files: self.state.files.map(function (x) { return x.id === f.id ? Object.assign({}, x, { status: 'uploading', progress: 0, err: '' }) : x; }) }); self.startUpload(f.id); },
+        remove: function () { self.setState({ files: self.state.files.filter(function (x) { return x.id !== f.id; }) }); }
+      };
+    });
+    var labels = ['اختار', 'التفاصيل', 'التصميم', 'بياناتك', 'المراجعة'];
+    var stepIcons = [IC.grid, IC.sliders, IC.upload, IC.user, IC.list];
+    var stepper = labels.map(function (l, i) {
+      var n = i + 1, cur = n === step, visited = n <= s.maxStep;
+      var hasIssue = s.showErr[n] && checks.some(function (c) { return c.step === n && c.status === 'attn'; });
+      var doneStep = visited && !cur && !checks.some(function (c) { return c.step === n && c.status === 'attn'; });
+      var base = 'width: 46px; height: 46px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; ';
+      var dot = cur ? base + 'background: #01302d; color: #7ee8c7; border: 1.5px solid #7ee8c7; box-shadow: 0 0 18px rgba(126,232,199,0.6), inset 0 0 10px rgba(126,232,199,0.2); transform: scale(1.08)'
+        : (hasIssue ? base + 'background: rgba(214,174,98,0.2); color: #f0d39a; border: 1.5px solid #d6ae62; box-shadow: 0 0 14px rgba(214,174,98,0.4)'
+        : (doneStep ? base + 'background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; box-shadow: 0 0 14px rgba(126,232,199,0.55)'
+        : base + 'background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2)'));
+      return {
+        label: l, locked: !visited, current: cur ? 'step' : 'false', mark: doneStep ? '✓' : (hasIssue ? '!' : String(n)),
+        aria: 'الخطوة ' + n + ': ' + l + (doneStep ? ' (مكتملة)' : (hasIssue ? ' (محتاجة انتباه)' : '')),
+        dot: dot, text: 'font-size: 13px; font-weight: ' + (cur ? '800; color: #ffffff' : (visited ? '700; color: rgba(255,255,255,0.82)' : '600; color: rgba(255,255,255,0.5)')),
+        go: function () { if (visited) self.goStep(n); }
+      };
+    });
+    var fillPct = Math.max(0, Math.min(4, Math.max(s.maxStep, step) - 1)) / 4 * 80;
+    var titles = ['', 'نوع الطلب والمنتج', 'حدد التفاصيل', 'التصميم والملفات', 'بياناتك والاستلام', 'راجع طلبك قبل الإرسال'];
+    var hints = ['', 'قولنا الطلب لمين، وبعدين اختار المنتج أو فكرة خاصة.', 'هنسألك بس عن اللي يخص المنتج اللي اخترته.', 'ارفع تصميمك أو صور مرجعية، أو اطلب مساعدة.', 'عشان نقدر نتواصل معاك ونسلّمك طلبك.', 'تقدر تعدّل أي جزء قبل ما تبعت.'];
+    var required = checks.filter(function (c) { return c.status !== 'opt'; });
+    var okCount = required.filter(function (c) { return c.status === 'ok'; }).length;
+    var attn = checks.filter(function (c) { return c.status === 'attn'; });
+    var pct = required.length ? Math.round(okCount / required.length * 100) : 0;
+    var tagFor = { ok: 'مكتمل', attn: 'محتاج انتباه', opt: 'اختياري' };
+    var wrap = 'width: 32px; height: 32px; flex-shrink: 0; border-radius: 11px; display: flex; align-items: center; justify-content: center; ';
+    var checkVals = checks.map(function (c) {
+      return {
+        label: c.label, msg: c.msg, tag: tagFor[c.status], icon: IC[c.status],
+        wrap: wrap + (c.status === 'ok' ? 'background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; box-shadow: 0 0 10px rgba(126,232,199,0.5)' : (c.status === 'attn' ? 'background: rgba(214,174,98,0.18); color: #f0d39a; border: 1px solid #d6ae62' : 'background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.2)')),
+        tagStyle: 'font-size: 11px; font-weight: 700; ' + (c.status === 'attn' ? 'color: #f0d39a' : (c.status === 'ok' ? 'color: #7ee8c7' : 'color: rgba(255,255,255,0.6)')),
+        fixable: c.status === 'attn', fixLabel: 'صلّح ' + c.label,
+        fix: function () { var o = { step: c.step, maxStep: Math.max(self.state.maxStep, c.step), showErr: Object.assign({}, self.state.showErr) }; o.showErr[c.step] = true; self.setState(o); self.focusField(c.field); }
+      };
+    });
+    function row(k, v, missing) { return { k: k, v: v || 'ناقص', style: 'margin: 0; ' + (v && !missing ? 'font-weight: 600; color: var(--ink-strong)' : 'font-weight: 800; color: var(--warn-ink); text-decoration: underline wavy #d6ae62') }; }
+    var catLabel = (catDefs.filter(function (c) { return c.id === s.cat; })[0] || {}).label;
+    var specRows = [];
+    if (s.cat === 'wear') {
+      specRows.push(row('النوع', s.prod ? self.prodLabel(s.prod) : ''));
+      specRows.push(row('اللون', s.color ? ({ white: 'أبيض', black: 'أسود', other: 'لون تاني' })[s.color] : ''));
+      specRows.push(row('الكمية', qty ? qty + ' قطعة' : ''));
+      if (s.prod !== 'cap') specRows.push(row('المقاسات', Object.keys(s.sizes).filter(function (k) { return self.num(s.sizes[k]) > 0; }).map(function (k) { return k + ': ' + self.num(s.sizes[k]); }).join(' · ') + (sumOk ? '' : ' (المجموع ' + sum + ' من ' + qty + ')'), !sumOk));
+      specRows.push(row('مكان الطباعة', s.places.map(function (p) { return self.placeLabel(p); }).join('، ')));
+    } else if (s.cat === 'mug') { specRows.push(row('النوع', s.prod ? self.prodLabel(s.prod) : '')); specRows.push(row('الكمية', qty ? qty + ' قطعة' : '')); specRows.push({ k: 'النص', v: s.text || '—', style: 'margin: 0' }); }
+    else if (s.cat === 'phone') { specRows.push(row('الموديل', s.model)); specRows.push(row('الكمية', qty ? qty + ' قطعة' : '')); }
+    else if (s.cat === 'sticker') { var dimC = checks.filter(function (c) { return c.id === 'dims'; })[0]; specRows.push(row('المقاس', dimC && dimC.status === 'ok' ? dimC.msg : '')); specRows.push(row('الشكل', s.shape ? ({ circle: 'دائري', square: 'مربع', rect: 'مستطيل', cut: 'على شكل التصميم' })[s.shape] : '')); specRows.push(row('الكمية', qty ? qty + ' قطعة' : '')); }
+    else if (s.cat === 'custom') { specRows.push(row('الفكرة', s.desc.trim().length >= 10 ? s.desc : '')); }
+    if (isOrg) {
+      var bl = [s.sample ? 'عينة قبل الإنتاج' : '', s.perPiece ? 'اسم أو رقم لكل قطعة' : '', s.batches ? 'تسليم على دفعات' : ''].filter(Boolean);
+      specRows.push({ k: 'خيارات الطلب الكبير', v: bl.join('، ') || 'من غير خيارات إضافية', style: 'margin: 0' });
+      if (s.batches) specRows.push(row('الدفعات', s.batchNotes.trim().length >= 5 ? s.batchNotes : ''));
+    }
+    if (s.notes) specRows.push({ k: 'ملاحظات', v: s.notes, style: 'margin: 0' });
+    var doneFiles = s.files.filter(function (f) { return f.status === 'done'; }).map(function (f) { return f.name; });
+    var artC = checks.filter(function (c) { return c.id === 'art'; })[0];
+    var phC = checks.filter(function (c) { return c.id === 'phone'; })[0];
+    var rdot = 'width: 28px; height: 28px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; background: var(--chip-on-bg); color: #ffffff; box-shadow: 0 0 10px rgba(126,232,199,0.4)';
+    var review = [
+      { title: 'نوع الطلب والمنتج', step: 1, rows: [row('الطلب لـ', s.ctype ? ({ person: 'فرد', biz: 'شركة أو محل', group: 'فريق أو جهة أو مناسبة' })[s.ctype] : ''), row('المنتج', catLabel)] },
+      { title: 'التفاصيل', step: 2, rows: specRows.length ? specRows : [row('التفاصيل', '')] },
+      { title: 'التصميم والملفات', step: 3, rows: [row('الملفات', doneFiles.join('، ') || (s.help ? 'لا يوجد — طالب مساعدة' : ''), artC.status !== 'ok'), { k: 'مساعدة في التصميم', v: s.help ? 'أيوه' : 'لا', style: 'margin: 0' }] },
+      { title: 'بياناتك والاستلام', step: 4, rows: (isOrg ? [row(s.ctype === 'biz' ? 'الشركة أو المحل' : 'الجهة أو الفريق', s.org.trim().length >= 2 ? s.org : ''), { k: 'الصفة', v: s.role || '—', style: 'margin: 0' }, { k: 'فاتورة', v: s.invoice ? 'أيوه' + (s.taxId ? ' (' + s.taxId + ')' : '') : 'لا', style: 'margin: 0' }] : []).concat([row(isOrg ? 'المسؤول' : 'الاسم', s.name.trim()), row('الموبايل', phC.status === 'ok' ? phC.msg : ''), { k: 'الإيميل', v: s.email || '—', style: 'margin: 0' }, row('الاستلام', s.receipt ? (s.receipt === 'pickup' ? 'استلام من المحل' : 'توصيل') : ''), { k: 'التاريخ المرغوب', v: s.date || 'مش محدد', style: 'margin: 0' }]) }
+    ].map(function (r, i) { return Object.assign({}, r, { n: i + 1, dot: rdot, editLabel: 'تعديل ' + r.title, edit: function () { self.goStep(r.step); } }); });
+    var nIc = { search: 'M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3', chat: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z', track: IC.list, quote: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8', eye: 'M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12zM12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0', coin: 'M12 12m-10 0a10 10 0 1 0 20 0 10 10 0 1 0-20 0M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 18V6', box: IC.truck };
+    var steps = isOrg ? [
+      [nIc.quote, 'هنراجع طلبك ونبعتلك عرض سعر رسمي على واتساب' + (s.email ? ' والإيميل.' : '.')],
+      [nIc.eye, 'بعد موافقتك على العرض، هنبعتلك موكاب' + (s.sample ? ' ونطبع عينة' : '') + ' تعتمدها قبل الإنتاج.'],
+      [nIc.coin, 'الإنتاج بيبدأ بعد الاعتماد والعربون. [نسبة العربون وطرق الدفع بانتظار تأكيد يوزرسيف]'],
+      [nIc.box, 'التسليم ' + (s.batches ? 'على دفعات زي ما اتفقنا' : 'مرة واحدة') + (s.invoice ? '، ومعاه الفاتورة.' : '.')],
+      [nIc.track, 'كل مرحلة بتظهر في صفحة تتبّع الطلب، وبيوصلك تحديث على واتساب.']
+    ] : [
+      [nIc.search, 'يوزرسيف هيراجع طلبك وملفاتك.'],
+      [nIc.chat, 'هيوصلك القرار على واتساب، ومعاه السعر والموعد ولينك تتبّع الطلب لو اتقبل.'],
+      [nIc.track, 'تقدر تتابع كل التحديثات من صفحة تتبّع الطلب.']
+    ];
+    return {
+      yes: true,
+      ctypes: ctypes, isOrg: isOrg, orgWord: s.ctype === 'biz' ? 'الشركات والمحلات' : 'الفرق والجهات والمناسبات', orgWordOne: orgWordOne,
+      orgLabel: s.ctype === 'biz' ? 'اسم الشركة أو المحل' : 'اسم الجهة أو الفريق', rolePh: s.ctype === 'biz' ? 'مثلًا: مدير التسويق، صاحب المحل' : 'مثلًا: مدرب الفريق، منظم الإيفنت',
+      nameLabel: isOrg ? 'اسم المسؤول عن الطلب' : 'الاسم',
+      invCls: 'ocard' + (s.invoice ? ' on' : ''), invSw: 'sw ' + (s.invoice ? 'sw-on' : 'sw-off'),
+      bulkOpts: bulkOpts, bigQtyHint: s.ctype === 'person' && this.num(s.qty) >= 30,
+      switchToBiz: function () { self.setState({ ctype: 'biz' }); },
+      acceptExt: '.png,.jpg,.jpeg,.pdf,.ai,.psd,.svg' + (s.perPiece ? ',.xlsx,.xls,.csv' : ''),
+      extText: 'PNG، JPG، PDF، AI، PSD، SVG' + (s.perPiece ? '، Excel، CSV' : ''),
+      sheetText: hasSheet ? 'الشيت اترفع ✓' : 'لسه ما اترفعش.', sheetState: 'font-weight: 800; ' + (hasSheet ? 'color: var(--accent-ink)' : ''),
+      addDemoSheet: function () { self.addFile('team-names-sizes.xlsx', 48211, ''); },
+      nextSteps: steps.map(function (x, i) { return { icon: x[0], text: x[1], n: String(i + 1).padStart(2, '0') }; }),
+      doneOrg: isOrg, doneOrgWord: s.ctype === 'biz' ? 'شركة أو محل' : 'فريق أو جهة',
+      doneNote: isOrg ? 'مدة تجهيز عرض السعر المتوقعة: [بانتظار تأكيد يوزرسيف]' : 'مدة المراجعة المتوقعة: [بانتظار تأكيد يوزرسيف]', notDone: step <= 5, done: step === 6,
+      homeHref: 'Main' + SFX + '.html', trackHref: 'Track' + SFX + '.html', galleryHref: 'Main' + SFX + '.html#gallery',
+      motif: DARK ? 'assets/7e9c2bf666d78520c5029e5857437282.svg' : 'assets/09db2274cf741cc3e59da087108d65f1.svg',
+      motifStyle: 'position: absolute; z-index: -1; top: 60px; left: -320px; width: 700px; height: 700px; pointer-events: none; opacity: ' + (DARK ? '.2' : '1'),
+      is1: step === 1, is2: step === 2, is3: step === 3, is4: step === 4, is5: step === 5, notReview: step < 5,
+      isWear: s.cat === 'wear', isMug: s.cat === 'mug', isPhone: s.cat === 'phone', isSticker: s.cat === 'sticker', isCustom: s.cat === 'custom',
+      hasProds: s.cat === 'wear' || s.cat === 'mug', hasSizes: s.cat === 'wear' && s.prod !== 'cap',
+      stepper: stepper, stepNum: Math.min(step, 5), stepIcon: stepIcons[Math.min(step, 5) - 1], stepTitle: titles[step] || '', stepHint: hints[step] || '',
+      railFill: 'position: absolute; top: 22px; right: 10%; height: 2px; border-radius: 2px; width: ' + fillPct.toFixed(1) + '%; background: linear-gradient(270deg,#7ee8c7,#b8f2de); box-shadow: 0 0 10px rgba(126,232,199,0.8); transition: width .8s cubic-bezier(.22,1,.36,1)',
+      stepErrors: showErr && stepErrs.length > 0 && step < 5, stepErrorText: 'فيه ' + stepErrs.length + ' حاجة محتاجة تتكمّل في الخطوة دي. التفاصيل جنب كل حقل.',
+      cats: cats, prods: prods, sizeFields: sizeFields, placesF: placesF, receipts: receipts,
+      sumText: sumText, sumIcon: sumOk ? IC.ok : IC.warn, sumCls: 'sum ' + (sumOk ? 'ok' : 'warn'),
+      v: s, on: on, e: e, inv: inv, today: this.todayStr(),
+      files: files, hasFiles: files.length > 0,
+      onFiles: function (ev) { var list = ev.target.files; for (var i = 0; i < list.length; i++) { var f = list[i]; var th = /^image\//.test(f.type) && window.URL ? URL.createObjectURL(f) : ''; self.addFile(f.name, f.size, th); } ev.target.value = ''; },
+      addDemoFile: function () { self.addFile('team-logo-final.png', 2516582, 'assets/55f58d72365f99c37ffedef3b41b2aa5.png'); },
+      helpCls: 'ocard' + (s.help ? ' on' : ''), helpSw: 'sw ' + (s.help ? 'sw-on' : 'sw-off'),
+      review: review,
+      checks: checkVals, rdDone: okCount, rdTotal: required.length,
+      rdRing: 'width: 84px; height: 84px; flex-shrink: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: conic-gradient(#7ee8c7 0 ' + pct + '%, rgba(255,255,255,0.12) ' + pct + '% 100%); box-shadow: 0 0 22px rgba(126,232,199,0.45); transition: background .6s',
+      rdSummary: attn.length === 0 ? 'طلبك كامل وجاهز للإرسال.' : (attn.length === 1 ? 'فاضل حاجة واحدة قبل ما طلبك يبقى جاهز.' : 'فاضل ' + attn.length + ' حاجات قبل ما طلبك يبقى جاهز.'),
+      canBack: step > 1 && step <= 5,
+      back: function () { self.goStep(step - 1); },
+      nextLabel: step === 4 ? 'راجع الطلب' : 'التالي',
+      next: function () {
+        if (stepErrs.length) { var o = Object.assign({}, self.state.showErr); o[step] = true; self.setState({ showErr: o }); self.focusField(stepErrs[0].field); return; }
+        self.goStep(step + 1);
+      },
+      submitting: s.submitting, submittingStr: s.submitting ? 'true' : 'false', submitError: s.submitError,
+      submitLabel: s.submitting ? 'جاري الإرسال…' : (s.submitError ? 'إعادة الإرسال' : 'ابعت الطلب'),
+      onSubmitForm: function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        if (step !== 5 || self.state.submitting) return;
+        if (attn.length) { var o = {}; [1, 2, 3, 4].forEach(function (n) { o[n] = true; }); self.setState({ showErr: o }); var first = attn[0]; self.timers.push(setTimeout(function () { self.setState({ step: first.step }); self.focusField(first.field); }, 0)); return; }
+        self.setState({ submitting: true, submitError: false });
+        self.timers.push(setTimeout(function () {
+          if (self.props.simulateFailure && !self.state.subFailed) { self.setState({ submitting: false, submitError: true, subFailed: true }); return; }
+          var A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', r = '';
+          for (var i = 0; i < 6; i++) r += A.charAt(Math.floor(Math.random() * A.length));
+          self.setState({ submitting: false, step: 6, ref: 'YZ-' + r });
+          self.focusField('ok-h');
+        }, 1400));
+      },
+      ref: s.ref,
+      restart: function () { self.setState(self.fresh()); }
+    };
+  }
+}
+</script>
+</body>
+</html>

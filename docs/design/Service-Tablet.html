@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>خدمة التيشيرتات — تابلت</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#fcfcfc}
+*{box-sizing:border-box}
+a[style*="background: #005c58"]{box-shadow:0 0 0 1px rgba(0,92,88,.25),0 6px 22px rgba(0,92,88,.35)}
+a{color:#005c58}a:hover{color:#002b28}
+:focus-visible{outline:2px solid #005c58;outline-offset:2px}
+summary{cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(180deg)}
+.chev{transition:transform .2s}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+/* ===== glass skin (light) ===== */
+body{background:#f3faf8}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.8)) drop-shadow(0 0 12px rgba(126,232,199,.35))}
+[style*="background: #ffffff"]:not(input):not(select):not(textarea),[style*="background: #fcfcfc"]:not(input):not(select):not(textarea),[style*="background:#fcfcfc"]{background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.62)) !important;-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);box-shadow:0 0 0 1px rgba(0,92,88,.09),inset 0 1px 0 #ffffff,0 10px 26px rgba(0,92,88,.09)}
+[style*="background: #f0f0f0"],[style*="background:#f0f0f0"]{background:linear-gradient(135deg,rgba(184,242,222,.38),rgba(126,232,199,.14)) !important;box-shadow:inset 0 0 0 1px rgba(0,92,88,.1)}
+[style*="background: #005c58"],[style*="background:#005c58"]{background:linear-gradient(180deg,#00706a,#004541) !important;border-color:rgba(126,232,199,.7) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 18px rgba(126,232,199,.45),0 0 40px rgba(126,232,199,.2)}
+[style*="border-radius: 16px"]{border-radius:24px !important}
+[style*="border-radius: 12px"]{border-radius:18px !important}
+[style*="border-radius: 8px"]{border-radius:14px !important}
+[style*="solid #005c58"]:not([style*="background: #005c58"]){border-color:rgba(0,92,88,.32) !important}
+.pg header{border-bottom-color:transparent !important;top:12px !important;margin:12px 16px 0;border-radius:24px;box-shadow:0 0 0 1px rgba(126,232,199,.5),inset 0 1px 0 #ffffff,0 0 22px rgba(126,232,199,.22),0 12px 30px rgba(0,92,88,.1) !important}
+.pg > div[style*="sticky"]{border-top-color:transparent !important;margin:0 16px 12px;border-radius:24px;bottom:12px !important;box-shadow:0 0 0 1px rgba(126,232,199,.5),0 0 22px rgba(126,232,199,.22),0 -6px 30px rgba(0,92,88,.12) !important}
+.pg[class][style]{background:#f3faf8 !important}
+</style>
+</helmet>
+<div class="pg" style="width: 834px; min-height: 2240px; background: #fcfcfc; color: #030909; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif; position: relative; overflow: clip; isolation: isolate; display: flex; flex-direction: column">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 1100px; left: -220px; width: 620px; height: 620px; pointer-events: none">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 60px; right: -260px; width: 560px; height: 560px; transform: rotate(180deg); pointer-events: none">
+
+<header style="position: sticky; top: 0; z-index: 5; background: #ffffff; border-bottom: 1px solid rgba(3,9,9,0.12); padding: 10px 32px; display: flex; align-items: center; gap: 20px">
+<a href="Main.html" aria-label="يوزرسيف — الرئيسية"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 72px; height: 72px; border-radius: 8px; display: block"></a>
+<nav aria-label="القائمة الرئيسية" style="display: flex; gap: 20px; flex-grow: 1; font-size: 15px; font-weight: 700">
+<a href="Main.html#services" aria-current="page" style="color: #005c58; text-decoration: none; padding: 10px 0; border-bottom: 2px solid #005c58">الخدمات</a>
+<a href="Main.html#work" style="color: #030909; text-decoration: none; padding: 10px 0">أعمالنا</a>
+<a href="Track.html" style="color: #030909; text-decoration: none; padding: 10px 0">تتبّع طلبك</a>
+</nav>
+<a href="Request.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 12px 24px; border-radius: 999px; background: #005c58; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700">ابدأ طلبًا</a>
+</header>
+
+<main style="padding: 24px 32px 120px; display: flex; flex-direction: column; gap: 48px">
+<nav aria-label="مسار التنقل" style="font-size: 14px; line-height: 24px">
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; align-items: center; color: rgba(3,9,9,0.7)">
+<li><a href="Main.html">الرئيسية</a></li><li aria-hidden="true">/</li>
+<li><a href="Main.html#services">الخدمات</a></li><li aria-hidden="true">/</li>
+<li aria-current="page" style="color: #030909; font-weight: 700">التيشيرتات</li>
+</ol>
+</nav>
+
+<section aria-labelledby="svc-title" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="height: 380px; border-radius: 24px; overflow: hidden; background: #f0f0f0; position: relative">
+<img src="assets/d4608fce7a780ebb4635192b39c5e23f.jpg" alt="تيشيرت أبيض مطبوع عليه شعار يوزرسيف من الأمام" style="width: 100%; height: 100%; object-fit: cover; display: block">
+<span style="position: absolute; top: 14px; right: 14px; padding: 2px 10px; border-radius: 999px; background: #ffffff; font-size: 12px; font-weight: 600; border: 1px solid rgba(3,9,9,0.12)">نموذج عرض</span>
+</div>
+<div role="group" aria-label="صور المنتج" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<button type="button" aria-label="الصورة ١: تيشيرت أبيض" aria-pressed="true" style="padding: 0; height: 72px; border-radius: 8px; overflow: hidden; border: 2px solid #005c58; background: #f0f0f0"><img src="assets/d4608fce7a780ebb4635192b39c5e23f.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block"></button>
+<button type="button" aria-label="الصورة ٢: طباعة حرارية" aria-pressed="false" style="padding: 0; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(3,9,9,0.12); background: #f0f0f0"><img src="assets/9094d6d3078b4a111c3c53e31749d141.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block"></button>
+<button type="button" aria-label="الصورة ٣: هودي" aria-pressed="false" style="padding: 0; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(3,9,9,0.12); background: #f0f0f0"><img src="assets/d4de876ef462c3e541788e94f50199e3.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block"></button>
+<div style="height: 72px; border-radius: 8px; border: 1px dashed rgba(3,9,9,0.3); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 11px; line-height: 16px; font-weight: 600; color: rgba(3,9,9,0.7); padding: 4px">[صورة عمل حقيقي]</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 id="svc-title" style="margin: 0; font-size: 36px; line-height: 52px; font-weight: 800">التيشيرتات</h1>
+<p style="margin: 0; font-size: 18px; line-height: 30px; font-weight: 500; color: rgba(3,9,9,0.7)">طباعة تيشيرتات بأعلى جودة — لنفسك، لفريقك، أو لمناسبتك.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: #ffffff; border: 1px solid rgba(3,9,9,0.12)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 style="margin: 0; font-size: 20px; line-height: 32px; font-weight: 700">الخيارات</h2>
+<span style="padding: 2px 10px; border-radius: 999px; background: #f0f0f0; font-size: 12px; line-height: 20px; font-weight: 600">بانتظار تأكيد يوزرسيف</span>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; font-size: 15px; line-height: 24px">
+<dt style="font-weight: 700">الألوان</dt><dd style="margin: 0; color: rgba(3,9,9,0.7)">أبيض، أسود [+ ألوان أخرى للتأكيد]</dd>
+<dt style="font-weight: 700">المقاسات</dt><dd style="margin: 0; color: rgba(3,9,9,0.7); direction: rtl">S · M · L · XL · XXL [للتأكيد]</dd>
+<dt style="font-weight: 700">مكان الطباعة</dt><dd style="margin: 0; color: rgba(3,9,9,0.7)">أمام، ظهر، كُم</dd>
+<dt style="font-weight: 700">الكمية</dt><dd style="margin: 0; color: rgba(3,9,9,0.7)">من قطعة واحدة [حد أدنى للتأكيد]</dd>
+<dt style="font-weight: 700">السعر</dt><dd style="margin: 0; color: rgba(3,9,9,0.7)">بيتحدد بعد مراجعة الطلب</dd>
+</dl>
+</div>
+<a href="Request.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 999px; background: #005c58; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 700">ابدأ طلب تيشيرتات
+<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"></path></svg></a>
+<a href="https://wa.me/201116891025" style="align-self: center; font-size: 15px; font-weight: 700; padding: 8px">عندك سؤال؟ كلّمنا واتساب</a>
+</div>
+</section>
+
+<section aria-labelledby="prep-h" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="prep-h" style="margin: 0; font-size: 28px; line-height: 42px; font-weight: 700">قبل ما تطلب</h2>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<details open style="border-radius: 16px; background: #ffffff; border: 1px solid rgba(3,9,9,0.12)">
+<summary style="padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 700; min-height: 56px">تجهيز ملف التصميم
+<svg class="chev" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="#005c58"></path></svg></summary>
+<ul style="margin: 0; padding: 0 40px 20px 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.7)">
+<li>ارفع الملف بأعلى دقة عندك. مقترح: PNG بخلفية شفافة أو PDF [الصيغ والحجم الأقصى بانتظار التأكيد].</li>
+<li>لو التصميم صورة من الموبايل، ابعتها برضه وهنقولك لو محتاجة تعديل.</li>
+<li>الألوان على الشاشة ممكن تختلف شوية عن الطباعة على القماش.</li>
+</ul>
+</details>
+<details style="border-radius: 16px; background: #ffffff; border: 1px solid rgba(3,9,9,0.12)">
+<summary style="padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 700; min-height: 56px">إزاي أوزّع المقاسات؟
+<svg class="chev" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="#005c58"></path></svg></summary>
+<p style="margin: 0; padding: 0 20px 20px; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.7)">في الطلب هتكتب الكمية الكلية، وبعدين عدد القطع من كل مقاس. مساعد الجاهزية هينبهك لو المجموع مش مطابق.</p>
+</details>
+<details style="border-radius: 16px; background: #ffffff; border: 1px solid rgba(3,9,9,0.12)">
+<summary style="padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 700; min-height: 56px">الاستلام والتوصيل
+<svg class="chev" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="#005c58"></path></svg></summary>
+<p style="margin: 0; padding: 0 20px 20px; font-size: 15px; line-height: 26px; color: rgba(3,9,9,0.7)">[طرق الاستلام والتوصيل ومواعيدها بانتظار تأكيد يوزرسيف]. التاريخ اللي بتختاره في الطلب رغبة، والموعد النهائي بيتأكد بعد المراجعة.</p>
+</details>
+</div>
+</section>
+
+<section aria-labelledby="rel-h" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h2 id="rel-h" style="margin: 0; font-size: 28px; line-height: 42px; font-weight: 700">خدمات تانية</h2>
+<a href="Main.html#services" style="font-size: 15px; font-weight: 700">كل الخدمات</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<a href="Request.html" style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: #ffffff; border: 1px solid rgba(3,9,9,0.12); color: #030909; text-decoration: none">
+<img src="assets/d4de876ef462c3e541788e94f50199e3.jpg" alt="" style="width: 100%; height: 150px; object-fit: cover; display: block">
+<span style="padding: 12px 16px 2px; font-size: 18px; font-weight: 700">الهوديز والسويتشيرت</span>
+<span style="padding: 0 16px 16px; font-size: 14px; line-height: 24px; color: rgba(3,9,9,0.7)">خامات مميزة وتشطيبات احترافية</span></a>
+<a href="Request.html" style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: #ffffff; border: 1px solid rgba(3,9,9,0.12); color: #030909; text-decoration: none">
+<img src="assets/53f6eb00973f2207c9b44d73b256c3e5.jpg" alt="" style="width: 100%; height: 150px; object-fit: cover; display: block">
+<span style="padding: 12px 16px 2px; font-size: 18px; font-weight: 700">الكابات والاكسسوارات</span>
+<span style="padding: 0 16px 16px; font-size: 14px; line-height: 24px; color: rgba(3,9,9,0.7)">تصميم وطباعة يعكس شخصيتك</span></a>
+<a href="Request.html" style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; background: #ffffff; border: 1px solid rgba(3,9,9,0.12); color: #030909; text-decoration: none">
+<img src="assets/9094d6d3078b4a111c3c53e31749d141.jpg" alt="" style="width: 100%; height: 150px; object-fit: cover; display: block">
+<span style="padding: 12px 16px 2px; font-size: 18px; font-weight: 700">الطباعة الحرارية</span>
+<span style="padding: 0 16px 16px; font-size: 14px; line-height: 24px; color: rgba(3,9,9,0.7)">ألوان ثابتة تدوم طويلًا</span></a>
+</div>
+</section>
+</main>
+
+<div style="position: sticky; bottom: 0; margin-top: auto; background: #ffffff; border-top: 1px solid rgba(3,9,9,0.12); padding: 12px 32px; display: flex; align-items: center; gap: 16px">
+<img src="assets/d4608fce7a780ebb4635192b39c5e23f.jpg" alt="" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover">
+<span style="display: flex; flex-direction: column; flex-grow: 1"><strong style="font-size: 16px">التيشيرتات</strong><span style="font-size: 13px; color: rgba(3,9,9,0.7)">السعر بيتحدد بعد مراجعة طلبك</span></span>
+<a href="Request.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 12px 28px; border-radius: 999px; background: #005c58; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700">ابدأ الطلب</a>
+</div>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":834,"height":2240}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

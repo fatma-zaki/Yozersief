@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>ابدأ طلبك — الخطوة ٢ على الموبايل (داكن)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#001412}
+*{box-sizing:border-box}
+button,select,input{font-family:inherit}
+:focus-visible{outline:2px solid #7ee8c7;outline-offset:2px}
+.gl{background:linear-gradient(160deg,rgba(5,64,57,.5) 0%,rgba(0,27,23,.55) 100%);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);border:1px solid rgba(126,232,199,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 30px rgba(0,0,0,.35)}
+.g-btn{position:relative;cursor:pointer;-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);transition:box-shadow .2s,transform .15s}
+.g-btn:active{transform:scale(.97)}
+.g-cta{background:linear-gradient(180deg,rgba(5,64,57,.8) 0%,rgba(0,27,23,.8) 100%);color:#ffffff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.4),0 0 40px rgba(126,232,199,.16)}
+.g-soft{background:rgba(126,232,199,.07);color:#b8f2de;border:1px solid rgba(126,232,199,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.g-arrow{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(126,232,199,.24),rgba(126,232,199,.08));border:1px solid rgba(126,232,199,.55);color:#b8f2de;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 12px rgba(126,232,199,.25)}
+.g-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.chip{position:relative;display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 20px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer}
+.chip-off{background:rgba(126,232,199,.05);color:rgba(242,251,248,.8);border:1px solid rgba(126,232,199,.22)}
+.chip-on{background:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.12));color:#ffffff;border:1px solid rgba(126,232,199,.85);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 16px rgba(126,232,199,.35)}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip:focus-within{outline:2px solid #7ee8c7;outline-offset:2px}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.5),0 0 26px rgba(126,232,199,.28)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.7)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.fld{width:100%;min-height:50px;padding:8px 14px;border-radius:16px;border:1px solid rgba(126,232,199,.3);background:rgba(0,20,18,.6);font-size:16px;color:#ffffff}
+.fld:focus{border-color:#7ee8c7;box-shadow:0 0 0 3px rgba(126,232,199,.3);outline:none}
+.fld option{background:#032722;color:#ffffff}
+.lbl{font-size:14px;font-weight:700;color:#f2fbf8}
+.scroll{scrollbar-width:none}.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; isolation: isolate; background: #001412; color: #f2fbf8; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif; display: flex; flex-direction: column">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 380px; left: -200px; width: 420px; height: 420px; transform: rotate(180deg); opacity: .25; pointer-events: none">
+
+<header style="position: relative; overflow: hidden; isolation: isolate; flex-shrink: 0; background: #001b17; color: #ffffff; border-radius: 0 0 28px 28px; padding: 10px 12px 14px; padding-top: max(10px, env(safe-area-inset-top)); border-bottom: 1px solid rgba(126,232,199,0.35); box-shadow: 0 10px 28px rgba(0,0,0,0.4), 0 0 22px rgba(126,232,199,0.12)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 90% at 75% 10%, rgba(5,64,57,0.9) 0%, rgba(5,64,57,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -110px; left: -150px; width: 320px; height: 320px; opacity: .45; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 8px">
+<a class="g-btn g-soft g-icon" href="Home-Mobile-Dark.html" aria-label="رجوع">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg></a>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center">
+<h1 style="margin: 0; font-size: 19px; line-height: 28px; font-weight: 800">حدد <span class="neon-t" style="color: #7ee8c7">التفاصيل</span></h1>
+<span style="font-size: 12px; line-height: 18px; color: rgba(242,251,248,0.7)">الخطوة 2 من 5 · تيشيرت</span>
+</div>
+<a class="g-btn g-soft g-icon" href="Home-Mobile-Dark.html" aria-label="إغلاق الطلب (بياناتك محفوظة)">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M18 6 6 18M6 6l12 12"></path></svg></a>
+</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding: 10px 6px 0">
+<span style="height: 5px; border-radius: 999px; background: #7ee8c7; box-shadow: 0 0 8px rgba(126,232,199,0.8)"></span>
+<span style="height: 5px; border-radius: 999px; background: #7ee8c7; box-shadow: 0 0 8px rgba(126,232,199,0.8)"></span>
+<span style="height: 5px; border-radius: 999px; background: rgba(126,232,199,0.15)"></span>
+<span style="height: 5px; border-radius: 999px; background: rgba(126,232,199,0.15)"></span>
+<span style="height: 5px; border-radius: 999px; background: rgba(126,232,199,0.15)"></span>
+</div>
+<button class="g-btn gl" type="button" onClick="{{openSheet}}" aria-haspopup="dialog" style="margin-top: 12px; width: 100%; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 8px 6px 14px; border-radius: 999px; color: #ffffff; text-align: right; border-color: rgba(126,232,199,0.35)">
+<span aria-hidden="true" style="{{topIconWrap}}"><svg class="ic" viewBox="0 0 24 24" style="width: 18px; height: 18px; stroke-width: 2"><path d="{{sumIconTop}}"></path></svg></span>
+<span style="flex-grow: 1; font-size: 13px; font-weight: 700" aria-live="polite">جاهزية الطلب: {{done}} من {{total}} · {{shortMsg}}</span>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #7ee8c7"><path d="m18 15-6-6-6 6"></path></svg>
+</button>
+</header>
+
+<main class="scroll" style="flex-grow: 1; overflow-y: auto; padding: 18px 16px 24px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="md-color">اللون</label>
+<select class="fld" id="md-color"><option>أبيض</option><option>أسود</option><option>لون تاني</option></select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span id="md-qty-l" class="lbl">الكمية الكلية</span>
+<div class="gl" style="display: flex; align-items: center; justify-content: space-between; min-height: 50px; border-radius: 999px; padding: 0 5px">
+<button class="g-btn g-arrow" type="button" aria-label="قلّل الكمية" onClick="{{qtyDown}}" style="width: 38px; height: 38px; font-size: 20px; font-weight: 800">−</button>
+<output aria-labelledby="md-qty-l" style="font-size: 18px; font-weight: 800; color: #ffffff">{{qty}}</output>
+<button class="g-btn g-arrow" type="button" aria-label="زوّد الكمية" onClick="{{qtyUp}}" style="width: 38px; height: 38px; font-size: 20px; font-weight: 800">+</button>
+</div>
+</div>
+</div>
+
+<fieldset style="margin: 0; padding: 0; border: 0">
+<legend style="padding: 0; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: #f2fbf8">توزيع المقاسات</legend>
+<ul class="gl" style="list-style: none; margin: 0; padding: 4px 0; border-radius: 24px">
+<sc-for list="{{sizes}}" as="z" hint-placeholder-count="5">
+<li style="{{z.rowStyle}}">
+<span style="display: flex; align-items: center; justify-content: center; min-width: 46px; height: 32px; padding: 0 10px; border-radius: 10px; background: rgba(126,232,199,0.12); border: 1px solid rgba(126,232,199,0.3); color: #b8f2de; font-size: 15px; font-weight: 800; direction: ltr">{{z.k}}</span>
+<div style="display: flex; align-items: center; gap: 8px">
+<button class="g-btn g-arrow" type="button" aria-label="{{z.dl}}" onClick="{{z.down}}" style="font-size: 19px; font-weight: 800">−</button>
+<span style="min-width: 32px; text-align: center; font-size: 18px; font-weight: 800; color: #ffffff">{{z.v}}</span>
+<button class="g-btn g-arrow" type="button" aria-label="{{z.ul}}" onClick="{{z.up}}" style="font-size: 19px; font-weight: 800">+</button>
+</div>
+</li>
+</sc-for>
+</ul>
+<p role="status" style="{{sumStyle}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="{{sumIcon}}"></path></svg>{{sumText}}</p>
+</fieldset>
+
+<fieldset style="margin: 0; padding: 0; border: 0">
+<legend style="padding: 0; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: #f2fbf8">مكان الطباعة <span style="font-weight: 500; color: rgba(242,251,248,0.6)">(تقدر تختار أكتر من مكان)</span></legend>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{places}}" as="p" hint-placeholder-count="3">
+<label class="{{p.cls}}"><input type="checkbox" checked="{{p.on}}" onChange="{{p.toggle}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2"><path d="{{p.icon}}"></path></svg>{{p.label}}</label>
+</sc-for>
+</div>
+</fieldset>
+</main>
+
+<div style="flex-shrink: 0; padding: 0 12px 12px; padding-bottom: max(12px, env(safe-area-inset-bottom))">
+<div class="gl" style="display: flex; gap: 10px; padding: 8px; border-radius: 999px; border-color: rgba(126,232,199,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 22px rgba(126,232,199,0.12), 0 -4px 24px rgba(0,0,0,0.4)">
+<a class="g-btn g-soft" href="Home-Mobile-Dark.html" style="flex: 0 0 auto; display: flex; align-items: center; gap: 6px; justify-content: center; min-height: 50px; padding: 0 18px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 700">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg>السابق</a>
+<button class="g-btn g-cta" type="button" onClick="{{next}}" style="flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; border-radius: 999px; font-size: 16px; font-weight: 800">التالي: التصميم
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></button>
+</div>
+</div>
+
+<sc-if value="{{sheet}}" hint-placeholder-val="{{false}}">
+<div style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end">
+<button type="button" aria-label="إغلاق" onClick="{{closeSheet}}" style="position: absolute; inset: 0; border: 0; background: rgba(0,8,7,0.65); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px)"></button>
+<section role="dialog" aria-modal="true" aria-labelledby="shd-h" style="position: relative; overflow: hidden; isolation: isolate; background: #032722; color: #ffffff; border-radius: 28px 28px 0 0; padding: 12px 20px 28px; display: flex; flex-direction: column; gap: 12px; max-height: 80%; overflow-y: auto; border-top: 1px solid rgba(126,232,199,0.55); box-shadow: 0 -10px 30px rgba(126,232,199,0.18)">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 50% at 75% 0%, rgba(5,64,57,0.9) 0%, rgba(5,64,57,0) 100%)"></div>
+<span aria-hidden="true" style="align-self: center; width: 44px; height: 5px; border-radius: 999px; background: rgba(126,232,199,0.45)"></span>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 id="shd-h" style="margin: 0; font-size: 20px; line-height: 32px; font-weight: 800">جاهزية <span class="neon-t" style="color: #7ee8c7">الطلب</span></h2>
+<button class="g-btn g-soft g-icon" type="button" onClick="{{closeSheet}}" aria-label="إغلاق" style="border-radius: 999px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</div>
+<div aria-hidden="true" style="height: 6px; border-radius: 999px; background: rgba(126,232,199,0.12); overflow: hidden"><div style="{{bar}}"></div></div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{checks}}" as="k" hint-placeholder-count="6">
+<li class="gl" style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 18px">
+<span aria-hidden="true" style="{{k.wrap}}"><svg class="ic" viewBox="0 0 24 24" style="width: 18px; height: 18px; stroke-width: 2"><path d="{{k.icon}}"></path></svg></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">{{k.label}}</span><span style="font-size: 13px; line-height: 20px; color: rgba(242,251,248,0.7)">{{k.msg}}</span></span>
+<sc-if value="{{k.bad}}" hint-placeholder-val="{{false}}"><button class="g-btn" type="button" onClick="{{closeSheet}}" style="min-height: 38px; padding: 4px 14px; border-radius: 999px; border: 1px solid #d6ae62; background: rgba(214,174,98,0.12); color: #d6ae62; font-size: 13px; font-weight: 700">صلّحها</button></sc-if>
+</li>
+</sc-for>
+</ul>
+<p style="margin: 0; font-size: 12px; line-height: 20px; color: rgba(242,251,248,0.65)">اكتمال الطلب مش تأكيد للسعر أو الألوان أو صلاحية التصميم للطباعة.</p>
+</section>
+</div>
+</sc-if>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { qty: 12, sizes: { S: 2, M: 4, L: 3, XL: 0, XXL: 0 }, places: ['front'], sheet: false }; }
+  renderVals() {
+    var s = this.state, self = this;
+    var OK = 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3';
+    var WARN = 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01';
+    var DOT = 'M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0';
+    var BOX = 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z';
+    var BOXON = 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 12l3 3 5-6';
+    var sum = 0; Object.keys(s.sizes).forEach(function (k) { sum += s.sizes[k]; });
+    var sumOk = s.qty > 0 && sum === s.qty;
+    var keys = Object.keys(s.sizes);
+    var sizes = keys.map(function (k, i) {
+      return { k: k, v: s.sizes[k], dl: 'قلّل ' + k, ul: 'زوّد ' + k,
+        rowStyle: 'display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; min-height: 56px; ' + (i < keys.length - 1 ? 'border-bottom: 1px solid rgba(126,232,199,0.12)' : ''),
+        down: function () { var z = Object.assign({}, self.state.sizes); z[k] = Math.max(0, z[k] - 1); self.setState({ sizes: z }); },
+        up: function () { var z = Object.assign({}, self.state.sizes); z[k] = z[k] + 1; self.setState({ sizes: z }); } };
+    });
+    var places = [['front', 'أمام'], ['back', 'ظهر'], ['sleeve', 'كُم']].map(function (p) {
+      var on = s.places.indexOf(p[0]) >= 0;
+      return { label: p[1], on: on, icon: on ? BOXON : BOX, cls: 'chip g-btn ' + (on ? 'chip-on' : 'chip-off'),
+        toggle: function () { var a = self.state.places.slice(); var i = a.indexOf(p[0]); if (i >= 0) a.splice(i, 1); else a.push(p[0]); self.setState({ places: a }); } };
+    });
+    var sumText = sumOk ? 'مجموع المقاسات ' + sum + ' مطابق للكمية.' : (sum < s.qty ? 'المجموع ' + sum + ' من ' + s.qty + ': ناقص ' + (s.qty - sum) + ' قطعة.' : 'المجموع ' + sum + ' أكتر من الكمية بـ ' + (sum - s.qty) + '.');
+    var raw = [
+      ['المنتج', true, 'تيشيرت · أبيض'],
+      ['الكمية', s.qty > 0, s.qty > 0 ? s.qty + ' قطعة' : 'حدد الكمية'],
+      ['توزيع المقاسات', sumOk, sumText],
+      ['مكان الطباعة', s.places.length > 0, s.places.length ? 'تم الاختيار' : 'اختار مكان واحد على الأقل'],
+      ['التصميم', false, 'الخطوة الجاية: ارفع تصميمك أو اطلب مساعدة'],
+      ['بياناتك والاستلام', false, 'في الخطوة 4']
+    ];
+    var done = raw.filter(function (r) { return r[1]; }).length;
+    var issues = raw.filter(function (r, i) { return !r[1] && i < 4; });
+    var wrap = 'width: 34px; height: 34px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; ';
+    return {
+      qty: s.qty, sizes: sizes, places: places, sumText: sumText,
+      sumIcon: sumOk ? OK : WARN, sumIconTop: issues.length ? WARN : OK,
+      topIconWrap: wrap + 'border-radius: 999px; ' + (issues.length ? 'background: rgba(214,174,98,0.14); color: #d6ae62; border: 1px solid #d6ae62' : 'background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #001412'),
+      sumStyle: 'margin: 10px 0 0; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 22px; font-weight: 700; ' + (sumOk ? 'background: linear-gradient(180deg,rgba(126,232,199,.22),rgba(126,232,199,.08)); color: #b8f2de; box-shadow: 0 0 0 1px rgba(126,232,199,0.55), 0 0 14px rgba(126,232,199,0.2)' : 'background: rgba(214,174,98,0.12); color: #f0d39a; box-shadow: inset 0 0 0 1px rgba(214,174,98,0.6)'),
+      done: done, total: raw.length, shortMsg: issues.length ? 'محتاج انتباه: ' + issues[0][0] : 'الخطوة دي كاملة',
+      bar: 'height: 100%; border-radius: 999px; background: linear-gradient(90deg,#7ee8c7,#b8f2de); box-shadow: 0 0 10px rgba(126,232,199,0.8); width: ' + Math.round(done / raw.length * 100) + '%',
+      checks: raw.map(function (r, i) {
+        var bad = !r[1] && i < 4;
+        return { label: r[0], msg: r[2], bad: bad, icon: r[1] ? OK : (bad ? WARN : DOT),
+          wrap: wrap + (r[1] ? 'background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #001412; box-shadow: 0 0 12px rgba(126,232,199,0.45)' : (bad ? 'background: rgba(214,174,98,0.14); color: #d6ae62; border: 1px solid #d6ae62' : 'background: rgba(126,232,199,0.05); color: rgba(242,251,248,0.5); border: 1px solid rgba(126,232,199,0.2)')) };
+      }),
+      qtyDown: function () { self.setState({ qty: Math.max(0, self.state.qty - 1) }); },
+      qtyUp: function () { self.setState({ qty: self.state.qty + 1 }); },
+      sheet: s.sheet, openSheet: function () { self.setState({ sheet: true }); }, closeSheet: function () { self.setState({ sheet: false }); },
+      next: function () { if (issues.length) self.setState({ sheet: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

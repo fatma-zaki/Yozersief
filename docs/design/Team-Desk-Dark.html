@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مساحة الفريق — استقبال الطلبات (داكن)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#001412;--ink:#f2fbf8;--ink-strong:#ffffff;--muted:rgba(242,251,248,.6);--line:rgba(126,232,199,.14);--accent-ink:#7ee8c7;--card-bg:linear-gradient(160deg,rgba(5,64,57,.5),rgba(0,27,23,.55));--card-bd:rgba(126,232,199,.22);--card-sh:inset 0 1px 0 rgba(255,255,255,.08),0 16px 34px rgba(0,0,0,.35);--bar-sh:inset 0 1px 0 rgba(255,255,255,.1),0 0 22px rgba(126,232,199,.12),0 14px 34px rgba(0,0,0,.4);--field-bg:rgba(0,20,18,.6);--field-bd:rgba(126,232,199,.3);--field-ink:#ffffff;--focus:#7ee8c7;--focus-ring:rgba(126,232,199,.3);--soft-bg:rgba(126,232,199,.07);--soft-ink:#b8f2de;--soft-bd:rgba(126,232,199,.32);--cta-bg:linear-gradient(180deg,rgba(5,64,57,.8),rgba(0,27,23,.8));--chip-off-bg:rgba(126,232,199,.05);--chip-off-ink:rgba(242,251,248,.8);--chip-off-bd:rgba(126,232,199,.22);--chip-on-bg:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.12));--chip-on-ink:#fff;--tint:rgba(126,232,199,.07);--tint-bd:rgba(126,232,199,.2);--tile-bg:linear-gradient(135deg,rgba(126,232,199,.16),rgba(5,64,57,.45));--tile-ink:#7ee8c7;--side-bg:#032722;--side-glow:rgba(5,64,57,.95);--warn-bg:rgba(214,174,98,.14);--warn-ink:#e9c98a;--warn-bd:#d6ae62;--ok-bg:linear-gradient(180deg,rgba(126,232,199,.32),rgba(126,232,199,.12));--ok-ink:#fff;--off-bg:rgba(242,251,248,.08);--off-ink:rgba(242,251,248,.6);--overlay:rgba(0,8,7,.6);--sheet-bg:#032722;--toast-bg:#032722;--img-bg:#032722;--opt-bg:#032722;--opt-ink:#ffffff}
+</style>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;background:var(--bg)}
+*{box-sizing:border-box}
+a{color:var(--accent-ink)}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.side :focus-visible{outline-color:#7ee8c7}
+.page{position:relative;overflow:clip;isolation:isolate;min-height:100vh;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;padding:16px;background:var(--bg);color:var(--ink);font-family:Cairo,'Segoe UI',Tahoma,sans-serif}
+.card{background:var(--card-bg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--card-bd);box-shadow:var(--card-sh);border-radius:26px}
+.bar{border-radius:24px;padding:12px 14px 12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;box-shadow:var(--bar-sh)}
+.side{position:sticky;top:16px;overflow:hidden;isolation:isolate;flex:1 1 248px;max-width:100%;min-height:calc(100vh - 32px);background:var(--side-bg);color:#fff;border-radius:28px;padding:20px 14px;display:flex;flex-direction:column;gap:22px;border:1px solid rgba(126,232,199,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 26px rgba(126,232,199,.16),0 20px 44px rgba(0,0,0,.25)}
+.side-glow{position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse 120% 50% at 70% 0%,var(--side-glow) 0%,rgba(0,0,0,0) 100%)}
+.side-l{display:flex;align-items:center;gap:12px;min-height:48px;padding:10px 14px;border-radius:16px;font-size:15px;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid transparent}
+.side-l:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-l[aria-current="page"]{background:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.1));color:#fff;border-color:rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 18px rgba(126,232,199,.3)}
+.main-col{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.h1{margin:0;font-size:24px;line-height:36px;font-weight:800;color:var(--ink-strong)}
+.h2{margin:0;font-size:17px;line-height:28px;font-weight:800;color:var(--ink-strong)}
+.muted{color:var(--muted)}
+.g-btn{position:relative;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.g-btn[disabled]{opacity:.5;cursor:not-allowed}
+.g-cta{background:var(--cta-bg);color:#fff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.42),0 0 40px rgba(126,232,199,.18)}
+.g-soft{background:var(--soft-bg);color:var(--soft-ink);border:1px solid var(--soft-bd)}
+.g-line{background:transparent;color:var(--ink);border:1px solid var(--field-bd)}
+.fld{width:100%;min-height:46px;padding:8px 14px;border-radius:14px;border:1px solid var(--field-bd);background:var(--field-bg);color:var(--field-ink);font-size:15px}
+.fld:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-ring);outline:none}
+.fld option{background:var(--opt-bg);color:var(--opt-ink)}
+.lbl{font-size:13px;font-weight:700}
+.tint{background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);border-radius:16px}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--tile-bg);color:var(--tile-ink);box-shadow:0 0 0 1px var(--tint-bd)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.3)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.75)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.sw{position:relative;width:46px;height:26px;flex-shrink:0;border:0;padding:0;border-radius:999px;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .45s var(--ease)}
+.sw-on{background:linear-gradient(180deg,#00a08f,#00706a);box-shadow:0 0 12px rgba(126,232,199,.55)}
+.sw-on::after{transform:translateX(-20px)}
+.sw-off{background:var(--off-bg);box-shadow:inset 0 0 0 1px var(--line)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;line-height:20px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok-ink);box-shadow:0 0 10px rgba(126,232,199,.35)}
+.b-warn{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-bd)}
+.b-off{background:var(--off-bg);color:var(--off-ink)}
+.b-role{background:var(--tint);color:var(--accent-ink);box-shadow:inset 0 0 0 1px var(--tint-bd)}
+.toast{position:fixed;bottom:24px;left:24px;z-index:40;max-width:460px;display:flex;gap:10px;align-items:center;padding:12px 14px 12px 18px;border-radius:20px;background:var(--toast-bg);color:#fff;font-size:15px;font-weight:600;border:1px solid rgba(126,232,199,.55);box-shadow:0 0 26px rgba(126,232,199,.3),0 16px 34px rgba(0,0,0,.3)}
+.g-btn,.side-l,.sw,.lift,.cb{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .4s var(--ease) !important}
+.g-btn:hover,.lift:hover{transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .8s var(--ease) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+.slide{animation:slideIn .6s var(--ease) both}
+.fade{animation:fadeIn .4s var(--ease) both}
+.pop{animation:pop .5s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+.mrow{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,.8fr);align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);font-size:14px}
+.mh{font-size:12px;font-weight:700;color:var(--muted)}
+.xrow{display:grid;grid-template-columns:minmax(0,2.4fr) repeat(5,minmax(0,1fr));align-items:center;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.cb{width:30px;height:30px;border-radius:10px;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.cb-on{background:linear-gradient(180deg,#00a08f,#00706a);color:#fff;box-shadow:0 0 10px rgba(126,232,199,.55)}
+.cb-off{background:transparent;color:transparent;box-shadow:inset 0 0 0 1.5px var(--field-bd)}
+.cb[disabled]{cursor:not-allowed;opacity:.75}
+
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid var(--chip-off-bd);background:var(--chip-off-bg);color:var(--chip-off-ink);font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--chip-on-bg);color:var(--chip-on-ink);border-color:rgba(126,232,199,.7);box-shadow:0 0 12px rgba(126,232,199,.35)}
+.lockrow{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:16px;border:1px dashed var(--field-bd);color:var(--muted);font-size:13px;line-height:20px}
+.rowb{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:18px;border:1px solid transparent;background:transparent;color:inherit;text-align:right;cursor:pointer;font-family:inherit}
+.rowb:hover{background:var(--tint)}
+.rowb[aria-current="true"]{background:var(--tint);border-color:var(--tint-bd);box-shadow:inset -4px 0 0 #00a08f,0 0 14px rgba(126,232,199,.18)}
+.barp{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.barp > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#00706a,#7ee8c7);box-shadow:0 0 8px rgba(126,232,199,.6);transition:width .6s var(--ease)}
+.kcol{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:22px;background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);min-height:220px}
+.stat{padding:14px 16px;border-radius:22px;display:flex;flex-direction:column;gap:2px}
+.who{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:800;background:rgba(126,232,199,.12);border:1px solid rgba(126,232,199,.45);color:#b8f2de}
+.cbx{width:26px;height:26px;flex-shrink:0;border-radius:9px;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit}
+.cbx-on{background:linear-gradient(180deg,#00a08f,#00706a);color:#fff;box-shadow:0 0 10px rgba(126,232,199,.55)}
+.cbx-off{background:transparent;color:transparent;box-shadow:inset 0 0 0 1.5px var(--field-bd)}
+.card[aria-pressed="true"]{box-shadow:0 0 0 2px #00a08f,0 0 20px rgba(126,232,199,.4)}
+.wa-note{font-size:12px;line-height:18px;color:var(--muted)}
+</style>
+</helmet>
+<div class="page">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 320px; left: -240px; width: 680px; height: 680px; opacity: .2; pointer-events: none">
+<nav class="side slide" aria-label="قائمة الفريق">
+<div class="side-glow" aria-hidden="true"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -170px; right: -190px; width: 460px; height: 460px; opacity: .5; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 12px; padding: 0 6px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 0 0 1px rgba(126,232,199,0.4), 0 0 18px rgba(126,232,199,0.25)">
+<span style="display: flex; flex-direction: column"><strong style="font-size: 17px">مساحة <span class="neon-t">الفريق</span></strong><span style="font-size: 12px; color: rgba(255,255,255,0.7)">بيئة تجريبية</span></span>
+</div>
+<span class="who" style="align-self: flex-start; margin: 0 6px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>دورك: {{roleLabel}}</span>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="3">
+<li><a class="side-l" href="{{n.href}}" aria-current="{{n.cur}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.icon}}"></path></svg><span style="flex-grow: 1">{{n.label}}</span>
+<sc-if value="{{n.count}}" hint-placeholder-val="{{false}}"><span style="min-width: 24px; padding: 0 8px; border-radius: 999px; background: #d6ae62; color: #030909; font-size: 12px; font-weight: 800; text-align: center">{{n.count}}</span></sc-if></a></li>
+</sc-for>
+</ul>
+<p style="margin: 0 6px; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px dashed rgba(126,232,199,0.3); font-size: 12px; line-height: 19px; color: rgba(255,255,255,0.72)">الأقسام التانية مخفية لأنها مش ضمن صلاحيات دورك. المدير بيتحكم فيها من «الحسابات والصلاحيات».</p>
+<div style="margin-top: auto; padding: 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(126,232,199,0.3)">
+<span aria-hidden="true" style="width: 38px; height: 38px; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center; font-weight: 800">{{initial}}</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">{{userName}}</span><span style="font-size: 12px; color: rgba(255,255,255,0.7)">{{roleLabel}}</span></span>
+<a href="{{homeHref}}" style="padding: 6px 10px; border-radius: 12px; color: #b8f2de; font-size: 13px; font-weight: 700; text-decoration: none; border: 1px solid rgba(126,232,199,0.35)">خروج</a>
+</div>
+</nav>
+<div class="main-col">
+<header class="card bar anim-up">
+<div style="flex-grow: 1; display: flex; flex-direction: column">
+<h1 class="h1">استقبال الطلبات</h1>
+<span class="muted" style="font-size: 13px">راجع الطلبات الجديدة، كلّم العملاء، وجهّز عروض الأسعار للمدير</span>
+</div>
+<span class="badge b-warn">بيانات تجريبية</span>
+</header>
+
+<section aria-label="ملخص" class="anim-up d1" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{stats}}" as="t" hint-placeholder-count="4">
+<div class="card stat"><span class="muted" style="font-size: 13px; font-weight: 700">{{t.label}}</span><strong style="font-size: 32px; line-height: 44px; color: var(--ink-strong)">{{t.n}}</strong><span class="muted" style="font-size: 12px">{{t.sub}}</span></div>
+</sc-for>
+</section>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; align-items: start">
+<section class="card anim-up d2" aria-labelledby="q-h" style="padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 6px"><h2 id="q-h" class="h2">الطلبات اللي عليك</h2>
+<div role="group" aria-label="فلتر" style="display: flex; gap: 6px"><sc-for list="{{filters}}" as="f" hint-placeholder-count="3"><button class="chip" type="button" aria-pressed="{{f.on}}" onClick="{{f.pick}}">{{f.label}}</button></sc-for></div></div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<li><button class="rowb" type="button" aria-current="{{r.cur}}" onClick="{{r.pick}}">
+<img src="{{r.img}}" alt="" style="width: 46px; height: 46px; border-radius: 14px; object-fit: cover; flex-shrink: 0">
+<span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column"><span style="display: flex; gap: 8px; align-items: baseline"><strong style="font-size: 15px; color: var(--ink-strong)">{{r.name}}</strong><span dir="ltr" class="muted" style="font-size: 11px">{{r.id}}</span></span><span class="muted" style="font-size: 13px">{{r.who}} · {{r.product}}</span></span>
+<span class="{{r.badge}}">{{r.status}}</span>
+</button></li>
+</sc-for>
+</ul>
+</section>
+
+<section class="card anim-up d3" aria-labelledby="dt-h" style="overflow: hidden; display: flex; flex-direction: column">
+<div class="dk" style="position: relative; overflow: hidden; isolation: isolate; padding: 18px 20px; background: var(--side-bg); color: #ffffff; display: flex; align-items: center; gap: 12px">
+<div class="side-glow" aria-hidden="true"></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column"><span dir="ltr" class="neon-t" style="align-self: flex-end; font-size: 13px; font-weight: 700; letter-spacing: 1px">{{sel.id}}</span><h2 id="dt-h" style="margin: 0; font-size: 22px; line-height: 32px; font-weight: 800">{{sel.product}}</h2></div>
+<span class="who">{{sel.who}}</span>
+</div>
+<div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div class="tint" style="padding: 12px 14px; display: flex; flex-direction: column"><span class="muted" style="font-size: 12px; font-weight: 700">العميل</span><strong style="color: var(--ink-strong)">{{sel.name}}</strong><sc-if value="{{sel.org}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; color: var(--accent-ink); font-weight: 700">{{sel.org}}</span></sc-if></div>
+<div class="tint" style="padding: 12px 14px; display: flex; flex-direction: column"><span class="muted" style="font-size: 12px; font-weight: 700">الموبايل <span class="badge b-ok" style="margin-inline-start: 4px">ظاهر لدورك</span></span><a dir="ltr" href="https://wa.me/201116891025" style="align-self: flex-end; font-weight: 800">{{sel.phone}}</a></div>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 24px"><strong>ملاحظات العميل:</strong> {{sel.notes}}</p>
+
+<sc-if value="{{sel.isPending}}" hint-placeholder-val="{{false}}">
+<div class="tint pop" style="padding: 14px 16px; display: flex; gap: 10px; align-items: center"><span class="tile" aria-hidden="true" style="width: 38px; height: 38px"><svg class="ic" viewBox="0 0 24 24" style="width: 18px; height: 18px"><path d="{{clockIc}}"></path></svg></span><span style="font-size: 14px; line-height: 22px"><strong style="color: var(--ink-strong)">مستني اعتماد المدير.</strong> هيوصلك إشعار لما يعتمد، وبعدها الرسالة بتتبعت للعميل.</span></div>
+</sc-if>
+
+<sc-if value="{{sel.showQuote}}" hint-placeholder-val="{{true}}">
+<form onSubmit="{{sendQuote}}" style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--tint-bd)">
+<h3 class="h2" style="font-size: 15px">مسودة عرض السعر <span class="muted" style="font-weight: 500; font-size: 12px">(بتروح للمدير يعتمدها)</span></h3>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 4px"><label class="lbl" for="q-u">سعر القطعة</label><input class="fld" id="q-u" type="text" inputmode="decimal" value="{{q.unit}}" onChange="{{onQ.unit}}" placeholder="[السعر]"></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><label class="lbl" for="q-t">الإجمالي</label><input class="fld" id="q-t" type="text" inputmode="decimal" value="{{q.total}}" onChange="{{onQ.total}}" placeholder="[الإجمالي]"></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><label class="lbl" for="q-d">مدة التنفيذ</label><input class="fld" id="q-d" type="text" value="{{q.days}}" onChange="{{onQ.days}}" placeholder="[المدة]"></div>
+</div>
+<sc-if value="{{qErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--warn-bg); border: 1px solid var(--warn-bd); color: var(--warn-ink); font-size: 13px; font-weight: 700">اكتب سعر القطعة والإجمالي والمدة.</p></sc-if>
+<button class="g-btn g-cta" type="submit" style="align-self: flex-start; min-height: 46px; padding: 8px 22px; border-radius: 999px; font-size: 14px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="{{sendIc}}"></path></svg>ابعت للمدير للاعتماد</button>
+</form>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-if value="{{sel.canForward}}" hint-placeholder-val="{{false}}"><button class="g-btn g-cta" type="button" onClick="{{forward}}" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px">حوّل للمدير للموافقة</button></sc-if>
+<button class="g-btn g-soft" type="button" onClick="{{askInfo}}" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px">طلب بيانات من العميل</button>
+<a class="g-btn g-soft" href="https://wa.me/201116891025" style="min-height: 44px; padding: 6px 18px; border-radius: 999px; font-size: 14px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px"><path d="{{chatIc}}"></path></svg>واتساب العميل</a>
+</div>
+<div class="lockrow"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="{{lockIc}}"></path></svg><span><strong>الموافقة النهائية والرفض والأسعار</strong> صلاحية المدير بس. إنت بتجهّز وبتحوّل.</span></div>
+</div>
+</section>
+</div>
+</div>
+<sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+<div class="toast pop" role="status">
+<span aria-hidden="true" style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke-width: 2.6"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1">{{toast}}</span>
+<button type="button" onClick="{{hideToast}}" aria-label="إغلاق الإشعار" style="width: 32px; height: 32px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.08); color: #fff; cursor: pointer">×</button>
+</div>
+</sc-if>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1220}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    var T = 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', M = 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', H = 'assets/d4de876ef462c3e541788e94f50199e3.jpg', P = 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg';
+    this.state = { toast: '', f: 'all', sel: 'YZ-Q2M7HP', q: { unit: '', total: '', days: '' }, qErr: false,
+      orders: [
+        { id: 'YZ-Q2M7HP', name: 'سارة حسن', org: 'شركة نيل ڤيو للسياحة (تجريبي)', who: 'شركة', product: 'مج أبيض × 30', img: M, st: 'new', phone: '011•••••204', notes: 'هدايا لموظفين الشركة، كل مج عليه اسم. الشيت مرفوع.' },
+        { id: 'YZ-8K3QF7', name: 'محمد عبد الرحيم', org: 'فريق شباب أسوان (تجريبي)', who: 'فريق', product: 'تيشيرت أبيض × 12', img: T, st: 'new', phone: '010•••••678', notes: 'لوجو الفريق قدام، والاسم ورا.' },
+        { id: 'YZ-R5L1VB', name: 'هبة مصطفى', org: '', who: 'فرد', product: 'كفر Samsung A54 × 1', img: P, st: 'new', phone: '012•••••845', notes: 'صورة بنتي على الكفر.' },
+        { id: 'YZ-B6R2NX', name: 'كريم سيد', org: '', who: 'فرد', product: 'كفر iPhone 13 × 1', img: P, st: 'awaiting', phone: '015•••••118', notes: 'الصورة دقتها قليلة، اتطلب نسخة أعلى.' },
+        { id: 'YZ-T9W4KD', name: 'منى إبراهيم', org: 'مدرسة النور — دفعة 2026 (تجريبي)', who: 'جهة', product: 'هودي أسود × 40', img: H, st: 'pending', phone: '012•••••931', notes: 'هوديز دفعة 2026.' }
+      ] };
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  renderVals() {
+    var s = this.state, self = this, SFX = '-Dark', PAGE = 'Team-Desk';
+
+    var IC = {
+      inbox: 'M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z',
+      pen: 'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586M11 11m-2 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0',
+      print: 'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z',
+      truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14M19 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0M9 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0',
+      photo: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21',
+      chat: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z',
+      lock: 'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4',
+      eyeoff: 'M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20',
+      ok: 'M20 6 9 17l-5-5', warn: 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
+      clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v6l4 2', upload: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12',
+      file: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6', send: 'M22 2 11 13M22 2l-7 20-4-9-9-4Z',
+      biz: 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18ZM6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4',
+      user: 'M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0', coin: 'M12 12m-10 0a10 10 0 1 0 20 0 10 10 0 1 0-20 0M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 18V6'
+    };
+    function navOf(items) { return items.map(function (n) { return { label: n[0], icon: IC[n[1]], href: n[2] + SFX + '.html', cur: n[2] === PAGE ? 'page' : 'false', count: n[3] || 0 }; }); }
+    function flash(m) { clearTimeout(self.t); self.setState({ toast: m }); self.t = setTimeout(function () { self.setState({ toast: '' }); }, 3200); }
+
+    var ST = { 'new': ['جديد', 'badge b-ok'], awaiting: ['بانتظار العميل', 'badge b-warn'], pending: ['مستني المدير', 'badge b-role'] };
+    var cnt = function (k) { return s.orders.filter(function (o) { return o.st === k; }).length; };
+    var list = s.orders.filter(function (o) { return s.f === 'all' || (s.f === 'org' ? !!o.org : !o.org); });
+    var selO = s.orders.filter(function (o) { return o.id === s.sel; })[0] || s.orders[0];
+    function setSt(st, msg) { self.setState({ orders: self.state.orders.map(function (o) { return o.id === selO.id ? Object.assign({}, o, { st: st }) : o; }) }); flash(msg); }
+    function setQ(k) { return function (e) { var q = Object.assign({}, self.state.q); q[k] = e.target.value; self.setState({ q: q, qErr: false }); }; }
+    return {
+      nav: navOf([['استقبال الطلبات', 'inbox', 'Team-Desk', cnt('new')]]), roleLabel: 'استقبال طلبات', userName: '[اسم الموظف]', initial: 'م', homeHref: 'Main' + SFX + '.html',
+      stats: [{ label: 'طلبات جديدة', n: cnt('new'), sub: 'محتاجة مراجعة أولية' }, { label: 'بانتظار رد العميل', n: cnt('awaiting'), sub: 'اتطلب منهم بيانات' }, { label: 'مستنية اعتماد المدير', n: cnt('pending'), sub: 'عروض أسعار وموافقات' }, { label: 'متوسط أول رد', n: '[—]', sub: 'بيتحسب بعد الربط' }],
+      filters: [['all', 'الكل'], ['org', 'شركات وجهات'], ['person', 'أفراد']].map(function (f) { return { label: f[1], on: s.f === f[0] ? 'true' : 'false', pick: function () { self.setState({ f: f[0] }); } }; }),
+      rows: list.map(function (o) { return { id: o.id, name: o.name, who: o.org || o.who, product: o.product, img: o.img, status: ST[o.st][0], badge: ST[o.st][1], cur: o.id === selO.id ? 'true' : 'false', pick: function () { self.setState({ sel: o.id, qErr: false, q: { unit: '', total: '', days: '' } }); } }; }),
+      sel: Object.assign({}, selO, { isPending: selO.st === 'pending', showQuote: !!selO.org && selO.st !== 'pending', canForward: !selO.org && selO.st === 'new' }),
+      q: s.q, qErr: s.qErr, onQ: { unit: setQ('unit'), total: setQ('total'), days: setQ('days') },
+      sendQuote: function (e) { if (e && e.preventDefault) e.preventDefault(); var q = self.state.q; if (!q.unit.trim() || !q.total.trim() || !q.days.trim()) { self.setState({ qErr: true }); return; } setSt('pending', 'اتبعتت مسودة عرض السعر للمدير يعتمدها'); },
+      forward: function () { setSt('pending', 'اتحوّل الطلب للمدير للموافقة'); },
+      askInfo: function () { setSt('awaiting', 'اتبعت طلب بيانات للعميل على واتساب'); },
+      clockIc: IC.clock, sendIc: IC.send, chatIc: IC.chat, lockIc: IC.lock,
+      toast: s.toast, hideToast: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

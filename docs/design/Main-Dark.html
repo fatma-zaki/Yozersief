@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>يوزرسيف — الرئيسية (الوضع الداكن)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#001412;color:#f2fbf8;font-family:"Cairo","Segoe UI",Tahoma,sans-serif}
+*{box-sizing:border-box}
+a{color:#7ee8c7}
+:focus-visible{outline:2px solid #7ee8c7;outline-offset:3px}
+.glass-nav{background:linear-gradient(160deg,rgba(5,64,57,.62),rgba(0,27,23,.64));-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(126,232,199,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 22px rgba(126,232,199,.1),0 16px 40px rgba(0,0,0,.45)}
+.gl{background:linear-gradient(160deg,rgba(5,64,57,.5) 0%,rgba(0,27,23,.55) 100%);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);border:1px solid rgba(126,232,199,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 20px 44px rgba(0,0,0,.35);transition:border-color .25s,box-shadow .25s,transform .25s}
+.gl-hover:hover{transform:translateY(-3px);border-color:rgba(126,232,199,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 32px rgba(126,232,199,.22),0 24px 48px rgba(0,0,0,.4)}
+.pill{display:inline-flex;align-items:center;padding:4px 16px;border-radius:999px;background:rgba(126,232,199,.08);border:1px solid rgba(126,232,199,.4);color:#b8f2de;font-size:13px;line-height:22px;font-weight:700;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 14px rgba(126,232,199,.18)}
+.g-btn{position:relative;cursor:pointer;-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);transition:box-shadow .2s,transform .15s,border-color .2s,background .2s}
+.g-btn:active{transform:translateY(1px)}
+.g-cta{background:linear-gradient(180deg,rgba(5,64,57,.75) 0%,rgba(0,27,23,.75) 100%);color:#ffffff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.4),0 0 44px rgba(126,232,199,.16)}
+.g-cta:hover{transform:translateY(-1px);border-color:#b8f2de;box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 0 22px rgba(126,232,199,.2),0 0 26px rgba(126,232,199,.6),0 0 60px rgba(126,232,199,.25)}
+.g-soft{background:rgba(126,232,199,.07);color:#b8f2de;border:1px solid rgba(126,232,199,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.g-soft:hover{background:rgba(126,232,199,.14);border-color:rgba(126,232,199,.7);color:#ffffff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 18px rgba(126,232,199,.3)}
+.g-arrow{width:44px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(126,232,199,.24),rgba(126,232,199,.08));border:1px solid rgba(126,232,199,.55);color:#b8f2de;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 14px rgba(126,232,199,.25)}
+.g-arrow:hover{color:#ffffff;border-color:#7ee8c7;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 22px rgba(126,232,199,.5)}
+.g-icon{width:46px;height:46px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.g-round{width:52px;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.chip{min-height:44px;padding:8px 22px;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:box-shadow .2s,background .2s,border-color .2s}
+.chip-off{background:rgba(126,232,199,.05);color:rgba(242,251,248,.8);border:1px solid rgba(126,232,199,.22)}
+.chip-off:hover{border-color:rgba(126,232,199,.6);color:#ffffff}
+.chip-on{background:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.12));color:#ffffff;border:1px solid rgba(126,232,199,.85);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 18px rgba(126,232,199,.35)}
+.nav-l{color:rgba(242,251,248,.78);text-decoration:none;padding:8px 2px;border-bottom:2px solid transparent;transition:color .15s}
+.nav-l:hover{color:#7ee8c7}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.5),0 0 30px rgba(126,232,199,.28)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.7)) drop-shadow(0 0 14px rgba(126,232,199,.3))}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ring{display:flex;align-items:center;justify-content:center;border-radius:999px;border:1.5px solid rgba(126,232,199,.75);color:#7ee8c7;background:radial-gradient(circle,rgba(126,232,199,.12) 0%,rgba(126,232,199,0) 70%);box-shadow:0 0 18px rgba(126,232,199,.3),inset 0 0 12px rgba(126,232,199,.12)}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:24px;color:#7ee8c7;background:linear-gradient(135deg,rgba(126,232,199,.16),rgba(5,64,57,.45));border:1px solid rgba(126,232,199,.45);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 20px rgba(126,232,199,.2),0 10px 26px rgba(0,0,0,.35)}
+.divider{height:1px;max-width:1200px;margin:0 auto;background:linear-gradient(90deg,rgba(126,232,199,0) 0%,rgba(126,232,199,.55) 50%,rgba(126,232,199,0) 100%);box-shadow:0 0 12px rgba(126,232,199,.35)}
+.hero-scene{-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 14%,#000 72%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,#000 14%,#000 72%,transparent 100%)}
+.cta-scene{-webkit-mask-image:linear-gradient(to left,transparent 0%,#000 45%);mask-image:linear-gradient(to left,transparent 0%,#000 45%)}
+.pcard img{transition:transform .4s}
+.pcard:hover img{transform:scale(1.05)}
+.gal-item img{transition:transform .4s}
+.gal-item:hover img{transform:scale(1.05)}
+.ft-l{color:rgba(242,251,248,.68);text-decoration:none;transition:color .15s}
+.ft-l:hover{color:#7ee8c7}
+.mob-only{display:none !important}
+@media (max-width:1060px){.nav-links{display:none !important}.mob-only{display:inline-flex !important}.hero-row{flex-direction:column !important}.prod-grid{grid-template-columns:minmax(0,1fr) !important}}
+@media (max-width:760px){.hdr-cta{display:none !important}.hero-title{font-size:44px !important;line-height:60px !important}.gal{grid-template-columns:repeat(2,minmax(0,1fr)) !important}.gal>*:nth-child(n+3){display:none}.step-arrow{display:none !important}.cta-scene{display:none}.pcard{flex-direction:column !important}.pcard>div:last-child{width:100% !important;height:180px}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+/* smooth motion */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth}
+.g-btn,.gl-hover,.chip,.nav-l,.ft-l,.g-arrow,.g-round{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .35s var(--ease) !important}
+.pcard img,.gal-item img{transition:transform .9s var(--ease) !important}
+.g-btn:hover{transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+main > section{animation:fadeUp .9s var(--ease) both}
+main > section:nth-of-type(2){animation-delay:.08s}main > section:nth-of-type(3){animation-delay:.16s}main > section:nth-of-type(n+4){animation-delay:.24s}
+@supports (animation-timeline: view()){main > section:not(:first-of-type){animation:fadeUp linear both;animation-timeline:view();animation-range:entry 0% cover 22%;animation-delay:0s}}
+.hero-scene,.scene{animation:floaty 7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}html{scroll-behavior:auto}}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #001412; color: #f2fbf8; font-family: Cairo, 'Segoe UI', Tahoma, sans-serif">
+
+<header style="position: sticky; top: 14px; z-index: 50; padding: 0 20px; height: 0">
+<div class="glass-nav" style="max-width: 1320px; margin: 0 auto; border-radius: 26px; padding: 8px 12px 8px 20px; display: flex; align-items: center; gap: 24px">
+<a href="#top" aria-label="يوزرسيف — الصفحة الرئيسية" style="display: block; flex-shrink: 0"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="display: block; width: 64px; height: 64px; border-radius: 16px"></a>
+<nav class="nav-links" aria-label="القائمة الرئيسية" style="display: flex; gap: 28px; flex-grow: 1; justify-content: center; font-size: 15px; line-height: 24px; font-weight: 700">
+<a class="nav-l" href="#top" aria-current="page" style="color: #7ee8c7; border-bottom-color: #7ee8c7">الرئيسية</a>
+<a class="nav-l" href="#products">المنتجات</a>
+<a class="nav-l" href="#gallery">معرض الأعمال</a>
+<a class="nav-l" href="#about">من نحن</a>
+<a class="nav-l" href="#contact">تواصل معنا</a>
+</nav>
+<div class="mob-only" style="flex-grow: 1"></div>
+<div style="display: flex; align-items: center; gap: 8px">
+<button class="g-btn g-soft g-icon" type="button" aria-label="بحث" aria-expanded="{{searchOpenStr}}" onClick="{{toggleSearch}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"></path></svg></button>
+<a class="g-btn g-soft g-icon" href="Track-Dark.html" aria-label="طلباتي — تتبّع طلبك">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"></path></svg></a>
+<a class="g-btn g-cta hdr-cta" href="Request-Dark.html" style="display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 22px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 800">ابدأ طلبك الآن
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+<button class="g-btn g-soft g-icon mob-only" type="button" aria-label="فتح القائمة" aria-expanded="{{menuOpenStr}}" onClick="{{toggleMenu}}">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+</div>
+</div>
+<sc-if value="{{searchOpen}}" hint-placeholder-val="{{false}}">
+<form role="search" class="glass-nav" onSubmit="{{onSearch}}" style="max-width: 560px; margin: 10px auto 0; border-radius: 22px; padding: 10px; display: flex; gap: 8px">
+<label for="site-qd" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">ابحث في المنتجات</label>
+<input id="site-qd" type="search" placeholder="ابحث عن منتج: تيشيرت، مج، استيكر…" style="flex-grow: 1; min-height: 46px; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(126,232,199,0.3); background: rgba(0,20,18,0.6); color: #ffffff; font-family: inherit; font-size: 16px">
+<button class="g-btn g-cta" type="submit" style="min-height: 46px; padding: 8px 22px; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 800">بحث</button>
+</form>
+</sc-if>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<nav class="glass-nav" aria-label="القائمة" style="max-width: 1320px; margin: 10px auto 0; border-radius: 22px; padding: 10px 20px 16px; display: flex; flex-direction: column; font-size: 16px; font-weight: 700">
+<a class="nav-l" href="#products" style="padding: 12px 0">المنتجات</a>
+<a class="nav-l" href="#gallery" style="padding: 12px 0">معرض الأعمال</a>
+<a class="nav-l" href="#about" style="padding: 12px 0">من نحن</a>
+<a class="nav-l" href="#contact" style="padding: 12px 0">تواصل معنا</a>
+<a class="g-btn g-cta" href="Request-Dark.html" style="margin-top: 10px; display: flex; justify-content: center; min-height: 48px; padding: 12px; border-radius: 999px; text-decoration: none; font-weight: 800">ابدأ طلبك الآن</a>
+</nav>
+</sc-if>
+</header>
+
+<main id="top">
+<!-- Hero -->
+<section aria-labelledby="hero-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001412; padding-top: 112px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 45% 70% at 78% 40%, rgba(5,64,57,0.85) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 40% 60% at 28% 50%, rgba(3,39,34,0.9) 0%, rgba(3,39,34,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 40px; right: -260px; width: 620px; height: 620px; transform: rotate(180deg); opacity: .6; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -120px; left: -260px; width: 620px; height: 620px; opacity: .4; pointer-events: none">
+<div class="hero-row" style="max-width: 1320px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 24px; min-height: 500px">
+<div style="flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 0">
+<span class="pill">مطبوعات مميزة</span>
+<h1 id="hero-h" class="hero-title" style="margin: 0; font-size: 68px; line-height: 88px; font-weight: 800; color: #ffffff">مطبوعات<br><span class="neon-t" style="color: #7ee8c7">تحكي قصتك</span></h1>
+<p style="margin: 0; max-width: 480px; font-size: 18px; line-height: 32px; font-weight: 500; color: rgba(242,251,248,0.75)">تيشرتات، هوديز، كابات، مجات، استيكرات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px">
+<a class="g-btn g-cta" href="Request-Dark.html" style="display: inline-flex; align-items: center; gap: 14px; min-height: 58px; padding: 14px 36px; border-radius: 999px; text-decoration: none; font-size: 18px; font-weight: 800">ابدأ طلبك الآن
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+<a class="g-btn g-soft" href="#gallery" style="display: inline-flex; align-items: center; min-height: 58px; padding: 14px 28px; border-radius: 999px; text-decoration: none; font-size: 16px; font-weight: 700">شوف أعمالنا</a>
+</div>
+</div>
+<div style="flex: 1.2 1 600px; min-width: 0; align-self: stretch; position: relative; min-height: 460px">
+<img class="hero-scene" src="assets/c8049162e0dd61f1eab9f6729f80a06b.jpg" alt="تيشيرت وهودي وكاب ومج وكفر موبايل مطبوع عليهم شعار يوزرسيف" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 60%; display: block">
+</div>
+</div>
+<div style="max-width: 1180px; margin: -20px auto 0; padding: 0 24px 104px; position: relative">
+<ul class="gl" style="list-style: none; margin: 0; padding: 22px 12px; border-radius: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))">
+<sc-for list="{{heroFeatures}}" as="f" hint-placeholder-count="4">
+<li style="{{f.style}}">
+<span class="ring" aria-hidden="true" style="width: 52px; height: 52px"><svg class="ic" viewBox="0 0 24 24"><path d="{{f.d}}"></path></svg></span>
+<span style="font-size: 17px; font-weight: 700">{{f.t}}</span>
+</li>
+</sc-for>
+</ul>
+</div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- Products -->
+<section id="products" aria-labelledby="prod-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001b17; padding: 96px 24px 110px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 35% 50% at 12% 30%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 35% 50% at 88% 75%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 40px; left: -220px; width: 620px; height: 620px; opacity: .3; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -80px; right: -260px; width: 560px; height: 560px; transform: rotate(180deg); opacity: .25; pointer-events: none">
+<div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<span class="pill">منتجاتنا</span>
+<h2 id="prod-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">كل ما تحتاجه في <span class="neon-t" style="color: #7ee8c7">مكان واحد</span></h2>
+<p style="margin: 0; font-size: 16px; line-height: 28px; color: rgba(242,251,248,0.7)">مجموعة متنوعة من المطبوعات والهدايا المخصصة لتناسب جميع احتياجاتك.</p>
+</div>
+<div class="prod-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<sc-for list="{{products}}" as="p" hint-placeholder-count="4">
+<article class="pcard gl gl-hover" style="border-radius: 26px; padding: 14px; display: flex; align-items: stretch; gap: 18px; min-height: 210px">
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px 8px 8px">
+<h3 style="margin: 0; font-size: 22px; line-height: 34px; font-weight: 800; color: #ffffff">{{p.t}}</h3>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(242,251,248,0.68); flex-grow: 1">{{p.d}}</p>
+<a class="g-btn g-arrow" href="{{p.href}}" aria-label="{{p.label}}" style="margin-top: 10px; text-decoration: none">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+</div>
+<div style="flex: 0 0 46%; width: 46%; border-radius: 20px; overflow: hidden; background: #032722"><img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+</article>
+</sc-for>
+</div>
+</div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- Why us -->
+<section aria-labelledby="why-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001412; padding: 110px 24px 130px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 50% 70% at 50% 50%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -60px; right: -240px; width: 560px; height: 560px; opacity: .4; pointer-events: none">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -200px; left: -200px; width: 560px; height: 560px; transform: rotate(180deg); opacity: .35; pointer-events: none">
+<div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 44px">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<span class="pill">مميزاتنا</span>
+<h2 id="why-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">لماذا يختارنا <span class="neon-t" style="color: #7ee8c7">عملاؤنا؟</span></h2>
+<p style="margin: 0; font-size: 16px; line-height: 28px; color: rgba(242,251,248,0.7)">نقدم لك تجربة طباعة مميزة تجمع بين الجودة، السرعة، والتصميم الاحترافي.</p>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px">
+<sc-for list="{{why}}" as="w" hint-placeholder-count="4">
+<li class="gl gl-hover" style="border-radius: 26px; padding: 30px 22px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px">
+<span class="ring" aria-hidden="true" style="width: 72px; height: 72px"><svg class="ic" viewBox="0 0 24 24" style="width: 32px; height: 32px; stroke-width: 1.5"><path d="{{w.d}}"></path></svg></span>
+<h3 style="margin: 0; font-size: 20px; line-height: 32px; font-weight: 800; color: #ffffff">{{w.t}}</h3>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(242,251,248,0.68)">{{w.s}}</p>
+</li>
+</sc-for>
+</ul>
+</div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- How it works -->
+<section id="how" aria-labelledby="how-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001b17; padding: 72px 24px 88px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 30% 50% at 85% 40%, rgba(5,64,57,0.55) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 30% 50% at 15% 70%, rgba(5,64,57,0.45) 0%, rgba(5,64,57,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -60px; left: -240px; width: 560px; height: 560px; opacity: .3; pointer-events: none">
+<div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<span class="pill">خطوات بسيطة</span>
+<h2 id="how-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">كيف يعمل <span class="neon-t" style="color: #7ee8c7">طلبك؟</span></h2>
+<p style="margin: 0; font-size: 16px; line-height: 28px; color: rgba(242,251,248,0.7)">من الفكرة إلى المنتج بخطوات سهلة وسريعة</p>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 12px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<li style="display: contents">
+<div style="flex: 1 1 200px; max-width: 250px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<div style="position: relative">
+<span class="tile" aria-hidden="true" style="width: 88px; height: 88px"><svg class="ic" viewBox="0 0 24 24" style="width: 36px; height: 36px; stroke-width: 1.5"><path d="{{s.d}}"></path></svg></span>
+<span aria-hidden="true" style="position: absolute; bottom: -8px; left: -8px; width: 30px; height: 30px; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #001412; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; border: 2px solid #001b17; box-shadow: 0 0 14px rgba(126,232,199,0.7)">{{s.n}}</span>
+</div>
+<h3 style="margin: 8px 0 0; font-size: 20px; line-height: 32px; font-weight: 800; color: #ffffff"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">الخطوة {{s.n}}: </span>{{s.t}}</h3>
+<p style="margin: 0; font-size: 14px; line-height: 24px; color: rgba(242,251,248,0.68)">{{s.s}}</p>
+</div>
+<sc-if value="{{s.arrow}}" hint-placeholder-val="{{true}}">
+<span class="step-arrow" aria-hidden="true" style="display: flex; align-items: center; height: 88px; color: #7ee8c7; opacity: .6"><svg class="ic" viewBox="0 0 24 24" style="width: 28px; height: 28px"><path d="M15 18l-6-6 6-6"></path></svg></span>
+</sc-if>
+</li>
+</sc-for>
+</ol>
+</div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- Gallery -->
+<section id="gallery" aria-labelledby="gal-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001412; padding: 72px 24px 80px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 50% 50% at 50% 60%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"></div>
+<div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<span class="pill">معرض الأعمال</span>
+<h2 id="gal-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">تصاميم حقيقية <span class="neon-t" style="color: #7ee8c7">لعملائنا</span></h2>
+<p style="margin: 0; font-size: 13px; line-height: 22px; font-weight: 600; color: rgba(242,251,248,0.62)">الصور الحالية نماذج عرض لحين إضافة صور أعمال العملاء بموافقتهم</p>
+</div>
+<div role="group" aria-label="تصفية المعرض" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+<button type="button" class="{{c.cls}}" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}">{{c.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<button class="g-btn g-cta g-round" type="button" onClick="{{galPrev}}" aria-label="الصور السابقة" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 5l7 7-7 7M5 12h14"></path></svg></button>
+<ul class="gal" aria-live="polite" style="list-style: none; margin: 0; padding: 0; flex-grow: 1; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{gal}}" as="g" hint-placeholder-count="4">
+<li class="gal-item gl gl-hover" style="position: relative; height: 260px; border-radius: 24px; overflow: hidden; padding: 6px">
+<div style="width: 100%; height: 100%; border-radius: 19px; overflow: hidden; background: #032722"><img src="{{g.img}}" alt="{{g.alt}}" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<span style="position: absolute; bottom: 14px; right: 14px; padding: 2px 10px; border-radius: 999px; background: rgba(0,20,18,0.7); border: 1px solid rgba(126,232,199,0.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font-size: 11px; font-weight: 700; color: #b8f2de">نموذج عرض</span>
+</li>
+</sc-for>
+</ul>
+<button class="g-btn g-cta g-round" type="button" onClick="{{galNext}}" aria-label="الصور التالية" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></button>
+</div>
+<sc-if value="{{galEmpty}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; text-align: center; font-size: 15px; color: rgba(242,251,248,0.7)">لسه مفيش أعمال منشورة في القسم ده.</p>
+</sc-if>
+<div role="group" aria-label="صفحات المعرض" style="display: flex; justify-content: center; gap: 8px">
+<sc-for list="{{dots}}" as="d" hint-placeholder-count="4">
+<button type="button" onClick="{{d.go}}" aria-label="{{d.label}}" aria-current="{{d.cur}}" style="{{d.style}}"></button>
+</sc-for>
+</div>
+</div>
+</section>
+
+<div class="divider" aria-hidden="true"></div>
+
+<!-- Testimonials (placeholders) -->
+<section aria-labelledby="tst-h" style="position: relative; overflow: hidden; isolation: isolate; background: #001b17; padding: 72px 24px 80px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; top: 120px; right: 14%; font-size: 220px; line-height: 1; font-weight: 800; color: rgba(126,232,199,0.16); font-family: Georgia, serif">”</div>
+<div aria-hidden="true" style="position: absolute; z-index: -1; bottom: 40px; left: 16%; font-size: 180px; line-height: 1; font-weight: 800; color: rgba(126,232,199,0.12); font-family: Georgia, serif">“</div>
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 26px">
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+<span class="pill">آراء عملائنا</span>
+<h2 id="tst-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">ماذا يقول <span class="neon-t" style="color: #7ee8c7">عملاؤنا؟</span></h2>
+<p style="margin: 0; font-size: 16px; line-height: 28px; color: rgba(242,251,248,0.7)">ثقة عملائنا هي أكبر دليل على جودة منتجاتنا</p>
+</div>
+<div style="width: 100%; display: flex; align-items: center; gap: 16px">
+<button class="g-btn g-arrow" type="button" onClick="{{revPrev}}" aria-label="الرأي السابق" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M9 18l6-6-6-6"></path></svg></button>
+<figure class="gl" aria-live="polite" style="flex-grow: 1; margin: 0; border-radius: 28px; padding: 30px 32px; display: flex; flex-direction: column; gap: 14px; min-height: 200px; border-style: dashed">
+<div aria-label="التقييم: بانتظار رأي حقيقي" style="display: flex; gap: 4px; color: #7ee8c7">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+</div>
+<blockquote style="margin: 0; font-size: 18px; line-height: 32px; color: rgba(242,251,248,0.72)">{{rev.q}}</blockquote>
+<figcaption style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="width: 44px; height: 44px; border-radius: 999px; background: rgba(126,232,199,0.08); border: 1px solid rgba(126,232,199,0.4)"></span>
+<strong style="font-size: 15px; color: rgba(242,251,248,0.8)">{{rev.n}}</strong>
+</figcaption>
+</figure>
+<button class="g-btn g-arrow" type="button" onClick="{{revNext}}" aria-label="الرأي التالي" style="flex-shrink: 0">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 20px; height: 20px; stroke-width: 2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+</div>
+<div style="display: flex; justify-content: center; gap: 8px">
+<sc-for list="{{revDots}}" as="d" hint-placeholder-count="3">
+<button type="button" onClick="{{d.go}}" aria-label="{{d.label}}" aria-current="{{d.cur}}" style="{{d.style}}"></button>
+</sc-for>
+</div>
+<p style="margin: 0; text-align: center; font-size: 13px; color: rgba(242,251,248,0.6)">مكان مخصص لآراء عملاء حقيقية — تُضاف بموافقة أصحابها ولا تُكتب نيابة عنهم.</p>
+</div>
+</section>
+
+<!-- Idea banner -->
+<section aria-labelledby="idea-h" style="background: #001b17; padding: 0 24px 88px">
+<div style="position: relative; overflow: hidden; isolation: isolate; max-width: 1240px; margin: 0 auto; border-radius: 32px; background: linear-gradient(160deg, #054039 0%, #032722 55%, #001b17 100%); min-height: 250px; display: flex; align-items: center; border: 1px solid rgba(126,232,199,0.5); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 0 30px rgba(126,232,199,0.2), 0 24px 50px rgba(0,0,0,0.4)">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -220px; right: -160px; width: 520px; height: 520px; opacity: .45; pointer-events: none">
+<img class="cta-scene" src="assets/0f74f4cd0ed72ba9584b3c1394971e2f.jpg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 0; bottom: 0; left: 0; width: 52%; height: 100%; object-fit: cover; object-position: center 70%">
+<div style="padding: 40px 48px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; max-width: 560px">
+<h2 id="idea-h" style="margin: 0; font-size: 38px; line-height: 54px; font-weight: 800; color: #ffffff">لديك فكرة <span class="neon-t" style="color: #7ee8c7">مميزة؟</span></h2>
+<p style="margin: 0; font-size: 17px; line-height: 30px; color: rgba(242,251,248,0.78)">حوّلها إلى مطبوعات فريدة مع يوزرسيف</p>
+<a class="g-btn g-cta" href="Request-Dark.html" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 12px; min-height: 56px; padding: 12px 34px; border-radius: 999px; text-decoration: none; font-size: 17px; font-weight: 800">ابدأ طلبك الآن
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width: 2.2"><path d="M12 19l-7-7 7-7M19 12H5"></path></svg></a>
+</div>
+</div>
+</section>
+</main>
+
+<div class="divider" aria-hidden="true" style="max-width: none"></div>
+
+<!-- Footer -->
+<footer id="contact" style="position: relative; overflow: hidden; isolation: isolate; background: #000e0c; padding: 64px 24px 28px">
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -260px; left: -220px; width: 600px; height: 600px; transform: rotate(180deg); opacity: .3; pointer-events: none">
+<div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-wrap: wrap; gap: 48px; justify-content: space-between">
+<div id="about" style="flex: 1.3 1 280px; display: flex; flex-direction: column; gap: 16px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 112px; height: 112px; border-radius: 22px; display: block">
+<p style="margin: 0; max-width: 320px; font-size: 14px; line-height: 26px; color: rgba(242,251,248,0.68)">يوزرسيف للطباعة والتخصيص في أسوان: تيشرتات، هوديز، كابات، مجات، استيكرات وهدايا بتصميمك أنت.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a class="g-btn g-soft" href="https://wa.me/201116891025" style="display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 700">واتساب</a>
+<a class="g-btn g-soft" href="https://www.instagram.com/youzersef" style="display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 700">انستجرام</a>
+<span class="g-soft" style="display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700">فيسبوك: يوزرسيف</span>
+<span class="g-soft" style="display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700">تيك توك: يوزرسيف</span>
+</div>
+</div>
+<nav aria-label="روابط سريعة" style="flex: 1 1 150px; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<h2 class="neon-t" style="margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #7ee8c7">روابط سريعة</h2>
+<a class="ft-l" href="#top">الرئيسية</a>
+<a class="ft-l" href="#products">المنتجات</a>
+<a class="ft-l" href="#gallery">معرض الأعمال</a>
+<a class="ft-l" href="Track-Dark.html">تتبّع طلبك</a>
+<a class="ft-l" href="Admin-Dark.html">دخول الإدارة</a>
+</nav>
+<nav aria-label="المنتجات" style="flex: 1 1 150px; display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<h2 class="neon-t" style="margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #7ee8c7">المنتجات</h2>
+<a class="ft-l" href="Service-Tablet-Dark.html">طباعة الملابس</a>
+<a class="ft-l" href="Request-Dark.html">المجات والكاسات</a>
+<a class="ft-l" href="Request-Dark.html">الهدايا المخصصة</a>
+<a class="ft-l" href="Request-Dark.html">الاستيكرات</a>
+<a class="ft-l" href="#products">جميع المنتجات</a>
+</nav>
+<div style="flex: 1 1 200px; display: flex; flex-direction: column; gap: 12px; font-size: 15px">
+<h2 class="neon-t" style="margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #7ee8c7">تواصل معنا</h2>
+<a class="ft-l" href="https://wa.me/201116891025" style="display: flex; align-items: center; gap: 8px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #7ee8c7"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg><span dir="ltr">01116891025</span></a>
+<span style="display: flex; align-items: center; gap: 8px; color: rgba(242,251,248,0.68)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #7ee8c7"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>[الإيميل — بانتظار التأكيد]</span>
+<span style="display: flex; align-items: center; gap: 8px; color: rgba(242,251,248,0.68)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #7ee8c7"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0M15 10a3 3 0 1 1-6 0 3 3 0 1 1 6 0"></path></svg>أسوان، مصر</span>
+</div>
+</div>
+<div style="padding-top: 22px; border-top: 1px solid rgba(126,232,199,0.14); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 13px; color: rgba(242,251,248,0.55)">
+<span>جميع الحقوق محفوظة © 2026 يوزرسيف</span>
+<div style="display: flex; gap: 18px"><a class="ft-l" href="#privacy">سياسة الخصوصية</a><a class="ft-l" href="#terms">الشروط والأحكام</a></div>
+</div>
+</div>
+</footer>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4500}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { menuOpen: false, searchOpen: false, gal: 0, cat: 'all', rev: 0 }; }
+  renderVals() {
+    var s = this.state, self = this;
+    var D = {
+      gem: 'M6 3h12l4 6-10 13L2 9ZM11 3 8 9l4 13 4-13-3-6M2 9h20',
+      truck: 'M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14M19 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0M9 18a2 2 0 1 1-4 0 2 2 0 1 1 4 0',
+      pen: 'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4',
+      gift: 'M4 8h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5',
+      gear: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0',
+      headset: 'M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3',
+      image: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21',
+      shirt: 'M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z'
+    };
+    var feats = [{ t: 'جودة عالية', d: D.gem }, { t: 'توصيل سريع', d: D.truck }, { t: 'تصاميم مخصصة', d: D.pen }, { t: 'هدايا مميزة', d: D.gift }];
+    var heroFeatures = feats.map(function (f, i) {
+      return Object.assign({}, f, { style: 'display: flex; align-items: center; justify-content: center; gap: 14px; padding: 6px 16px; ' + (i > 0 ? 'border-right: 1px solid rgba(126,232,199,0.18)' : '') });
+    });
+    var all = [
+      { cat: 'wear', img: 'assets/d4de876ef462c3e541788e94f50199e3.jpg', alt: 'هودي مطبوع' },
+      { cat: 'mug', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', alt: 'مج ومطرة مطبوعين' },
+      { cat: 'cap', img: 'assets/53f6eb00973f2207c9b44d73b256c3e5.jpg', alt: 'كاب مطبوع' },
+      { cat: 'sticker', img: 'assets/f60de672b1c4acb9d0379db6a94b4d42.jpg', alt: 'كفرات موبايل مطبوعة' },
+      { cat: 'wear', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', alt: 'تيشيرت مطبوع' },
+      { cat: 'sticker', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', alt: 'استيكر مطبوع' },
+      { cat: 'sticker', img: 'assets/0b3e57d34122b654cbb1f7615c9f91ac.jpg', alt: 'لافتة محل' },
+      { cat: 'wear', img: 'assets/9094d6d3078b4a111c3c53e31749d141.jpg', alt: 'طباعة حرارية على تيشيرت' }
+    ];
+    var images = all.filter(function (x) { return s.cat === 'all' || x.cat === s.cat; });
+    var n = images.length, show = Math.min(4, n), start = n ? s.gal % n : 0;
+    var gal = []; for (var i = 0; i < show; i++) gal.push(images[(start + i) % n]);
+    var pages = Math.max(1, Math.ceil(n / 2)), page = n ? Math.floor(start / 2) % pages : 0;
+    function dot(on) { return 'width: ' + (on ? '28px' : '10px') + '; height: 10px; padding: 0; border-radius: 999px; border: 0; cursor: pointer; transition: width .2s; background: ' + (on ? '#7ee8c7' : 'rgba(126,232,199,0.22)') + (on ? '; box-shadow: 0 0 10px rgba(126,232,199,0.8)' : ''); }
+    var dots = []; for (var j = 0; j < Math.min(pages, 4); j++) (function (j) {
+      dots.push({ label: 'صفحة ' + (j + 1), cur: j === page ? 'true' : 'false', style: dot(j === page), go: function () { self.setState({ gal: j * 2 }); } });
+    })(j);
+    var chips = [['all', 'الكل'], ['wear', 'تيشرتات'], ['mug', 'مجات'], ['cap', 'كابات'], ['sticker', 'استيكرات']].map(function (c) {
+      var on = s.cat === c[0];
+      return { label: c[1], pressed: on ? 'true' : 'false', cls: 'chip ' + (on ? 'chip-on' : 'chip-off'), pick: function () { self.setState({ cat: c[0], gal: 0 }); } };
+    });
+    var reviews = [
+      { q: '[رأي عميل حقيقي — يُضاف بعد موافقته]', n: '[اسم العميل]' },
+      { q: '[رأي عميل حقيقي ثاني — يُضاف بعد موافقته]', n: '[اسم العميل]' },
+      { q: '[رأي عميل حقيقي ثالث — يُضاف بعد موافقته]', n: '[اسم العميل]' }
+    ];
+    var r = s.rev % reviews.length;
+    return {
+      menuOpen: s.menuOpen, menuOpenStr: s.menuOpen ? 'true' : 'false', toggleMenu: function () { self.setState({ menuOpen: !self.state.menuOpen, searchOpen: false }); },
+      searchOpen: s.searchOpen, searchOpenStr: s.searchOpen ? 'true' : 'false',
+      toggleSearch: function () { self.setState({ searchOpen: !self.state.searchOpen, menuOpen: false }); setTimeout(function () { var el = document.getElementById('site-qd'); if (el) el.focus(); }, 50); },
+      onSearch: function (e) { if (e && e.preventDefault) e.preventDefault(); self.setState({ searchOpen: false }); var el = document.getElementById('products'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth' }); },
+      heroFeatures: heroFeatures,
+      products: [
+        { t: 'المجات والكاسات', d: 'مجات بتصميماتك الخاصة للمناسبات والهدايا.', img: 'assets/ce3fba3159f707f897e470d1c21dfa80.jpg', alt: 'مج مطبوع', href: 'Request-Dark.html', label: 'اطلب المجات والكاسات' },
+        { t: 'طباعة الملابس', d: 'تيشرتات، هوديز، كابات بجودة عالية وتصاميم مميزة.', img: 'assets/d4608fce7a780ebb4635192b39c5e23f.jpg', alt: 'تيشيرت مطبوع', href: 'Service-Tablet-Dark.html', label: 'تفاصيل طباعة الملابس' },
+        { t: 'الهدايا المخصصة', d: 'هدايا فريدة بتصميمات تناسب كل مناسبة.', img: 'assets/0b3e57d34122b654cbb1f7615c9f91ac.jpg', alt: 'هدية مطبوعة بشعار يوزرسيف', href: 'Request-Dark.html', label: 'اطلب الهدايا المخصصة' },
+        { t: 'الاستيكرات والمطبوعات', d: 'استيكرات بجودة عالية ومطبوعات لمختلف الاستخدامات.', img: 'assets/9d4247e2bcdb4759db99ebe55a9162e2.jpg', alt: 'استيكرات مطبوعة', href: 'Request-Dark.html', label: 'اطلب الاستيكرات والمطبوعات' }
+      ],
+      why: [
+        { t: 'جودة طباعة عالية', s: 'خامات مميزة وطباعة احترافية.', d: D.gem },
+        { t: 'توصيل سريع', s: 'نهتم بوصول طلبك في أسرع وقت. [المناطق والمدة بانتظار التأكيد]', d: D.truck },
+        { t: 'تصاميم مخصصة', s: 'للمناسبات والطلبات الخاصة.', d: D.pen },
+        { t: 'دعم مستمر', s: 'فريق دائم لمساعدتك في كل خطوة.', d: D.headset }
+      ],
+      steps: [
+        { n: '1', t: 'اختر المنتج', s: 'حدد نوع المنتج والمواصفات.', d: D.shirt, arrow: true },
+        { n: '2', t: 'أرسل تصميمك', s: 'ارفع تصميمك أو اطلب مساعدة.', d: D.image, arrow: true },
+        { n: '3', t: 'نقوم بالطباعة', s: 'بعد مراجعة طلبك، نطبعه بأعلى جودة.', d: D.gear, arrow: true },
+        { n: '4', t: 'استلم طلبك', s: 'من المحل أو بالتوصيل حسب المتاح.', d: D.truck, arrow: false }
+      ],
+      chips: chips, gal: gal, dots: dots, galEmpty: n === 0,
+      galPrev: function () { if (n) self.setState({ gal: (self.state.gal - 1 + n) % n }); },
+      galNext: function () { if (n) self.setState({ gal: (self.state.gal + 1) % n }); },
+      rev: reviews[r],
+      revDots: reviews.map(function (x, k) { return { label: 'رأي ' + (k + 1), cur: k === r ? 'true' : 'false', style: dot(k === r), go: function () { self.setState({ rev: k }); } }; }),
+      revPrev: function () { self.setState({ rev: (self.state.rev - 1 + reviews.length) % reviews.length }); },
+      revNext: function () { self.setState({ rev: (self.state.rev + 1) % reviews.length }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

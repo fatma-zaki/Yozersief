@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>التواصل والمحتوى — لوحة الإدارة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/react.production.min.js"></script>
+<script src="assets/react-dom.production.min.js"></script>
+<script src="assets/dc-lite.js"></script>
+</head>
+<body>
+<template id="dc-template"><x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#f3faf8;--ink:#030909;--ink-strong:#030909;--muted:rgba(3,9,9,.6);--line:rgba(0,92,88,.12);--accent-ink:#005c58;--card-bg:linear-gradient(135deg,rgba(255,255,255,.88),rgba(255,255,255,.6));--card-bd:rgba(255,255,255,.95);--card-sh:0 0 0 1px rgba(0,92,88,.1),inset 0 1px 0 #fff,0 10px 26px rgba(0,92,88,.1);--bar-sh:0 0 0 1px rgba(126,232,199,.5),inset 0 1px 0 #fff,0 0 22px rgba(126,232,199,.2),0 12px 30px rgba(0,92,88,.1);--field-bg:rgba(255,255,255,.85);--field-bd:rgba(0,92,88,.25);--field-ink:#030909;--focus:#005c58;--focus-ring:rgba(126,232,199,.45);--soft-bg:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.6));--soft-ink:#005c58;--soft-bd:rgba(0,92,88,.25);--cta-bg:linear-gradient(180deg,rgba(0,120,112,.92),rgba(0,43,40,.92));--chip-off-bg:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.5));--chip-off-ink:#005c58;--chip-off-bd:rgba(0,92,88,.18);--chip-on-bg:linear-gradient(180deg,#00706a,#004541);--chip-on-ink:#fff;--tint:linear-gradient(135deg,rgba(184,242,222,.45),rgba(126,232,199,.16));--tint-bd:rgba(0,92,88,.12);--tile-bg:linear-gradient(135deg,rgba(220,250,240,.9),rgba(184,242,222,.45));--tile-ink:#005c58;--side-bg:#01302d;--side-glow:rgba(0,92,88,.95);--warn-bg:rgba(214,174,98,.22);--warn-ink:#5c430f;--warn-bd:#d6ae62;--ok-bg:linear-gradient(180deg,#00706a,#004541);--ok-ink:#fff;--off-bg:rgba(3,9,9,.08);--off-ink:rgba(3,9,9,.6);--overlay:rgba(0,43,40,.45);--sheet-bg:linear-gradient(180deg,rgba(255,255,255,.98),rgba(243,250,248,.97));--toast-bg:#01302d;--img-bg:#e8f3f0;--opt-bg:#ffffff;--opt-ink:#030909;--bubble-bg:linear-gradient(135deg,#e3faf1,#c9f2e2);--bubble-ink:#032722}
+</style>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;background:var(--bg)}
+*{box-sizing:border-box}
+a{color:var(--accent-ink)}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.side :focus-visible,.prev :focus-visible{outline-color:#7ee8c7}
+.page{position:relative;overflow:clip;isolation:isolate;min-height:100vh;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;padding:16px;background:var(--bg);color:var(--ink);font-family:Cairo,'Segoe UI',Tahoma,sans-serif}
+.card{background:var(--card-bg);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--card-bd);box-shadow:var(--card-sh);border-radius:26px}
+.bar{border-radius:24px;padding:12px 14px 12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;box-shadow:var(--bar-sh)}
+.side{position:sticky;top:16px;overflow:hidden;isolation:isolate;flex:1 1 248px;max-width:100%;min-height:calc(100vh - 32px);background:var(--side-bg);color:#fff;border-radius:28px;padding:20px 14px;display:flex;flex-direction:column;gap:22px;border:1px solid rgba(126,232,199,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 26px rgba(126,232,199,.16),0 20px 44px rgba(0,0,0,.25)}
+.side-glow{position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse 120% 50% at 70% 0%,var(--side-glow) 0%,rgba(0,0,0,0) 100%)}
+.side-l{display:flex;align-items:center;gap:12px;min-height:48px;padding:10px 14px;border-radius:16px;font-size:15px;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none;border:1px solid transparent}
+.side-l:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-l[aria-current="page"]{background:linear-gradient(180deg,rgba(126,232,199,.28),rgba(126,232,199,.1));color:#fff;border-color:rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 18px rgba(126,232,199,.3)}
+.main-col{flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.h1{margin:0;font-size:24px;line-height:36px;font-weight:800;color:var(--ink-strong)}
+.h2{margin:0;font-size:17px;line-height:28px;font-weight:800;color:var(--ink-strong)}
+.muted{color:var(--muted)}
+.g-btn{position:relative;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.g-btn[disabled]{opacity:.5;cursor:not-allowed}
+.g-cta{background:var(--cta-bg);color:#fff;border:1.5px solid rgba(126,232,199,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 0 18px rgba(126,232,199,.12),0 0 18px rgba(126,232,199,.42),0 0 40px rgba(126,232,199,.18)}
+.g-soft{background:var(--soft-bg);color:var(--soft-ink);border:1px solid var(--soft-bd)}
+.chip{min-height:38px;padding:4px 16px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+.chip-off{background:var(--chip-off-bg);color:var(--chip-off-ink);border:1px solid var(--chip-off-bd)}
+.chip-on{background:var(--chip-on-bg);color:var(--chip-on-ink);border:1px solid rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 14px rgba(126,232,199,.4)}
+.fld{width:100%;min-height:46px;padding:8px 14px;border-radius:14px;border:1px solid var(--field-bd);background:var(--field-bg);color:var(--field-ink);font-size:15px}
+.fld:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-ring);outline:none}
+.fld option{background:var(--opt-bg);color:var(--opt-ink)}
+.lbl{font-size:13px;font-weight:700}
+.tint{background:var(--tint);box-shadow:inset 0 0 0 1px var(--tint-bd);border-radius:16px}
+.tile{display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--tile-bg);color:var(--tile-ink);box-shadow:0 0 0 1px var(--tint-bd)}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.neon-t{color:#7ee8c7;text-shadow:0 0 10px rgba(126,232,199,.55),0 0 26px rgba(126,232,199,.3)}
+img[src="assets/7e9c2bf666d78520c5029e5857437282.svg"]{filter:drop-shadow(0 0 4px rgba(126,232,199,.75)) drop-shadow(0 0 12px rgba(126,232,199,.3))}
+.sw{position:relative;width:46px;height:26px;flex-shrink:0;border:0;padding:0;border-radius:999px;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .45s var(--ease)}
+.sw-on{background:linear-gradient(180deg,#00a08f,#00706a);box-shadow:0 0 12px rgba(126,232,199,.55)}
+.sw-on::after{transform:translateX(-20px)}
+.sw-off{background:var(--off-bg);box-shadow:inset 0 0 0 1px var(--line)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;line-height:20px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok-ink);box-shadow:0 0 10px rgba(126,232,199,.35)}
+.b-warn{background:var(--warn-bg);color:var(--warn-ink);border:1px solid var(--warn-bd)}
+.b-off{background:var(--off-bg);color:var(--off-ink)}
+.toast{position:fixed;bottom:24px;left:24px;z-index:40;max-width:460px;display:flex;gap:10px;align-items:center;padding:12px 14px 12px 18px;border-radius:20px;background:var(--toast-bg);color:#fff;font-size:15px;font-weight:600;border:1px solid rgba(126,232,199,.55);box-shadow:0 0 26px rgba(126,232,199,.3),0 16px 34px rgba(0,0,0,.3)}
+.g-btn,.chip,.side-l,.sw,.lift,.tab{transition:background .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease),color .35s var(--ease),opacity .4s var(--ease) !important}
+.g-btn:hover,.lift:hover{transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.anim-up{animation:fadeUp .8s var(--ease) both}
+.d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}
+.slide{animation:slideIn .6s var(--ease) both}
+.fade{animation:fadeIn .45s var(--ease) both}
+.pop{animation:pop .5s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+.tab{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 16px;border-radius:999px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid transparent;background:transparent;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--chip-on-bg);color:#fff;border-color:rgba(126,232,199,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 14px rgba(126,232,199,.4)}
+.prev{position:relative;overflow:hidden;isolation:isolate;background:#01302d;color:#fff;border-radius:22px;border:1px solid rgba(126,232,199,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 24px rgba(126,232,199,.2)}
+.bubble{position:relative;white-space:pre-wrap;padding:12px 14px 24px;border-radius:18px 18px 4px 18px;background:var(--bubble-bg);color:var(--bubble-ink);font-size:14px;line-height:23px;box-shadow:0 0 0 1px var(--tint-bd),0 6px 16px rgba(0,0,0,.12)}
+.var{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;background:var(--tint);color:var(--accent-ink);border:1px dashed var(--field-bd)}
+.chk{position:relative;display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:700}
+.chk input{position:absolute;opacity:0;width:1px;height:1px}
+.chk:focus-within{outline:2px solid var(--focus);outline-offset:2px;border-radius:10px}
+</style>
+</helmet>
+<div class="page">
+<img src="assets/09db2274cf741cc3e59da087108d65f1.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: 320px; left: -240px; width: 680px; height: 680px; pointer-events: none">
+
+<nav class="side slide" aria-label="قائمة الإدارة">
+<div class="side-glow" aria-hidden="true"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -170px; right: -190px; width: 460px; height: 460px; opacity: .5; pointer-events: none">
+<div style="display: flex; align-items: center; gap: 12px; padding: 0 6px">
+<img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="شعار يوزرسيف" style="width: 56px; height: 56px; border-radius: 16px; box-shadow: 0 0 0 1px rgba(126,232,199,0.4), 0 0 18px rgba(126,232,199,0.25)">
+<span style="display: flex; flex-direction: column"><strong style="font-size: 17px">لوحة <span class="neon-t">الإدارة</span></strong><span style="font-size: 12px; color: rgba(255,255,255,0.7)">بيئة تجريبية</span></span>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="6">
+<li><a class="side-l" href="{{n.href}}" aria-current="{{n.cur}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="{{n.icon}}"></path></svg><span style="flex-grow: 1">{{n.label}}</span>
+<sc-if value="{{n.count}}" hint-placeholder-val="{{false}}"><span style="min-width: 24px; padding: 0 8px; border-radius: 999px; background: #d6ae62; color: #030909; font-size: 12px; font-weight: 800; text-align: center">{{n.count}}</span></sc-if></a></li>
+</sc-for>
+</ul>
+<div style="margin-top: auto; padding: 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(126,232,199,0.3)">
+<span aria-hidden="true" style="width: 38px; height: 38px; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center; font-weight: 800">ي</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 700">صاحب المحل</span><span style="font-size: 12px; color: rgba(255,255,255,0.7)">مدير</span></span>
+<a href="{{homeHref}}" style="padding: 6px 10px; border-radius: 12px; color: #b8f2de; font-size: 13px; font-weight: 700; text-decoration: none; border: 1px solid rgba(126,232,199,0.35)">خروج</a>
+</div>
+</nav>
+
+<div class="main-col">
+<header class="card bar anim-up">
+<div style="flex-grow: 1; display: flex; flex-direction: column">
+<h1 class="h1">التواصل والمحتوى</h1>
+<span class="muted" style="font-size: 13px">بيانات التواصل، نصوص الصفحة الرئيسية، رسائل واتساب الجاهزة وآراء العملاء</span>
+</div>
+<sc-if value="{{dirty}}" hint-placeholder-val="{{false}}"><span class="badge b-warn">فيه تغييرات مش محفوظة</span></sc-if>
+<button class="g-btn g-cta" type="button" onClick="{{saveAll}}" disabled="{{notDirty}}" style="min-height: 46px; padding: 8px 22px; border-radius: 999px; font-size: 15px">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; stroke-width: 2.2"><path d="M20 6 9 17l-5-5"></path></svg>حفظ التغييرات</button>
+</header>
+
+<div class="card anim-up d1" role="tablist" aria-label="أقسام المحتوى" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border-radius: 999px; align-self: flex-start">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button class="tab" type="button" role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="{{t.icon}}"></path></svg>{{t.label}}</button>
+</sc-for>
+</div>
+
+<!-- Contact -->
+<sc-if value="{{isContact}}" hint-placeholder-val="{{true}}">
+<div class="fade" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; align-items: start">
+<section class="card" aria-labelledby="ct-h" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="ct-h" class="h2">بيانات التواصل</h2>
+<sc-for list="{{contactFields}}" as="f" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label class="lbl" for="{{f.id}}">{{f.label}}</label>
+<div style="position: relative; display: flex; align-items: center">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="position: absolute; right: 14px; width: 18px; height: 18px; color: var(--accent-ink)"><path d="{{f.icon}}"></path></svg>
+<input class="fld" id="{{f.id}}" type="text" dir="{{f.dir}}" value="{{f.v}}" onChange="{{f.on}}" style="padding-right: 42px; text-align: right">
+</div>
+</div>
+</sc-for>
+<p class="muted" style="margin: 0; font-size: 12px; line-height: 20px">أي قيمة بين [ ] معناها لسه مستنية تأكيد، ومش هتظهر للعملاء بالشكل ده.</p>
+</section>
+<section aria-labelledby="ctp-h" style="display: flex; flex-direction: column; gap: 10px; position: sticky; top: 16px">
+<h2 id="ctp-h" class="h2" style="font-size: 15px">معاينة الفوتر في الموقع</h2>
+<div class="prev" style="padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 80% 80% at 80% 0%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; bottom: -120px; left: -120px; width: 280px; height: 280px; opacity: .45">
+<div style="display: flex; align-items: center; gap: 10px"><img src="assets/a09b143d6b90eabfcff65a45080007f7.jpg" alt="" style="width: 44px; height: 44px; border-radius: 12px"><strong class="neon-t" style="font-size: 16px">تواصل معنا</strong></div>
+<sc-for list="{{contactPreview}}" as="c" hint-placeholder-count="6">
+<span style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.85)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #7ee8c7"><path d="{{c.icon}}"></path></svg><span dir="{{c.dir}}">{{c.v}}</span></span>
+</sc-for>
+</div>
+</section>
+</div>
+</sc-if>
+
+<!-- Hero -->
+<sc-if value="{{isHero}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; align-items: start">
+<section class="card" aria-labelledby="hr-h" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="hr-h" class="h2">نصوص أول الصفحة الرئيسية</h2>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="h-pill">الشارة الصغيرة</label><input class="fld" id="h-pill" type="text" value="{{hero.pill}}" onChange="{{onHero.pill}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="h-t1">العنوان — السطر الأول</label><input class="fld" id="h-t1" type="text" value="{{hero.t1}}" onChange="{{onHero.t1}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="h-t2">العنوان — السطر المنوّر</label><input class="fld" id="h-t2" type="text" value="{{hero.t2}}" onChange="{{onHero.t2}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="h-sub">الوصف</label><textarea class="fld" id="h-sub" rows="3" value="{{hero.sub}}" onChange="{{onHero.sub}}" style="line-height: 24px"></textarea><span class="muted" style="font-size: 12px">{{subCount}} حرف — الأفضل أقل من 120</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="h-cta">نص الزرار</label><input class="fld" id="h-cta" type="text" value="{{hero.cta}}" onChange="{{onHero.cta}}"></div>
+</section>
+<section aria-labelledby="hrp-h" style="display: flex; flex-direction: column; gap: 10px; position: sticky; top: 16px">
+<h2 id="hrp-h" class="h2" style="font-size: 15px">معاينة مباشرة</h2>
+<div class="prev" style="padding: 28px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-height: 300px">
+<div aria-hidden="true" style="position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 30%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"></div>
+<img src="assets/7e9c2bf666d78520c5029e5857437282.svg" alt="" aria-hidden="true" style="position: absolute; z-index: -1; top: -80px; left: -140px; width: 340px; height: 340px; opacity: .5">
+<span style="display: inline-flex; padding: 3px 14px; border-radius: 999px; background: rgba(126,232,199,0.12); border: 1px solid rgba(126,232,199,0.5); color: #b8f2de; font-size: 12px; font-weight: 700">{{hero.pill}}</span>
+<strong style="font-size: 38px; line-height: 52px; font-weight: 800">{{hero.t1}}<br><span class="neon-t">{{hero.t2}}</span></strong>
+<p style="margin: 0; max-width: 360px; font-size: 14px; line-height: 24px; color: rgba(255,255,255,0.78)">{{hero.sub}}</p>
+<span style="margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 8px 24px; border-radius: 999px; background: linear-gradient(180deg,rgba(0,120,112,.6),rgba(0,43,40,.6)); border: 1.5px solid rgba(126,232,199,.8); box-shadow: 0 0 18px rgba(126,232,199,.45); font-weight: 800">{{hero.cta}}</span>
+</div>
+</section>
+</div>
+</sc-if>
+
+<!-- WhatsApp templates -->
+<sc-if value="{{isWa}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 16px; align-items: start">
+<section class="card" aria-label="الرسائل" style="padding: 10px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{tplList}}" as="t" hint-placeholder-count="4">
+<button class="g-btn" type="button" aria-pressed="{{t.sel}}" onClick="{{t.pick}}" style="{{t.style}}">
+<span aria-hidden="true" style="{{t.dot}}"></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: right"><span style="font-size: 14px">{{t.name}}</span><span style="font-size: 11px; font-weight: 500; opacity: .75">{{t.when}}</span></span>
+</button>
+</sc-for>
+</section>
+<section class="card" aria-labelledby="tp-h" style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="tp-h" class="h2">{{tpl.name}}</h2>
+<span class="muted" style="font-size: 12px">{{tpl.when}}</span>
+<label class="lbl" for="tp-body">نص الرسالة</label>
+<textarea class="fld" id="tp-body" rows="8" value="{{tpl.body}}" onChange="{{onTpl}}" style="line-height: 26px"></textarea>
+<span class="lbl">ضيف متغيّر (بيتبدل تلقائي لكل عميل)</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{vars}}" as="v" hint-placeholder-count="4"><button class="var g-btn" type="button" onClick="{{v.add}}">{{v.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span class="lbl" style="display: flex; align-items: center; gap: 6px; color: var(--accent-ink)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>معاينة بعميل تجريبي</span>
+<div class="tint" style="padding: 16px; border-radius: 22px; min-height: 240px; display: flex; flex-direction: column; justify-content: flex-end">
+<div class="bubble">{{preview}}<span aria-hidden="true" style="position: absolute; bottom: 5px; left: 12px; font-size: 11px; opacity: .6">10:24 ✓✓</span></div>
+</div>
+<p class="muted" style="margin: 0; font-size: 12px; line-height: 20px">الرسالة دي بتتبعت من شاشة الطلبات لما تاخد القرار. الإرسال التلقائي على رقم العميل محتاج ربط واتساب للأعمال [بانتظار الربط].</p>
+</div>
+</section>
+</div>
+</sc-if>
+
+<!-- Reviews -->
+<sc-if value="{{isReviews}}" hint-placeholder-val="{{false}}">
+<div class="fade" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; align-items: start">
+<form class="card" aria-labelledby="rv-h" onSubmit="{{addReview}}" style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="rv-h" class="h2">إضافة رأي عميل حقيقي</h2>
+<p class="muted" style="margin: 0; font-size: 13px; line-height: 22px">انقل رأي العميل زي ما كتبه (من واتساب أو انستجرام مثلًا). ممنوع نكتب آراء نيابة عن حد.</p>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="rv-name">اسم العميل (أو الاسم الأول بس)</label><input class="fld" id="rv-name" type="text" value="{{rv.name}}" onChange="{{onRv.name}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label class="lbl" for="rv-text">الرأي</label><textarea class="fld" id="rv-text" rows="3" value="{{rv.text}}" onChange="{{onRv.text}}" style="line-height: 24px"></textarea></div>
+<label class="chk"><input type="checkbox" checked="{{rv.consent}}" onChange="{{onRvConsent}}">
+<span aria-hidden="true" style="{{rvBox}}"><svg class="ic" viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke-width: 3"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span>العميل وافق على نشر رأيه باسمه</span></label>
+<sc-if value="{{rvErr}}" hint-placeholder-val="{{false}}"><p role="alert" style="margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--warn-bg); border: 1px solid var(--warn-bd); font-size: 13px; font-weight: 700">{{rvErr}}</p></sc-if>
+<button class="g-btn g-cta" type="submit" style="min-height: 48px; border-radius: 999px; font-size: 15px">إضافة الرأي</button>
+</form>
+<section class="card" aria-labelledby="rvl-h" style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 id="rvl-h" class="h2">الآراء المحفوظة</h2>
+<sc-if value="{{noReviews}}" hint-placeholder-val="{{true}}">
+<div class="tint" style="padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+<span class="tile" aria-hidden="true" style="width: 52px; height: 52px; border-radius: 999px"><svg class="ic" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg></span>
+<strong>لسه مفيش آراء عملاء</strong>
+<span class="muted" style="font-size: 13px">قسم الآراء في الموقع هيفضل بالنص المؤقت لحد ما تضيف أول رأي حقيقي.</span>
+</div>
+</sc-if>
+<sc-for list="{{reviews}}" as="r" hint-placeholder-count="0">
+<article class="tint pop" style="padding: 14px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 14px; line-height: 24px">«{{r.text}}»</p>
+<div style="display: flex; align-items: center; gap: 10px">
+<strong style="flex-grow: 1; font-size: 13px">{{r.name}}</strong>
+<span style="font-size: 12px; font-weight: 700">{{r.pubText}}</span>
+<button class="{{r.swCls}}" type="button" role="switch" aria-checked="{{r.pubStr}}" aria-label="{{r.swLabel}}" onClick="{{r.toggle}}"></button>
+</div>
+</article>
+</sc-for>
+</section>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{toast}}" hint-placeholder-val="{{false}}">
+<div class="toast pop" role="status">
+<span aria-hidden="true" style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 999px; background: linear-gradient(180deg,#b8f2de,#7ee8c7); color: #01302d; display: flex; align-items: center; justify-content: center"><svg class="ic" viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke-width: 2.6"><path d="M20 6 9 17l-5-5"></path></svg></span>
+<span style="flex-grow: 1">{{toast}}</span>
+<button type="button" onClick="{{hideToast}}" aria-label="إغلاق الإشعار" style="width: 32px; height: 32px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.08); color: #fff; cursor: pointer">×</button>
+</div>
+</sc-if>
+</div>
+</x-dc></template>
+<div id="dc-root"></div>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.state = { tab: 'wa', dirty: false, toast: '', tpl: 'approve', rvErr: '',
+      contact: { wa: '01116891025', ig: 'youzersef', fb: 'يوزرسيف', tt: 'يوزرسيف', email: '[الإيميل — بانتظار التأكيد]', addr: 'أسوان، مصر [العنوان التفصيلي بانتظار التأكيد]', hours: '[مواعيد العمل — بانتظار التأكيد]' },
+      hero: { pill: 'مطبوعات مميزة', t1: 'مطبوعات', t2: 'تحكي قصتك', sub: 'تيشرتات، هوديز، كابات، مجات، استيكرات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.', cta: 'ابدأ طلبك الآن' },
+      tpls: {
+        approve: 'أهلًا {الاسم}،\nطلبك رقم {رقم_الطلب} من يوزرسيف اتقبل.\n{السعر_والموعد}\nتقدر تتابع حالة طلبك من اللينك ده:\n{لينك_التتبع}\nهتحتاج رقم الطلب ورقم موبايلك عشان تفتح الصفحة.',
+        info: 'أهلًا {الاسم}،\nبخصوص طلبك رقم {رقم_الطلب}: محتاجين منك {المطلوب} عشان نكمّل المراجعة.\nتقدر تتابع الطلب من هنا: {لينك_التتبع}',
+        reject: 'أهلًا {الاسم}،\nللأسف مش هنقدر ننفذ طلبك رقم {رقم_الطلب} بشكله الحالي.\nالسبب: {السبب}\nلو حابب نعدّل الطلب سوا كلّمنا على الرقم ده.',
+        ready: 'أهلًا {الاسم}،\nطلبك رقم {رقم_الطلب} جاهز!\nتقدر تستلمه من المحل في أسوان [المواعيد بانتظار التأكيد].\nتفاصيل الطلب: {لينك_التتبع}'
+      },
+      rv: { name: '', text: '', consent: false }, reviews: [] };
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  renderVals() {
+    var s = this.state, self = this, SFX = '', PAGE = 'Admin-Content';
+    var IC = { req: 'M9 2h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01', chart: 'M3 3v18h18M7 15l4-4 3 3 6-7', grid: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', photo: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM11 9a2 2 0 1 1-4 0 2 2 0 1 1 4 0M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21', chat: 'M7.9 20A9 9 0 1 0 4 16.1L2 22Z', lock: 'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4',
+      phone: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z', ig: 'M17 2H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5zM16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01', fb: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z', tt: 'M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5', mail: 'M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7', pin: 'M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0M15 10a3 3 0 1 1-6 0 3 3 0 1 1 6 0', clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v6l4 2', home: 'M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z', star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' };
+    IC.act = 'M22 12h-4l-3 9L9 3l-3 9H2';
+    var nav = [['الطلبات', 'req', 'Admin'], ['الزيارات والترافيك', 'chart', 'Admin-Traffic'], ['الخدمات والمنتجات', 'grid', 'Admin-Products'], ['أعمالنا', 'photo', 'Admin-Gallery'], ['التواصل والمحتوى', 'chat', 'Admin-Content'], ['نشاط الفريق', 'act', 'Admin-Team'], ['الحسابات والصلاحيات', 'lock', 'Admin-Accounts']].map(function (n) { return { label: n[0], icon: IC[n[1]], href: n[2] + SFX + '.html', cur: n[2] === PAGE ? 'page' : 'false', count: n[2] === 'Admin' ? 2 : 0 }; });
+    function flash(m) { clearTimeout(self.t); self.setState({ toast: m }); self.t = setTimeout(function () { self.setState({ toast: '' }); }, 3200); }
+    function setIn(group, key) { return function (e) { var o = Object.assign({}, self.state[group]); o[key] = e.target.value; var p = {}; p[group] = o; p.dirty = true; self.setState(p); }; }
+    var tabs = [['contact', 'بيانات التواصل', IC.phone], ['hero', 'نصوص الرئيسية', IC.home], ['wa', 'رسائل واتساب', IC.chat], ['reviews', 'آراء العملاء', IC.star]].map(function (t) { return { label: t[1], icon: t[2], sel: s.tab === t[0] ? 'true' : 'false', pick: function () { self.setState({ tab: t[0] }); } }; });
+    var CF = [['wa', 'رقم واتساب', IC.phone, 'ltr'], ['ig', 'انستجرام', IC.ig, 'ltr'], ['fb', 'فيسبوك', IC.fb, 'rtl'], ['tt', 'تيك توك', IC.tt, 'rtl'], ['email', 'الإيميل', IC.mail, 'rtl'], ['addr', 'العنوان', IC.pin, 'rtl'], ['hours', 'مواعيد العمل', IC.clock, 'rtl']];
+    var contactFields = CF.map(function (f) { return { id: 'c-' + f[0], label: f[1], icon: f[2], dir: f[3], v: s.contact[f[0]], on: setIn('contact', f[0]) }; });
+    var contactPreview = CF.map(function (f) { return { icon: f[2], dir: f[3], v: s.contact[f[0]] }; });
+    var onHero = {}; ['pill', 't1', 't2', 'sub', 'cta'].forEach(function (k) { onHero[k] = setIn('hero', k); });
+    var TPL = [['approve', 'الموافقة على الطلب', 'بتتبعت لما توافق على طلب'], ['info', 'طلب بيانات ناقصة', 'لما تحتاج حاجة من العميل'], ['reject', 'رفض الطلب', 'لما الطلب ما ينفعش يتنفذ'], ['ready', 'الطلب جاهز', 'لما الطلب يخلص']];
+    var cur = TPL.filter(function (t) { return t[0] === s.tpl; })[0];
+    var tplList = TPL.map(function (t) { var on = s.tpl === t[0]; return { name: t[1], when: t[2], sel: on ? 'true' : 'false', pick: function () { self.setState({ tpl: t[0] }); },
+      style: 'width: 100%; justify-content: flex-start; gap: 10px; min-height: 56px; padding: 8px 12px; border-radius: 16px; border: 1px solid ' + (on ? 'rgba(126,232,199,0.7)' : 'transparent') + '; color: ' + (on ? '#ffffff' : 'var(--ink)') + '; background: ' + (on ? 'var(--chip-on-bg); box-shadow: 0 0 14px rgba(126,232,199,0.35)' : 'transparent'),
+      dot: 'width: 10px; height: 10px; flex-shrink: 0; border-radius: 999px; background: ' + (on ? '#7ee8c7; box-shadow: 0 0 8px rgba(126,232,199,0.9)' : 'var(--field-bd)') }; });
+    var body = s.tpls[s.tpl];
+    var sample = { '{الاسم}': 'محمد', '{رقم_الطلب}': 'YZ-8K3QF7', '{لينك_التتبع}': '[رابط الموقع]/track?order=YZ-8K3QF7', '{السعر_والموعد}': 'السعر: [السعر] · الاستلام: [التاريخ]', '{المطلوب}': 'نسخة من التصميم بدقة أعلى', '{السبب}': 'الكمية أقل من الحد الأدنى' };
+    var preview = body; Object.keys(sample).forEach(function (k) { preview = preview.split(k).join(sample[k]); });
+    var VARS = s.tpl === 'approve' ? ['{الاسم}', '{رقم_الطلب}', '{لينك_التتبع}', '{السعر_والموعد}'] : (s.tpl === 'info' ? ['{الاسم}', '{رقم_الطلب}', '{المطلوب}', '{لينك_التتبع}'] : (s.tpl === 'reject' ? ['{الاسم}', '{رقم_الطلب}', '{السبب}'] : ['{الاسم}', '{رقم_الطلب}', '{لينك_التتبع}']));
+    function setTpl(v) { var t = Object.assign({}, self.state.tpls); t[self.state.tpl] = v; self.setState({ tpls: t, dirty: true }); }
+    var reviews = s.reviews.map(function (r, i) { return { name: r.name, text: r.text, pubText: r.pub ? 'ظاهر في الموقع' : 'مخفي', pubStr: r.pub ? 'true' : 'false', swCls: 'sw ' + (r.pub ? 'sw-on' : 'sw-off'), swLabel: 'نشر رأي ' + r.name,
+      toggle: function () { var a = self.state.reviews.slice(); a[i] = Object.assign({}, a[i], { pub: !a[i].pub }); self.setState({ reviews: a, dirty: true }); } }; });
+    function setRv(k) { return function (e) { var o = Object.assign({}, self.state.rv); o[k] = e.target.value; self.setState({ rv: o, rvErr: '' }); }; }
+    return {
+      nav: nav, homeHref: 'Main' + SFX + '.html', tabs: tabs,
+      isContact: s.tab === 'contact', isHero: s.tab === 'hero', isWa: s.tab === 'wa', isReviews: s.tab === 'reviews',
+      dirty: s.dirty, notDirty: !s.dirty,
+      saveAll: function () { self.setState({ dirty: false }); flash('اتحفظت التغييرات وهتظهر في الموقع'); },
+      contactFields: contactFields, contactPreview: contactPreview,
+      hero: s.hero, onHero: onHero, subCount: s.hero.sub.length,
+      tplList: tplList, tpl: { name: cur[1], when: cur[2], body: body }, onTpl: function (e) { setTpl(e.target.value); }, preview: preview,
+      vars: VARS.map(function (v) { return { label: v, add: function () { setTpl(self.state.tpls[self.state.tpl] + ' ' + v); } }; }),
+      rv: s.rv, onRv: { name: setRv('name'), text: setRv('text') }, rvErr: s.rvErr,
+      onRvConsent: function (e) { var o = Object.assign({}, self.state.rv); o.consent = e.target.checked; self.setState({ rv: o, rvErr: '' }); },
+      rvBox: 'width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px; display: flex; align-items: center; justify-content: center; ' + (s.rv.consent ? 'background: linear-gradient(180deg,#00a08f,#00706a); color: #fff; box-shadow: 0 0 8px rgba(126,232,199,0.6)' : 'background: transparent; color: transparent; border: 1.5px solid var(--field-bd)'),
+      addReview: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var r = self.state.rv;
+        if (!r.name.trim() || r.text.trim().length < 5) { self.setState({ rvErr: 'اكتب اسم العميل ورأيه.' }); return; }
+        if (!r.consent) { self.setState({ rvErr: 'لازم موافقة العميل قبل ما نضيف رأيه.' }); return; }
+        self.setState({ reviews: [{ name: r.name.trim(), text: r.text.trim(), pub: false }].concat(self.state.reviews), rv: { name: '', text: '', consent: false }, dirty: true });
+        flash('اتضاف الرأي كمخفي — فعّله لما تحب يظهر');
+      },
+      noReviews: s.reviews.length === 0, reviews: reviews,
+      toast: s.toast, hideToast: function () { self.setState({ toast: '' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
