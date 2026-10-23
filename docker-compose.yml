@@ -1,0 +1,26 @@
+# Local development services. `docker compose up -d`, then `pnpm db:migrate && pnpm db:seed`.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: youzersef
+      POSTGRES_PASSWORD: youzersef
+      POSTGRES_DB: youzersef
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U youzersef"]
+      interval: 5s
+      retries: 10
+
+  # Optional. Without Upstash env vars the app uses an in-memory rate limiter in development.
+  redis:
+    image: redis:7-alpine
+    profiles: ["redis"]
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
