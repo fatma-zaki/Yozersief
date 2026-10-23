@@ -44,6 +44,9 @@ export type ServerEnv = z.infer<typeof serverSchema>;
 export function parseEnv(): ServerEnv {
   // Empty values ("KEY=" in .env files) count as unset.
   const raw = Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== ""));
+  // The Vercel Marketplace Upstash integration names its variables KV_REST_API_*.
+  raw.UPSTASH_REDIS_REST_URL ??= raw.KV_REST_API_URL;
+  raw.UPSTASH_REDIS_REST_TOKEN ??= raw.KV_REST_API_TOKEN;
   const result = serverSchema.safeParse(raw);
   if (!result.success) {
     const issues = result.error.issues
