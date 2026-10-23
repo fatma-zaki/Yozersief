@@ -6,10 +6,25 @@ import type { ReactNode } from "react";
 import { Toaster as SonnerToaster } from "sonner";
 import { cn } from "@/lib/cn";
 
+/**
+ * The anti-flash script only matters in the server HTML. On the client React 19 warns about any
+ * executable <script> it renders, so mark it as an inert data block there (next-themes already
+ * sets suppressHydrationWarning on it, so the `type` mismatch is silent).
+ */
+const themeScriptProps = {
+  type: typeof window === "undefined" ? "text/javascript" : "text/plain",
+};
+
 /** Light/dark theme following the system by default (brief A7). */
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      scriptProps={themeScriptProps}
+    >
       {children}
       <Toaster />
     </ThemeProvider>
