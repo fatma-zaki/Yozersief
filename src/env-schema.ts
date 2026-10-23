@@ -23,6 +23,9 @@ const serverSchema = z.object({
   CRON_SECRET: z.string().min(16),
 
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  // Newer Vercel Blob stores authenticate with Vercel OIDC instead of a read-write token.
+  BLOB_STORE_ID: z.string().optional(),
+  BLOB_WEBHOOK_PUBLIC_KEY: z.string().optional(),
 
   UPSTASH_REDIS_REST_URL: z.url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
