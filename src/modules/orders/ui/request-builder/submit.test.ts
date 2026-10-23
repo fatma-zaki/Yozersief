@@ -19,6 +19,7 @@ vi.mock("@vercel/blob/client", () => ({
 }));
 
 const {
+  safeFileName,
   submitRequest,
   DEMO_MODE,
   getOrCreateSubmissionKey,
@@ -140,6 +141,32 @@ describe("submitRequest uploads", () => {
     expect(uploadPresigned).not.toHaveBeenCalled();
   });
 
+  it("rejects unsupported types before uploading", async () => {
+    const result = await submitRequest(draft(), {
+      submissionKey: "abababab-abab-4bab-8bab-abababababab",
+      fileBlobs: new Map([["f1", new File(["x"], "photo.heic")]]),
+      uploadMode: "presigned",
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toMatch(/نوع الملف مش مدعوم/);
+    expect(uploadPresigned).not.toHaveBeenCalled();
+  });
+
+  it("replaces English Blob SDK errors with an Arabic message", async () => {
+    uploadPresigned.mockRejectedValueOnce(
+      new Error("Vercel Blob: Failed to retrieve the presigned URL"),
+    );
+    const result = await submitRequest(draft(), {
+      submissionKey: "acacacac-acac-4cac-8cac-acacacacacac",
+      fileBlobs: fileBlobs(),
+      uploadMode: "presigned",
+    });
+    expect(result).toEqual({
+      ok: false,
+      error: "رفع الملف «a.png» فشل. جرّب تاني، ولو المشكلة فضلت ابعته على واتساب.",
+    });
+  });
+
   it("fails clearly when uploads are not configured", async () => {
     const result = await submitRequest(draft(), {
       submissionKey: "ffffffff-ffff-4fff-8fff-ffffffffffff",
@@ -148,6 +175,18 @@ describe("submitRequest uploads", () => {
     });
     expect(result).toEqual({ ok: false, error: "رفع الملفات مش متاح دلوقتي." });
     expect(submitOrderAction).not.toHaveBeenCalled();
+  });
+});
+
+describe("safeFileName", () => {
+  it.each([
+    ["IMG_2024.JPG", "IMG_2024.JPG"],
+    ["صورة_التصميم.png", "file.png"],
+    ["تصميم logo 2.pdf", "logo_2.pdf"],
+    ["my design (final).psd", "my_design_final.psd"],
+    ["noext", "noext"],
+  ])("%s → %s", (input, expected) => {
+    expect(safeFileName(input)).toBe(expected);
   });
 });
 

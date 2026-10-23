@@ -2,7 +2,7 @@
 
 import { upload, uploadPresigned } from "@vercel/blob/client";
 import { submitOrderAction } from "@/app/(order)/order/actions";
-import { draftPathPrefix, type BlobUploadMode } from "../../domain/files";
+import { checkUpload, draftPathPrefix, type BlobUploadMode } from "../../domain/files";
 import { isNamesSheet, type DraftFile, type RequestDraft } from "../../domain/request";
 
 export type SubmitResult = { ok: true; ref: string } | { ok: false; error: string };
@@ -60,8 +60,18 @@ export function clearSubmissionKey(): void {
   }
 }
 
-function safeFileName(name: string): string {
-  return name.replace(/[^\w.\u0600-\u06FF-]+/g, "_").slice(0, 120) || "file";
+/**
+ * ASCII-only Blob pathname segment: presigned (OIDC) uploads fail on non-ASCII pathnames, so an
+ * Arabic name like "\u0635\u0648\u0631\u0629.png" becomes "file.png". Blob adds a random suffix, so names may repeat.
+ */
+export function safeFileName(name: string): string {
+  const dot = name.lastIndexOf(".");
+  const ext = dot > 0 ? name.slice(dot + 1).replace(/[^A-Za-z0-9]/g, "") : "";
+  const base = (dot > 0 ? name.slice(0, dot) : name)
+    .replace(/[^A-Za-z0-9_-]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 100);
+  return `${/[A-Za-z0-9]/.test(base) ? base : "file"}${ext ? `.${ext}` : ""}`;
 }
 
 async function confirmDraftUpload(input: {
@@ -144,11 +154,17 @@ export async function submitRequest(
     }
     if (!uploadMode) return { ok: false, error: "رفع الملفات مش متاح دلوقتي." };
     const kind = isNamesSheet(meta) ? "names_sheet" : "design";
+    const check = checkUpload({ kind, fileName: file.name, sizeBytes: file.size });
+    if (!check.ok) return { ok: false, error: `«${file.name}»: ${check.message}` };
     try {
       await uploadDraftFile({ file, submissionKey, kind, uploadMode });
       meta.uploaded = true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : "رفع الملف فشل.";
+      // The Blob SDK throws English errors without our route's message; never show those.
+      const message =
+        error instanceof Error && !error.message.startsWith("Vercel Blob")
+          ? error.message
+          : `رفع الملف «${file.name}» فشل. جرّب تاني، ولو المشكلة فضلت ابعته على واتساب.`;
       return { ok: false, error: message };
     }
   }
