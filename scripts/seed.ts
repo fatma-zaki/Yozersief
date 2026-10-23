@@ -63,10 +63,10 @@ const SETTINGS: { key: string; value: unknown }[] = [
 ];
 
 const SITE_CONTENT: { key: string; value: string }[] = [
-  { key: "hero.title", value: "اطبع فكرتك على أي حاجة" },
+  { key: "hero.title", value: "مطبوعات تحكي قصتك" },
   {
     key: "hero.subtitle",
-    value: "تيشيرتات، هوديز، كابات، مجات، كفرات واستيكرات — للأفراد والشركات والفرق في أسوان.",
+    value: "تيشرتات، هوديز، كابات، مجات، استيكرات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.",
   },
   { key: "contact.whatsapp", value: "01116891025" },
   { key: "contact.address", value: "[للتأكيد]" },
@@ -110,7 +110,7 @@ async function seedCatalog() {
       .values({
         key: category.key,
         nameAr: category.nameAr,
-        imageUrl: `/images/categories/${category.key}.svg`,
+        imageUrl: `/images/categories/${category.key}.jpg`,
         sortOrder: i + 1,
         isVisible: true,
       })

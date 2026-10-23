@@ -1,0 +1,88 @@
+/*
+ * Youzersef design tokens (brief A7). "Glass + neon": deep teal surfaces, mint neon accents,
+ * frosted glass cards, soft glows. Light is the default; `.dark` on <html> switches (next-themes).
+ */
+
+:root {
+  /* Brand */
+  --yz-teal: #005c58;
+  --yz-teal-2: #00706a;
+  --yz-deep: #004541;
+  --yz-deep-2: #01302d;
+  --yz-mint: #7ee8c7;
+  --yz-mint-light: #b8f2de;
+  --yz-gold: #d6ae62;
+  --yz-danger: #c2413b;
+
+  /* Surfaces & ink (light) */
+  --yz-page: #f3faf8;
+  --yz-surface: #ffffff;
+  --yz-panel: #e8f5f1;
+  --yz-panel-2: #d9efe8;
+  --yz-band: #01302d;
+  --yz-ink: #030909;
+  --yz-ink-muted: #4a5f5c;
+  --yz-ink-soft: #6f8481;
+  --yz-accent: #005c58;
+  --yz-on-accent: #ffffff;
+  --yz-border: rgb(0 92 88 / 0.16);
+  --yz-border-strong: rgb(0 92 88 / 0.38);
+  --yz-focus: #005c58;
+
+  /* Glass (light) */
+  --yz-glass: linear-gradient(135deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.62));
+  --yz-glass-border: rgb(255 255 255 / 0.95);
+  --yz-glass-shadow:
+    0 0 0 1px rgb(0 92 88 / 0.1), inset 0 1px 0 #ffffff, 0 14px 36px rgb(0 92 88 / 0.12);
+
+  /* Primary CTA (same in both themes) */
+  --yz-cta: linear-gradient(180deg, rgb(0 120 112 / 0.92) 0%, rgb(0 43 40 / 0.92) 100%);
+  --yz-cta-border: rgb(126 232 199 / 0.8);
+  --yz-cta-glow: 0 0 18px rgb(126 232 199 / 0.42);
+
+  /* Semantic: "needs the customer" = gold, done = mint, neutral = muted */
+  --yz-warn-bg: rgb(214 174 98 / 0.16);
+  --yz-warn-ink: #7a5a17;
+  --yz-ok-bg: rgb(126 232 199 / 0.26);
+  --yz-ok-ink: #005c58;
+  --yz-off-bg: rgb(3 9 9 / 0.06);
+  --yz-off-ink: #4a5f5c;
+  --yz-danger-bg: rgb(194 65 59 / 0.1);
+
+  /* Shape & motion */
+  --yz-radius-pill: 999px;
+  --yz-radius-card: 28px;
+  --yz-radius-card-sm: 24px;
+  --yz-radius-input: 16px;
+  --yz-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark {
+  --yz-page: #001412;
+  --yz-surface: #001b17;
+  --yz-panel: #032722;
+  --yz-panel-2: #054039;
+  --yz-band: #001b17;
+  --yz-ink: #f2fbf8;
+  --yz-ink-muted: rgb(242 251 248 / 0.72);
+  --yz-ink-soft: rgb(242 251 248 / 0.52);
+  --yz-accent: #7ee8c7;
+  --yz-on-accent: #001412;
+  --yz-border: rgb(126 232 199 / 0.2);
+  --yz-border-strong: rgb(126 232 199 / 0.5);
+  --yz-focus: #7ee8c7;
+
+  --yz-glass: linear-gradient(135deg, rgb(255 255 255 / 0.11) 0%, rgb(255 255 255 / 0.03) 100%);
+  --yz-glass-border: rgb(126 232 199 / 0.35);
+  --yz-glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18), 0 0 26px rgb(126 232 199 / 0.12),
+    0 18px 40px rgb(0 20 18 / 0.3);
+
+  --yz-warn-bg: rgb(214 174 98 / 0.18);
+  --yz-warn-ink: #e9c98a;
+  --yz-ok-bg: rgb(126 232 199 / 0.16);
+  --yz-ok-ink: #b8f2de;
+  --yz-off-bg: rgb(242 251 248 / 0.08);
+  --yz-off-ink: rgb(242 251 248 / 0.7);
+  --yz-danger-bg: rgb(194 65 59 / 0.2);
+}

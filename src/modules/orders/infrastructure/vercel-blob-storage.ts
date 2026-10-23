@@ -1,0 +1,24 @@
+import { del } from "@vercel/blob";
+import { env } from "@/env";
+import type { FileStorage } from "../application/file-storage";
+
+/**
+ * Vercel Blob adapter. Uploads go straight from the browser to Blob with a server-issued
+ * token (see /api/uploads/token), so files never pass through our functions.
+ */
+export class VercelBlobStorage implements FileStorage {
+  constructor(private readonly token: string) {}
+
+  async delete(storageKey: string) {
+    await del(storageKey, { token: this.token });
+  }
+
+  async downloadUrl(storageKey: string) {
+    // Blob URLs are unguessable; access control happens before we hand the URL out.
+    return storageKey;
+  }
+}
+
+export function createFileStorage(): FileStorage | null {
+  return env.BLOB_READ_WRITE_TOKEN ? new VercelBlobStorage(env.BLOB_READ_WRITE_TOKEN) : null;
+}

@@ -1,26 +1,135 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-/* Placeholder tokens; the full light/dark design system lands in src/styles/tokens.css (brief A7). */
-:root {
-  --background: #f3faf8;
-  --foreground: #030909;
-}
+/* Theme switching is class-based (next-themes puts .dark on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-cairo);
-}
+  --font-sans: var(--font-cairo), "Segoe UI", Tahoma, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #001412;
-    --foreground: #f2fbf8;
+  --color-page: var(--yz-page);
+  --color-surface: var(--yz-surface);
+  --color-panel: var(--yz-panel);
+  --color-panel-2: var(--yz-panel-2);
+  --color-band: var(--yz-band);
+  --color-ink: var(--yz-ink);
+  --color-ink-muted: var(--yz-ink-muted);
+  --color-ink-soft: var(--yz-ink-soft);
+  --color-accent: var(--yz-accent);
+  --color-on-accent: var(--yz-on-accent);
+  --color-line: var(--yz-border);
+  --color-line-strong: var(--yz-border-strong);
+  --color-teal: var(--yz-teal);
+  --color-teal-2: var(--yz-teal-2);
+  --color-deep: var(--yz-deep);
+  --color-deep-2: var(--yz-deep-2);
+  --color-mint: var(--yz-mint);
+  --color-mint-light: var(--yz-mint-light);
+  --color-gold: var(--yz-gold);
+  --color-danger: var(--yz-danger);
+  --color-danger-bg: var(--yz-danger-bg);
+  --color-warn-bg: var(--yz-warn-bg);
+  --color-warn-ink: var(--yz-warn-ink);
+  --color-ok-bg: var(--yz-ok-bg);
+  --color-ok-ink: var(--yz-ok-ink);
+  --color-off-bg: var(--yz-off-bg);
+  --color-off-ink: var(--yz-off-ink);
+
+  --radius-pill: var(--yz-radius-pill);
+  --radius-card: var(--yz-radius-card);
+  --radius-card-sm: var(--yz-radius-card-sm);
+  --radius-input: var(--yz-radius-input);
+
+  --ease-yz: var(--yz-ease);
+
+  --animate-fade-up: fade-up 0.9s var(--yz-ease) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-cairo), system-ui, sans-serif;
+/* Frosted glass card (light: white glass; dark: tinted glass with mint edge). */
+@utility glass {
+  background: var(--yz-glass);
+  border: 1px solid var(--yz-glass-border);
+  box-shadow: var(--yz-glass-shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+}
+
+/* Glass on dark teal bands, used regardless of theme (navbar, hero, dashboard sidebar). */
+@utility glass-dark {
+  background: linear-gradient(135deg, rgb(0 92 88 / 0.38), rgb(0 43 40 / 0.46));
+  border: 1px solid rgb(126 232 199 / 0.35);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 0 24px rgb(126 232 199 / 0.12),
+    0 14px 40px rgb(0 20 18 / 0.35);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+@utility cta {
+  background: var(--yz-cta);
+  color: #ffffff;
+  border: 1.5px solid var(--yz-cta-border);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    inset 0 0 18px rgb(126 232 199 / 0.12),
+    var(--yz-cta-glow);
+}
+
+@utility neon-text {
+  color: var(--yz-mint);
+  text-shadow:
+    0 0 10px rgb(126 232 199 / 0.55),
+    0 0 30px rgb(126 232 199 / 0.35);
+}
+
+@utility glow-ring {
+  box-shadow:
+    0 0 0 3px rgb(126 232 199 / 0.35),
+    0 0 22px rgb(126 232 199 / 0.35);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--yz-page);
+    color: var(--yz-ink);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--yz-focus);
+    outline-offset: 2px;
+  }
+
+  /* Western digits everywhere, even inside Arabic text (brief A5). */
+  html[lang="ar"] {
+    font-variant-numeric: lining-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

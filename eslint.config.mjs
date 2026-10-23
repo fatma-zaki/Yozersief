@@ -10,12 +10,13 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": "error",
       // Modules talk to each other only through their public index.ts (brief A3).
+      // schemas.ts is the one other entry point: client forms share it with server actions.
       "no-restricted-imports": [
         "error",
         {
           patterns: [
             {
-              group: ["@/modules/*/*"],
+              group: ["@/modules/*/*", "!@/modules/*/schemas"],
               message:
                 "Import another module through its public API (@/modules/<name>), not its internals.",
             },
@@ -40,7 +41,10 @@ const eslintConfig = defineConfig([
               group: ["drizzle-orm", "drizzle-orm/*", "@/db", "@/db/*"],
               message: "Domain code must not touch the database.",
             },
-            { group: ["@/modules/*/*"], message: "Import another module through its public API." },
+            {
+              group: ["@/modules/*/*", "!@/modules/*/schemas"],
+              message: "Import another module through its public API.",
+            },
           ],
         },
       ],

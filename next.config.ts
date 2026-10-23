@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  poweredByHeader: false,
+  experimental: {
+    // forbidden() / forbidden.tsx for permission-gated dashboard sections (brief A6.3).
+    authInterrupts: true,
+  },
   turbopack: {
     rules: {
       "*.css": {
