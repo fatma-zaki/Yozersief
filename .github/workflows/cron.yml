@@ -27,12 +27,18 @@ jobs:
             echo "::warning::CRON_APP_URL / CRON_SECRET secrets are not set; skipping."
             exit 0
           fi
+          # Tolerate "http://" and trailing slashes in the secret; both answer with a 308 redirect.
+          while [ "${APP_URL%/}" != "$APP_URL" ]; do APP_URL="${APP_URL%/}"; done
+          APP_URL="${APP_URL/#http:\/\//https://}"
           call() {
             out=$(curl --fail-with-body -sS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1") || {
               echo "::error::$1 failed: $out"
               return 1
             }
-            echo "::notice::$1 $out"
+            case "$out" in
+              *'"ok":true'*) echo "::notice::$1 $out" ;;
+              *) echo "::error::$1 unexpected response (check CRON_APP_URL): $out"; return 1 ;;
+            esac
           }
           case "${{ github.event.schedule }}" in
             "15 * * * *") call otp-cleanup ;;
