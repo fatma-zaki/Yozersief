@@ -5,7 +5,7 @@
  */
 import { ar } from "@/i18n/ar";
 import { cairoDateString, formatShortDateTime } from "@/lib/format";
-import { WEAR_SIZES } from "@/modules/catalog";
+import { WEAR_SIZES } from "@/modules/catalog/schemas";
 import {
   BIZ_STAGES,
   planTransition,

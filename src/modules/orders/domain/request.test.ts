@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { WEAR_SIZES } from "@/modules/catalog";
+import { WEAR_SIZES } from "@/modules/catalog/schemas";
 import { emptyDraft, sizeSum, WEAR_SIZES as requestWearSizes } from "./request";
 
 describe("wear sizes (brief B4)", () => {

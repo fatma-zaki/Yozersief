@@ -19,7 +19,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { ChangeEvent, ReactNode } from "react";
-import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog";
+import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog/schemas";
 import { ar, t } from "@/i18n/ar";
 import { cn } from "@/lib/cn";
 import { normalizeEgyptianMobile } from "@/lib/phone";
@@ -165,7 +165,12 @@ export function StepType({ d, set, e }: StepProps) {
 
 /* ───────────── Step 2: details ───────────── */
 
-export function StepDetails({ d, set, e }: StepProps) {
+export function StepDetails({
+  d,
+  set,
+  e,
+  hidden = [],
+}: StepProps & { hidden?: readonly string[] }) {
   const qty = toInt(d.qty);
   const sum = sizeSum(d.sizes);
   const sumOk = qty > 0 && sum === qty;
@@ -200,17 +205,19 @@ export function StepDetails({ d, set, e }: StepProps) {
         <fieldset id="f-prod" tabIndex={-1} className="m-0 border-0 p-0">
           <Legend>{b.productType}</Legend>
           <div className="flex flex-wrap gap-2">
-            {(d.cat === "mug" ? MUG_PRODUCTS : WEAR_PRODUCTS).map((p) => (
-              <ChipOption
-                key={p}
-                type="radio"
-                name="prod"
-                checked={d.prod === p}
-                onChange={() => set({ prod: p })}
-              >
-                {b.products[p]}
-              </ChipOption>
-            ))}
+            {(d.cat === "mug" ? MUG_PRODUCTS : WEAR_PRODUCTS)
+              .filter((p) => !hidden.includes(p))
+              .map((p) => (
+                <ChipOption
+                  key={p}
+                  type="radio"
+                  name="prod"
+                  checked={d.prod === p}
+                  onChange={() => set({ prod: p })}
+                >
+                  {b.products[p]}
+                </ChipOption>
+              ))}
           </div>
           {e.prod ? <p className={cn(s.err, "mt-2")}>{e.prod}</p> : null}
         </fieldset>

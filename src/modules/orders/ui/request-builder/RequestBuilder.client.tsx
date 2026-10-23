@@ -78,9 +78,12 @@ function save(value: Saved | null) {
 export function RequestBuilder({
   initialCategory,
   uploadMode,
+  hiddenProducts = [],
 }: {
   initialCategory: CategoryKey | null;
   uploadMode: BlobUploadMode | null;
+  /** Product keys the admin hid from the site (dashboard → products). */
+  hiddenProducts?: readonly string[];
 }) {
   const [draft, setDraft] = useState<RequestDraft>(() => ({
     ...emptyDraft(),
@@ -348,7 +351,9 @@ export function RequestBuilder({
               ) : null}
 
               {current === 1 ? <StepType d={draft} set={set} e={errors} /> : null}
-              {current === 2 ? <StepDetails d={draft} set={set} e={errors} /> : null}
+              {current === 2 ? (
+                <StepDetails d={draft} set={set} e={errors} hidden={hiddenProducts} />
+              ) : null}
               {current === 3 ? (
                 <StepFiles d={draft} set={set} e={errors} onFiles={onFiles} onRemove={removeFile} />
               ) : null}

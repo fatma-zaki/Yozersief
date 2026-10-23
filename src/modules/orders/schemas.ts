@@ -3,7 +3,7 @@
  * submit server action (brief A2, A5). Server validation is authoritative.
  */
 import { z } from "zod";
-import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog";
+import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog/schemas";
 import { cairoDateString, normalizeDigits } from "@/lib/format";
 import { normalizeEgyptianMobile } from "@/lib/phone";
 import {
