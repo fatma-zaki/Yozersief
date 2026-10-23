@@ -24,12 +24,15 @@ jobs:
       - name: Call cron routes
         run: |
           if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
-            echo "CRON_APP_URL / CRON_SECRET secrets are not set; skipping."
+            echo "::warning::CRON_APP_URL / CRON_SECRET secrets are not set; skipping."
             exit 0
           fi
           call() {
-            curl --fail-with-body -sS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1"
-            echo
+            out=$(curl --fail-with-body -sS -m 60 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/$1") || {
+              echo "::error::$1 failed: $out"
+              return 1
+            }
+            echo "::notice::$1 $out"
           }
           case "${{ github.event.schedule }}" in
             "15 * * * *") call otp-cleanup ;;
