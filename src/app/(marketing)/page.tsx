@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/Feedback";
 import { ar, t } from "@/i18n/ar";
 import { CATEGORY_KEYS } from "@/modules/catalog";
-
+import SplashScreen from "@/components/splash/SplashScreen";
 const FEATURE_ICONS = [Gem, Truck, PenTool, Gift];
 const WHY_ICONS = [Gem, Truck, PenTool, Headset];
 const STEP_ICONS = [Shirt, ImageIcon, Settings, Truck];
@@ -24,6 +24,7 @@ const STEP_ICONS = [Shirt, ImageIcon, Settings, Truck];
 export default function HomePage() {
   return (
     <>
+      <SplashScreen />
       <Hero />
       <Section
         id="products"

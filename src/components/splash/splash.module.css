@@ -1,0 +1,362 @@
+/* شاشة البداية «الخطّاط» — يوزرسيف
+   الألوان متربطة بمتغيرات الهوية لو موجودة (--yz-*)، ولها قيم احتياطية.
+   الوضع الداكن: كلاس .dark أو data-theme="dark" على <html>، وإلا إعداد النظام. */
+
+.root {
+  --sp-bg: var(--yz-page, #f3faf8);
+  --sp-glow: radial-gradient(
+    ellipse 60% 60% at 50% 45%,
+    rgba(126, 232, 199, 0.36) 0%,
+    rgba(243, 250, 248, 0) 70%
+  );
+  --sp-ink: #005c58;
+  --sp-text: #030909;
+  --sp-muted: rgba(3, 9, 9, 0.62);
+  --sp-motif: #00706a;
+  --sp-motif-op: 0.4;
+  --sp-track: rgba(0, 92, 88, 0.12);
+  --sp-btn-bg: rgba(255, 255, 255, 0.75);
+  --sp-btn-ink: #005c58;
+  --sp-btn-bd: rgba(0, 92, 88, 0.25);
+  --sp-logo-glow: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  --sp-logo-glow-peak: drop-shadow(0 0 18px rgba(126, 232, 199, 0.9));
+  --splash-scale: 1;
+  --e: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+  font-family: var(--font-cairo, Cairo), "Segoe UI", Tahoma, sans-serif;
+  direction: rtl;
+  /* اختفاء ناعم: شفافية بس، والهوم ثابتة تحتها. visibility بتتأخر لآخر الـ fade. */
+  transition:
+    opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0.9s;
+}
+
+/* اللي شاف الشاشة قبل كده: تختفي قبل ما تترسم (السكريبت بيحط الـ attribute ده) */
+:global(html[data-splash-seen]) .root {
+  display: none;
+}
+
+:global(.dark) .root,
+:global([data-theme="dark"]) .root {
+  --sp-bg: var(--yz-page-dark, #001412);
+  --sp-glow: radial-gradient(
+    ellipse 60% 60% at 50% 45%,
+    rgba(5, 64, 57, 0.95) 0%,
+    rgba(0, 20, 18, 0) 72%
+  );
+  --sp-ink: #f2fbf8;
+  --sp-text: #f2fbf8;
+  --sp-muted: rgba(242, 251, 248, 0.66);
+  --sp-motif: #7ee8c7;
+  --sp-motif-op: 0.5;
+  --sp-track: rgba(126, 232, 199, 0.14);
+  --sp-btn-bg: rgba(126, 232, 199, 0.08);
+  --sp-btn-ink: #b8f2de;
+  --sp-btn-bd: rgba(126, 232, 199, 0.35);
+  --sp-logo-glow: drop-shadow(0 0 8px rgba(126, 232, 199, 0.6))
+    drop-shadow(0 0 24px rgba(126, 232, 199, 0.35));
+  --sp-logo-glow-peak: drop-shadow(0 0 14px rgba(126, 232, 199, 1))
+    drop-shadow(0 0 44px rgba(126, 232, 199, 0.7));
+}
+
+/* الوضع الداكن حسب النظام بيتغطّى بالقاعدة اللي فوق: next-themes بيحط .dark على <html>
+   قبل أول رسم لما الإعداد system. (بلوك :global(html:not(...)) كان بيكسر الـ CSS كله في Turbopack.) */
+
+.leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--sp-glow);
+}
+
+/* ===== زخارف الخلفية ===== */
+.motif {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 46%;
+  width: min(1040px, 120vw);
+  height: min(1040px, 120vw);
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: var(--sp-motif);
+  stroke-opacity: var(--sp-motif-op);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: motifDim 1s ease var(--splash-write-end) both;
+}
+.motif path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.6s var(--e) both;
+}
+
+/* ===== الشعار ===== */
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* من غيرها السطر الطويل (الـ tagline) بيكبّر العمود أعرض من الشاشة والتوسيط يبوظ على الموبايل */
+  max-width: 100%;
+  gap: 22px;
+  margin-top: -40px;
+}
+.stage {
+  position: relative;
+  width: var(--splash-logo-w);
+  height: var(--splash-logo-h);
+  transform: scale(var(--splash-scale));
+  /* transform مش بيصغّر المساحة اللي العنصر واخدها؛ الهامش السالب بيخليها قد الحجم الظاهر
+     عشان التوسيط يفضل مظبوط لما الشعار (560px) أعرض من الشاشة. */
+  margin-inline: calc(var(--splash-logo-w) * (var(--splash-scale) - 1) / 2);
+}
+.logo {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  fill: var(--sp-ink);
+  filter: var(--sp-logo-glow);
+  animation: logoGlow 1.2s ease var(--splash-write-end) both;
+}
+.maskStroke {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation-name: draw;
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  animation-fill-mode: both;
+}
+.fullFill {
+  opacity: 0;
+  animation: fadeIn 0.35s ease both;
+}
+
+/* ===== الريشة ===== */
+.quill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 42px;
+  height: 42px;
+  color: var(--sp-ink);
+  offset-anchor: 8% 92%;
+  offset-rotate: 0deg;
+  opacity: 0;
+  filter: drop-shadow(0 0 4px rgba(126, 232, 199, 0.9)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+  animation-name: quillMove;
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  animation-fill-mode: both;
+  pointer-events: none;
+}
+.quill svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.quillVane {
+  fill: currentColor;
+}
+.quillShaft {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.quillBarb {
+  fill: none;
+  stroke: rgba(126, 232, 199, 0.85);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+/* ===== النصوص والتحكم ===== */
+.slogan {
+  margin: 0;
+  font-size: 30px;
+  line-height: 44px;
+  font-weight: 800;
+  text-align: center;
+  opacity: 0;
+  animation: up 0.8s var(--e) calc(var(--splash-total) - 0.9s) both;
+}
+.tagline {
+  margin: -14px 0 0;
+  font-size: 15px;
+  text-align: center;
+  color: var(--sp-muted);
+  opacity: 0;
+  animation: up 0.8s var(--e) calc(var(--splash-total) - 0.6s) both;
+}
+.progress {
+  position: absolute;
+  left: 50%;
+  bottom: 112px;
+  width: 240px;
+  margin-left: -120px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--sp-track);
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(270deg, #b8f2de, #00a08f);
+  box-shadow: 0 0 8px rgba(126, 232, 199, 0.8);
+  transform: scaleX(0);
+  transform-origin: right;
+  animation: bar var(--splash-total) linear both;
+}
+.skip {
+  position: absolute;
+  left: max(24px, env(safe-area-inset-left, 0px));
+  bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--sp-btn-bd);
+  background: var(--sp-btn-bg);
+  color: var(--sp-btn-ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.skip:focus-visible {
+  outline: 2px solid var(--sp-ink);
+  outline-offset: 2px;
+}
+.skip svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* موبايل وتابلت صغير */
+@media (max-width: 760px) {
+  .root {
+    --splash-scale: 0.57;
+  }
+  .center {
+    gap: 4px;
+    margin-top: -60px;
+  }
+  .slogan {
+    font-size: 20px;
+    line-height: 30px;
+  }
+  .tagline {
+    margin-top: 2px;
+    font-size: 13px;
+    padding-inline: 24px;
+  }
+  .progress {
+    bottom: 150px;
+    width: 200px;
+    margin-left: -100px;
+  }
+}
+
+/* حركة أقل: الشعار يظهر ثابت */
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    animation-duration: 0.01s !important;
+    animation-delay: 0s !important;
+  }
+  .quill {
+    display: none;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bar {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes motifDim {
+  to {
+    opacity: 0.3;
+  }
+}
+@keyframes logoGlow {
+  40% {
+    filter: var(--sp-logo-glow-peak);
+  }
+  100% {
+    filter: var(--sp-logo-glow);
+  }
+}
+@keyframes quillMove {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}

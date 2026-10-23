@@ -11,7 +11,11 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     rules: {
+      // Tailwind for plain stylesheets only. CSS Modules (*.module.css) must keep Next's own
+      // module pipeline: `as: "*.css"` would turn them into global CSS, breaking :global()
+      // and the hashed class names (the splash screen rendered unstyled because of this).
       "*.css": {
+        condition: { all: [{ not: "foreign" }, { not: { path: /\.module\.css$/ } }] },
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },
