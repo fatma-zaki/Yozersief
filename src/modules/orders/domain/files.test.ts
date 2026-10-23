@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { checkUpload, MAX_FILE_BYTES, qualityFlagFor } from "./files";
+import {
+  checkUpload,
+  draftPathId,
+  draftPathPrefix,
+  isAllowedContentType,
+  MAX_FILE_BYTES,
+  qualityFlagFor,
+} from "./files";
 
 describe("checkUpload", () => {
   it.each(["logo.png", "LOGO.JPG", "a.jpeg", "b.pdf", "c.ai", "d.psd", "e.svg"])(
@@ -30,5 +37,26 @@ describe("qualityFlagFor", () => {
     expect(qualityFlagFor({ width: 640, height: 480 })).toBe("low_res");
     expect(qualityFlagFor({ width: 2480, height: 3508 })).toBe("ok");
     expect(qualityFlagFor(null)).toBeNull();
+  });
+});
+
+describe("isAllowedContentType", () => {
+  it("accepts photoshop MIME for .psd and rejects octet-stream", () => {
+    expect(isAllowedContentType("design", "a.psd", "image/vnd.adobe.photoshop")).toBe(true);
+    expect(isAllowedContentType("design", "a.psd", "application/octet-stream")).toBe(false);
+  });
+});
+
+describe("draftPathPrefix", () => {
+  const key = "22222222-2222-4222-8222-222222222222";
+
+  it("uses a non-reversible id and never embeds the raw submission UUID", async () => {
+    const prefix = await draftPathPrefix(key);
+    const id = await draftPathId(key);
+    expect(prefix).toBe(`drafts/${id}/`);
+    expect(prefix).not.toContain(key);
+    expect(id).toMatch(/^[0-9a-f]{64}$/);
+    expect(await draftPathId(key)).toBe(id);
+    expect(await draftPathId("33333333-3333-4333-8333-333333333333")).not.toBe(id);
   });
 });

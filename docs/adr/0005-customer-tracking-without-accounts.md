@@ -1,6 +1,6 @@
 # ADR-0005: Customer tracking without accounts
 
-- Status: accepted (implementation in Phase 2)
+- Status: accepted (implementation in Phase 2; OTP path deferred — see ADR-0007)
 - Date: 2026-10-23
 
 ## Context

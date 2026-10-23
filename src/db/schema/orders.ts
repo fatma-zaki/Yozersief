@@ -48,6 +48,11 @@ export const orders = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     ref: text("ref").notNull().unique(),
+    /**
+     * HMAC of the client submission key. Unique so retries/double-clicks return the same order
+     * instead of creating duplicates (Phase 1 idempotency).
+     */
+    idempotencyKeyHash: text("idempotency_key_hash").unique(),
     customerId: uuid("customer_id")
       .notNull()
       .references(() => customers.id),
@@ -101,6 +106,30 @@ export const orders = pgTable(
       "orders_org_when_biz",
       sql`(${t.customerType} = 'person') = (${t.organizationId} IS NULL)`,
     ),
+  ],
+);
+
+/**
+ * Anonymous customer uploads before an order exists (Phase 1). Bound to a hashed submission key;
+ * claimed into `order_files` on submit. Expired rows are deleted by cron (and blobs best-effort).
+ */
+export const uploadDrafts = pgTable(
+  "upload_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    submissionKeyHash: text("submission_key_hash").notNull(),
+    kind: fileKind("kind").notNull(),
+    fileName: text("file_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(),
+    storageKey: text("storage_key").notNull().unique(),
+    expiresAt: timestamptz("expires_at").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("upload_drafts_submission_key_hash_idx").on(t.submissionKeyHash),
+    index("upload_drafts_expires_at_idx").on(t.expiresAt),
+    check("upload_drafts_kind_customer", sql`${t.kind} IN ('design', 'reference', 'names_sheet')`),
   ],
 );
 

@@ -1,6 +1,7 @@
-import { del } from "@vercel/blob";
+import { del, head } from "@vercel/blob";
 import { env } from "@/env";
-import type { FileStorage } from "../application/file-storage";
+import type { FileStorage, StoredBlobMeta } from "../application/file-storage";
+import type { BlobUploadMode } from "../domain/files";
 
 /**
  * Vercel Blob adapter. Uploads go straight from the browser to Blob with a server-issued
@@ -18,6 +19,21 @@ export class VercelBlobStorage implements FileStorage {
     // Blob URLs are unguessable; access control happens before we hand the URL out.
     return storageKey;
   }
+
+  async head(storageKey: string): Promise<StoredBlobMeta> {
+    const meta = await head(storageKey, { token: this.token });
+    return {
+      size: meta.size,
+      pathname: meta.pathname,
+      contentType: meta.contentType,
+      url: meta.url,
+    };
+  }
+}
+
+export function blobUploadMode(): BlobUploadMode | null {
+  if (env.BLOB_READ_WRITE_TOKEN) return "token";
+  return env.BLOB_STORE_ID ? "presigned" : null;
 }
 
 export function createFileStorage(): FileStorage | null {

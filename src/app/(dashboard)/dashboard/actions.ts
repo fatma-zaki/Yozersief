@@ -5,7 +5,11 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { actionError, actionOk, fromResult, type ActionResult } from "@/lib/action";
 import { auth } from "@/lib/auth/auth";
-import { requirePermission, requireStaff } from "@/lib/auth/session";
+import {
+  requirePermission,
+  requireStaff,
+  requireStaffEnrollingTwoFactor,
+} from "@/lib/auth/session";
 import { ValidationError } from "@/lib/errors";
 import { enforceRateLimit } from "@/lib/ratelimit";
 import { isPermission } from "@/lib/rbac";
@@ -63,7 +67,7 @@ export async function enableTwoFactorAction(
   password: string,
 ): Promise<ActionResult<{ totpURI: string; backupCodes: string[] }>> {
   try {
-    await requireStaff();
+    await requireStaffEnrollingTwoFactor();
     const result = await auth.api.enableTwoFactor({ body: { password }, headers: await headers() });
     if (result.method !== "totp") throw new Error("expected TOTP two-factor setup");
     return actionOk({ totpURI: result.totpURI, backupCodes: result.backupCodes });
@@ -76,7 +80,7 @@ export async function enableTwoFactorAction(
 /** Step 2: the first valid code turns 2FA on. */
 export async function confirmTwoFactorAction(code: string): Promise<ActionResult> {
   try {
-    await requireStaff();
+    await requireStaffEnrollingTwoFactor();
     await auth.api.verifyTOTP({ body: { code }, headers: await headers() });
     revalidatePath("/dashboard/security");
     return actionOk(undefined);

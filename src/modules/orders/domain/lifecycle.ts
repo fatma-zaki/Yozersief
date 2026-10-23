@@ -329,6 +329,7 @@ export function planTransition(
     event: {
       type: def.event.type,
       titleAr: def.event.titleAr,
+      // Customer-visible: never put phones, addresses, or other PII in note (brief B7).
       note: def.note?.(ctx) ?? null,
       visibleToCustomer: true,
     },

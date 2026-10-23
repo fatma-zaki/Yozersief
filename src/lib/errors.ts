@@ -59,6 +59,13 @@ export class UnauthorizedError extends AppError {
   }
 }
 
+/** Staff session exists but global 2FA enrollment is required and not completed. */
+export class TwoFactorRequiredError extends AppError {
+  constructor(message = "two-factor enrollment required") {
+    super("forbidden", 403, ar.errors.twoFactorRequired, message);
+  }
+}
+
 export type FieldErrors = Record<string, string[]>;
 
 export class ValidationError extends AppError {

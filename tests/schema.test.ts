@@ -32,7 +32,7 @@ const baseOrder = () => ({
 });
 
 describe("migrations", () => {
-  it("create all 37 tables (34 from the ERD + 3 for Better Auth) and 16 enums", async () => {
+  it("create all 38 tables (34 from the ERD + 3 for Better Auth + upload_drafts) and 16 enums", async () => {
     const tables = await db.execute<{ n: number }>(
       sql`select count(*)::int as n from information_schema.tables where table_schema = 'public'`,
     );
@@ -40,7 +40,7 @@ describe("migrations", () => {
       sql`select count(*)::int as n from pg_type t join pg_namespace n on n.oid = t.typnamespace
           where t.typtype = 'e' and n.nspname = 'public'`,
     );
-    expect(tables.rows[0]?.n).toBe(37);
+    expect(tables.rows[0]?.n).toBe(38);
     expect(enums.rows[0]?.n).toBe(16);
   });
 });

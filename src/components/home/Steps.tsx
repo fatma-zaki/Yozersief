@@ -25,7 +25,7 @@ export function Steps() {
           light="radial-gradient(circle at 85% 40%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 26%), radial-gradient(circle at 15% 70%, rgba(126,232,199,0.25) 0, rgba(126,232,199,0) 24%)"
           dark="radial-gradient(ellipse 30% 50% at 85% 40%, rgba(5,64,57,0.55) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 30% 50% at 15% 70%, rgba(5,64,57,0.45) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Ornament tone="teal" style={{ top: -60, left: -240, width: 560, height: 560 }} dark=".3" />
+        <Ornament tone="teal" style={{ top: -40, left: -260, width: 480, height: 480 }} dark=".2" />
         <div
           style={{
             maxWidth: 1180,

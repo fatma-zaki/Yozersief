@@ -3,26 +3,36 @@ import {
   handleUpload,
   handleUploadPresigned,
   type HandleUploadBody,
-  type HandleUploadPresignedBody,
   type HandleUploadOptions,
+  type HandleUploadPresignedBody,
 } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 import { env } from "@/env";
-import { getStaffContext } from "@/lib/auth/session";
+import { assertTwoFactorEnrollment, getStaffContext } from "@/lib/auth/session";
 import { isAppError, toAppError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import { clientIp, enforceRateLimit } from "@/lib/ratelimit";
-import { authorizeUpload, recordUploadedFile, uploadPayloadSchema } from "@/modules/orders";
+import {
+  authorizeUpload,
+  blobUploadMode,
+  completeUploadedFile,
+  uploadPayloadSchema,
+  type UploadCompletionPayload,
+} from "@/modules/orders";
 
 /**
  * Client uploads to Vercel Blob (brief A6.5): the browser asks here for a token, uploads
- * directly to Blob, and Blob calls back here when done (not on localhost).
+ * directly to Blob, and Blob calls back here when done (not on localhost — use /api/uploads/confirm).
  * Stores with a read-write token use `handleUpload` (client: `upload`). Newer stores set
  * BLOB_STORE_ID and authenticate with Vercel OIDC: `handleUploadPresigned`
- * (client: `uploadPresigned`).
+ * (client: `uploadPresigned`). See `blobUploadMode`.
+ *
+ * Anonymous draft tokens use `submissionKey` (upload_drafts). Staff order attachments use `orderId`.
+ * Staff attaching to an order must satisfy global 2FA when enforced; completion uses head().
  */
 export async function POST(request: Request) {
-  if (!env.BLOB_READ_WRITE_TOKEN && !env.BLOB_STORE_ID) {
+  const mode = blobUploadMode();
+  if (!mode) {
     return NextResponse.json({ error: "رفع الملفات مش متاح دلوقتي." }, { status: 503 });
   }
 
@@ -30,11 +40,12 @@ export async function POST(request: Request) {
     await enforceRateLimit("upload.token", clientIp(request.headers));
     const payload = uploadPayloadSchema.parse(JSON.parse(clientPayload ?? "{}"));
     const staff = await getStaffContext();
+    if (payload.orderId && staff) await assertTwoFactorEnrollment(staff);
     return authorizeUpload(staff, pathname, payload);
   };
 
   try {
-    if (env.BLOB_READ_WRITE_TOKEN) {
+    if (mode === "token") {
       const body = (await request.json()) as HandleUploadBody;
       const result = await handleUpload({
         body,
@@ -80,20 +91,13 @@ const onUploadCompleted: NonNullable<HandleUploadOptions["onUploadCompleted"]> =
   blob,
   tokenPayload,
 }) => {
-  const payload = JSON.parse(tokenPayload ?? "{}") as {
-    orderId?: string;
-    kind: "design" | "reference" | "names_sheet" | "mockup";
-    staffId: string | null;
-  };
-  if (!payload.orderId) return; // drafts are confirmed on order submission (Phase 1)
-  await recordUploadedFile({
-    orderId: payload.orderId,
-    kind: payload.kind,
-    staffId: payload.staffId,
-    url: blob.url,
-    pathname: blob.pathname,
-    contentType: blob.contentType,
-    // Blob's completion payload has no size; Phase 1 reads it with head().
-    sizeBytes: 0,
-  });
+  const payload = JSON.parse(tokenPayload ?? "{}") as UploadCompletionPayload;
+  await completeUploadedFile(
+    {
+      url: blob.url,
+      pathname: blob.pathname,
+      contentType: blob.contentType,
+    },
+    payload,
+  );
 };

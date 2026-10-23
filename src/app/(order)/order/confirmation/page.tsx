@@ -1,23 +1,6 @@
-import { PartyPopper } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { EmptyState } from "@/components/ui/Feedback";
-import { ar } from "@/i18n/ar";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: ar.order.confirmationTitle };
-
-/** Confirmation (B5). Phase 1 shows the ref and person/organisation next steps. */
+/** The confirmation is shown inside the builder right after sending (design: Flow-P6/B6). */
 export default function ConfirmationPage() {
-  return (
-    <EmptyState
-      icon={<PartyPopper />}
-      title={ar.order.confirmationTitle}
-      description={ar.order.comingSoon}
-      action={
-        <Button asChild>
-          <Link href="/track">{ar.nav.track}</Link>
-        </Button>
-      }
-    />
-  );
+  redirect("/order");
 }

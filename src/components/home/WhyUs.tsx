@@ -27,13 +27,15 @@ export function WhyUs() {
         />
         <Ornament
           tone="mint"
-          style={{ top: -60, right: -240, width: 560, height: 560 }}
-          dark=".4"
+          style={{ top: -40, right: -260, width: 480, height: 480, transform: "rotate(180deg)" }}
+          light=".35"
+          dark=".28"
         />
         <Ornament
           tone="mint"
-          style={{ bottom: -200, left: -200, width: 560, height: 560, transform: "rotate(180deg)" }}
-          dark=".35"
+          style={{ bottom: -180, left: -240, width: 480, height: 480 }}
+          light=".35"
+          dark=".25"
         />
         <div
           style={{
@@ -107,8 +109,9 @@ export function WhyUs() {
         />
         <Ornament
           tone="mint"
-          style={{ top: -40, right: -240, width: 500, height: 500 }}
-          dark=".35"
+          style={{ top: -40, right: -240, width: 440, height: 440, transform: "rotate(180deg)" }}
+          light=".35"
+          dark=".28"
         />
         <Head bp="t" style={{ marginBottom: 32 }} />
         <ul
@@ -170,8 +173,9 @@ export function WhyUs() {
         />
         <Ornament
           tone="mint"
-          style={{ top: 20, right: -220, width: 400, height: 400 }}
-          dark=".35"
+          style={{ top: 20, right: -200, width: 360, height: 360, transform: "rotate(180deg)" }}
+          light=".35"
+          dark=".25"
         />
         <Head bp="m" style={{ marginBottom: 24 }} />
         <ul

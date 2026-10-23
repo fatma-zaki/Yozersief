@@ -60,12 +60,12 @@ flowchart LR
 | ------------ | -------------------------------------------------------------------- | ---------------------------------------------- |
 | `identity`   | staff, roles, permissions, invitations, sessions, access requests    | working                                        |
 | `audit`      | `activity_logs`, sensitive-access flag                               | working                                        |
-| `orders`     | orders, sizes, places, files, pieces, events, **lifecycle**          | state machine + `applyTransition` + upload rules |
+| `orders`     | orders, sizes, places, files, pieces, events, **lifecycle**, submit  | state machine + `submitOrder` + draft uploads + lifecycle |
 | `messaging`  | templates, outbox, providers                                         | working (manual provider)                      |
 | `content`    | settings, site content, gallery, reviews, analytics reader           | settings + demo analytics                      |
 | `catalog`    | categories, products, options                                        | seed data                                      |
 | `quotes`     | quote versions, expiry                                               | expiry cron                                    |
-| `tracking`   | tracking links, OTP, customer session                                | cleanup crons                                  |
+| `tracking`   | links, ref+phone verify (no OTP, ADR-0007), signed session, DTO      | working (token deep-link still placeholder)    |
 | `customers`, `mockups`, `production`, `payments`, `delivery` | their tables                          | schema only (Phases 1–4)                       |
 
 ## Request flow: a staff action

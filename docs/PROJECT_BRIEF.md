@@ -101,7 +101,7 @@ Rules:
 │  │  ├─ payments/              ← payments, invoices
 │  │  ├─ delivery/
 │  │  ├─ messaging/             ← templates, outbox, providers
-│  │  ├─ tracking/              ← links, OTP verification, customer session
+│  │  ├─ tracking/              ← links, customer session (OTP deferred — ADR-0007)
 │  │  ├─ content/               ← gallery, reviews, site content, settings
 │  │  ├─ identity/              ← staff users, roles, permissions, invitations, sessions
 │  │  └─ audit/                 ← activity logs, sensitive-access logging
@@ -200,17 +200,21 @@ Rules:
 
 #### A6.7 Tracking & OTP (customers)
 
+> **This release:** verification is order ref + registered phone only (no OTP). See
+> `docs/adr/0007-tracking-without-otp.md`. The OTP design below remains the historical target
+> when a messaging channel is chosen (B13 #6); do not treat missing OTP as a defect under ADR-0007.
+
 - Tracking links: `/t/[token]`, where the token is random, stored hashed, and resolves to an order. It pre-fills the order ref; the customer confirms their phone.
 - Manual entry: `/track` → ref + phone.
-- OTP: 6 digits, stored hashed, 10-minute expiry, max 5 attempts, rate-limited per phone and per IP, sent on WhatsApp (SMS fallback is a pending decision).
+- OTP (deferred): 6 digits, stored hashed, 10-minute expiry, max 5 attempts, rate-limited per phone and per IP, sent on WhatsApp (SMS fallback is a pending decision).
 - On success, set a short-lived signed, httpOnly cookie scoped to that one order, then show `/track/[ref]`.
 - Only customer-visible `order_events` are ever shown.
 
 #### A6.8 Security & privacy
 
 - Security headers (CSP, HSTS, frame-ancestors none, referrer-policy) in middleware.
-- Rate limits on: OTP send/verify, tracking lookups, order submission, uploads, login.
-- Every token and code is stored hashed (tracking links, OTP, invitations).
+- Rate limits on: tracking lookups, order submission, uploads, login (and OTP send/verify when OTP returns — ADR-0007).
+- Every token and code is stored hashed (tracking links, invitations; OTP codes when that channel returns).
 - Gallery publishing is blocked unless `customer_consent = true`. Reviews are shown only with consent; never fabricate reviews.
 - Audit log: every write use case logs actor, action, entity and order; sensitive reads are flagged.
 - Personal data stays out of logs (mask phones).
@@ -264,7 +268,7 @@ The design lives in `docs/design/` (open `index.html`). Rebuild it with real com
 **Later phases (reference; do not start without approval)**
 
 - Phase 1: request builder + order submission + readiness checks + confirmation (B5).
-- Phase 2: admin order review, approve/info/reject, WhatsApp messages, tracking + OTP (B6–B8).
+- Phase 2: admin order review, approve/info/reject, WhatsApp messages, tracking (ref+phone this release — ADR-0007; OTP deferred) (B6–B8).
 - Phase 3: business path — quotes, mockups, deposit, production board, delivery, invoices (B3, B10).
 - Phase 4: team workspaces + team activity page (B9–B10).
 - Phase 5: catalog/gallery/content/accounts admin, traffic dashboard (B10–B12).
@@ -286,7 +290,7 @@ At the end of each phase: report what was built, what was deferred, any decision
 
 | Actor                                | Description                                                                                                     |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| Customer                             | No account. Identified by mobile number. Submits orders, tracks them via a link + OTP.                          |
+| Customer                             | No account. Identified by mobile number. Submits orders, tracks via link or ref+phone (OTP deferred — ADR-0007). |
 | Admin (مدير)                         | The owner. Everything, plus final approvals, prices, payments confirmation, roles.                              |
 | Desk (استقبال طلبات)                 | Reviews new orders, talks to customers, requests info, prepares quote drafts, forwards to admin.                |
 | Designer (مصمم)                      | Makes mockups, checks customer files, handles change requests; can manage gallery and site texts.               |
@@ -338,8 +342,11 @@ Steps: **1 Type & product → 2 Details → 3 Design & files → 4 Your info & r
 
 ### B6. Customer tracking
 
+> **This release:** no WhatsApp/SMS OTP — see `docs/adr/0007-tracking-without-otp.md`. The OTP step
+> below is retained as the intended stronger factor when B13 #6 is decided.
+
 - Entry points: the WhatsApp link `/t/[token]` (ref pre-filled; "not my order?" clears it) or `/track` (manual ref + phone). An invalid or expired link shows a warning and manual entry.
-- Verification: phone must match the order → 6-digit code on WhatsApp → access to that order only.
+- Verification (this release): canonical order ref + registered Egyptian mobile → short-lived signed httpOnly cookie → access to that order only. (Historical/stronger path: phone match → 6-digit WhatsApp OTP → cookie.)
 - Page: current status card + stage rail (5 stages for individuals, 7 business stages for organisations), "action needed" card (gold) when the customer must act, a timeline (newest first), order details, a help banner (WhatsApp).
 - Business actions on the tracking page: accept quote / ask a question; approve mockup / request changes (with notes); deposit instructions; production progress (`36 of 60 pieces`); pickup info.
 
@@ -349,6 +356,7 @@ Steps: **1 Type & product → 2 Details → 3 Design & files → 4 Your info & r
 - Order detail: customer (+ organisation and role), receipt and desired date, specs, files with download, customer notes, internal note (never shown to the customer), activity log.
 - Actions: **Approve** (individual: optional price/date message; organisation: "approve and send quote" with a required quote text), **Request info** (required text), **Reject** (required reason). Optional WhatsApp message with a preview and a copy-link button.
 - Business pipeline box: the 7-stage rail, bulk option chips, invoice flag, and a "record next stage" button that also prepares the customer update message.
+- **Customer-visible text (PII):** rejection reasons and `order_events.note` rows with `visible_to_customer = true` are shown on the public tracking page. Staff must not put phone numbers, addresses, or other personal data there — use the internal note for that. **Gap:** the order-detail / transition staff UI is not built yet (`dashboard/orders` is still a section placeholder), so an in-UI warning cannot be wired; enforce via this brief + review until that UI ships.
 
 ### B8. WhatsApp message templates (seed, editable by admin)
 
@@ -384,7 +392,7 @@ The admin can toggle any non-admin cell. Changes are audited.
 
 ### B10. Screens (see `docs/design/`)
 
-**Public**: Home (desktop/tablet/mobile), Service page, Request builder (desktop + mobile), Confirmation, Tracking (link entry, OTP, wrong phone, bad link, tracking views for both paths).
+**Public**: Home (desktop/tablet/mobile), Service page, Request builder (desktop + mobile), Confirmation, Tracking (link entry, ref+phone verify this release — ADR-0007; wrong phone, bad link, tracking views for both paths; OTP UI deferred).
 
 **Dashboard** (nav built from permissions):
 
@@ -423,7 +431,7 @@ The admin can toggle any non-admin cell. Changes are audited.
 3. Quote validity period; tracking link and invitation expiry.
 4. Number of free mockup revisions.
 5. Max file size (assumed 20 MB).
-6. OTP channel: WhatsApp Business API vs SMS fallback.
+6. OTP channel: WhatsApp Business API vs SMS fallback. (Tracking ships without OTP this release — ADR-0007; this decision still gates any future OTP restore.)
 7. Analytics provider (Plausible vs GA4).
 8. Delivery areas, fees and pickup address/hours.
 9. First-response SLA for the desk (used by alerts).

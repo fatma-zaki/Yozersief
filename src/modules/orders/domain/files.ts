@@ -6,6 +6,31 @@ export type FileKind = (typeof FILE_KINDS)[number];
 
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 
+const DRAFT_PATH_PURPOSE = "yz-draft-path:v1:";
+
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer), (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Non-reversible public folder id for Blob pathnames.
+ * Derived with SHA-256 so the client can compute it without the server secret; the raw
+ * submission UUID must never appear in public paths. This id is not a capability — claiming
+ * drafts still requires the raw submission key (HMAC-bound in `upload_drafts`).
+ */
+export async function draftPathId(submissionKey: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(`${DRAFT_PATH_PURPOSE}${submissionKey}`),
+  );
+  return toHex(digest);
+}
+
+/** Pathname must stay under `drafts/{draftPathId}/` so confirm can bind ownership without leaking the key. */
+export async function draftPathPrefix(submissionKey: string): Promise<string> {
+  return `drafts/${await draftPathId(submissionKey)}/`;
+}
+
 const DESIGN_TYPES: Record<string, readonly string[]> = {
   png: ["image/png"],
   jpg: ["image/jpeg"],
@@ -13,7 +38,8 @@ const DESIGN_TYPES: Record<string, readonly string[]> = {
   pdf: ["application/pdf"],
   svg: ["image/svg+xml"],
   ai: ["application/postscript", "application/illustrator", "application/pdf"],
-  psd: ["image/vnd.adobe.photoshop", "application/x-photoshop", "application/octet-stream"],
+  // Do not accept application/octet-stream: that would allow arbitrary bytes under a .psd name.
+  psd: ["image/vnd.adobe.photoshop", "application/x-photoshop"],
 };
 
 const SHEET_TYPES: Record<string, readonly string[]> = {
@@ -29,6 +55,19 @@ export function allowedTypesFor(kind: FileKind): Record<string, readonly string[
 
 export function allowedContentTypes(kind: FileKind): string[] {
   return [...new Set(Object.values(allowedTypesFor(kind)).flat())];
+}
+
+/** True when `contentType` is allowed for this kind + filename extension. */
+export function isAllowedContentType(
+  kind: FileKind,
+  fileName: string,
+  contentType: string,
+): boolean {
+  const ext = extensionOf(fileName);
+  const types = allowedTypesFor(kind)[ext];
+  if (!types) return false;
+  const normalized = contentType.split(";")[0]?.trim().toLowerCase() ?? "";
+  return types.some((t) => t.toLowerCase() === normalized);
 }
 
 export function extensionOf(fileName: string): string {
@@ -63,3 +102,9 @@ export function qualityFlagFor(
   if (!image) return null;
   return image.width * image.height < MIN_PRINT_PIXELS ? "low_res" : "ok";
 }
+
+/**
+ * How the browser uploads to Vercel Blob: `token` (client token from a read-write token,
+ * client `upload`) or `presigned` (stores on Vercel OIDC with BLOB_STORE_ID, `uploadPresigned`).
+ */
+export type BlobUploadMode = "token" | "presigned";

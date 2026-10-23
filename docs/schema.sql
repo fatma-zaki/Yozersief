@@ -138,6 +138,7 @@ CREATE INDEX ON products (category_id);
 CREATE TABLE orders (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   ref text NOT NULL UNIQUE,  -- YZ-XXXXXX اللي العميل بيشوفه
+  idempotency_key_hash text UNIQUE,  -- HMAC لمفتاح إرسال العميل (منع التكرار)
   customer_id uuid NOT NULL REFERENCES customers(id),
   organization_id uuid REFERENCES organizations(id) ON DELETE SET NULL,  -- للشركات والفرق بس
   customer_type customer_type NOT NULL,  -- person · biz · group
@@ -242,6 +243,22 @@ CREATE TABLE order_files (
 );
 CREATE INDEX ON order_files (order_id);
 CREATE INDEX ON order_files (uploaded_by);
+
+-- رفع مؤقت قبل ما الطلب يتسجل (العميل مجهول). بيتنقل لـ order_files عند الإرسال
+CREATE TABLE upload_drafts (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  submission_key_hash text NOT NULL,
+  kind file_kind NOT NULL,  -- design · reference · names_sheet فقط (موكاب للفريق)
+  file_name text NOT NULL,
+  mime_type text NOT NULL,
+  size_bytes bigint NOT NULL,
+  storage_key text NOT NULL UNIQUE,
+  expires_at timestamptz NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT upload_drafts_kind_customer CHECK (kind IN ('design', 'reference', 'names_sheet'))
+);
+CREATE INDEX ON upload_drafts (submission_key_hash);
+CREATE INDEX ON upload_drafts (expires_at);
 
 -- سطر لكل قطعة من شيت الأسماء، والإنتاج بيعلّم عليه
 CREATE TABLE order_pieces (
