@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, useEffect, useRef, useState, useTransition } from "react";
+import { Fragment, useEffect, useOptimistic, useRef, useState, useTransition } from "react";
 import { inviteStaffAction, signOutOtherDevicesAction } from "@/app/(dashboard)/dashboard/actions";
-import { setMemberStatusAction } from "@/app/(dashboard)/dashboard/accounts/actions";
+import {
+  setMemberRoleAction,
+  setMemberStatusAction,
+  setRolePermissionAction,
+} from "@/app/(dashboard)/dashboard/accounts/actions";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "@/lib/format";
 import { normalizeEgyptianMobile, toInternational } from "@/lib/phone";
-import type { RoleKey } from "@/lib/rbac/permissions";
+import type { Permission, RoleKey } from "@/lib/rbac/permissions";
 import s from "../admin.module.css";
 import { Ic, P } from "../Ic";
 import { KitHeader, KitToast, Switch, useFlash } from "../Kit.client";
@@ -17,9 +21,9 @@ import shell from "../shell/shell.module.css";
 import a from "./accounts.module.css";
 
 /**
- * Accounts & permissions, from docs/design/Admin-Accounts.html. Live: members, invitations,
- * pause/activate, signed-in devices. Demo (client state, as in the design): role changes, the
- * permission matrix, security switches and the admin log.
+ * Accounts & permissions, from docs/design/Admin-Accounts.html. Live: members, roles,
+ * invitations, pause/activate, the permission matrix, signed-in devices. Demo (client state, as
+ * in the design): security switches and the admin log.
  */
 
 export type AccountMember = {
@@ -44,43 +48,31 @@ const ROLE: Record<RoleKey, string> = {
 const ROLE_OPTIONS: RoleKey[] = ["desk", "design", "prod", "delivery", "admin"];
 type TeamRole = Exclude<RoleKey, "admin">;
 
-/** The design's matrix rows: [key, label, group heading]. */
-const PERMS: [string, string, string?][] = [
-  ["orders", "مشاهدة الطلبات", "الطلبات"],
-  ["phone", "رؤية رقم موبايل العميل"],
-  ["info", "طلب بيانات من العميل"],
-  ["quote", "تجهيز مسودة عرض السعر"],
-  ["approve", "الموافقة النهائية والأسعار"],
-  ["wa", "إرسال رسائل واتساب للعملاء"],
-  ["mockup", "رفع الموكاب وتعديله", "التنفيذ"],
-  ["production", "تحديث الإنتاج وفحص الجودة"],
-  ["payment", "تسجيل العربون والتحصيل"],
-  ["handover", "تأكيد تسليم الطلبات"],
-  ["products", "تعديل المنتجات والخدمات", "الموقع والإدارة"],
-  ["gallery", "نشر صور الأعمال"],
-  ["content", "تعديل نصوص الموقع"],
-  ["traffic", "مشاهدة الزيارات والترافيك"],
-  ["accounts", "إدارة الحسابات والصلاحيات"],
+/**
+ * The design's matrix rows: [permission, label, group heading]. «تأكيد الدفعات» and «نشاط
+ * الفريق» are not in the design but are real permissions (B9), so they get rows too.
+ */
+const PERMS: [Permission, string, string?][] = [
+  ["orders.view", "مشاهدة الطلبات", "الطلبات"],
+  ["customers.view_phone", "رؤية رقم موبايل العميل"],
+  ["orders.request_info", "طلب بيانات من العميل"],
+  ["quotes.draft", "تجهيز مسودة عرض السعر"],
+  ["orders.approve", "الموافقة النهائية والأسعار"],
+  ["messages.send", "إرسال رسائل واتساب للعملاء"],
+  ["mockups.manage", "رفع الموكاب وتعديله", "التنفيذ"],
+  ["production.update", "تحديث الإنتاج وفحص الجودة"],
+  ["payments.record", "تسجيل العربون والتحصيل"],
+  ["payments.confirm", "تأكيد استلام الدفعات"],
+  ["delivery.handover", "تأكيد تسليم الطلبات"],
+  ["catalog.manage", "تعديل المنتجات والخدمات", "الموقع والإدارة"],
+  ["gallery.manage", "نشر صور الأعمال"],
+  ["content.manage", "تعديل نصوص الموقع"],
+  ["traffic.view", "مشاهدة الزيارات والترافيك"],
+  ["team.activity.view", "مشاهدة نشاط الفريق"],
+  ["accounts.manage", "إدارة الحسابات والصلاحيات"],
 ];
 
-/** Default matrix (brief B9), as the design shows it. */
-const MATRIX: Record<string, Record<TeamRole, boolean>> = {
-  orders: { desk: true, design: true, prod: true, delivery: true },
-  phone: { desk: true, design: false, prod: false, delivery: true },
-  info: { desk: true, design: false, prod: false, delivery: false },
-  quote: { desk: true, design: false, prod: false, delivery: false },
-  approve: { desk: false, design: false, prod: false, delivery: false },
-  mockup: { desk: false, design: true, prod: false, delivery: false },
-  production: { desk: false, design: false, prod: true, delivery: false },
-  payment: { desk: false, design: false, prod: false, delivery: true },
-  handover: { desk: false, design: false, prod: false, delivery: true },
-  wa: { desk: true, design: false, prod: false, delivery: true },
-  products: { desk: false, design: false, prod: false, delivery: false },
-  gallery: { desk: false, design: true, prod: false, delivery: false },
-  content: { desk: false, design: true, prod: false, delivery: false },
-  traffic: { desk: false, design: false, prod: false, delivery: false },
-  accounts: { desk: false, design: false, prod: false, delivery: false },
-};
+export type AccountMatrix = Record<TeamRole, Permission[]>;
 
 const ROLE_VIEWS: [TeamRole, `/dashboard/${string}`, string][] = [
   ["desk", "/dashboard/desk", P.inbox],
@@ -118,21 +110,54 @@ const DEMO_LOG = [
 export function AccountsBoard({
   members: initialMembers,
   sessions,
+  matrix,
+  canEditMatrix,
 }: {
   members: AccountMember[];
   sessions: AccountSession[];
+  matrix: AccountMatrix;
+  /** Only the admin edits the matrix (the server enforces it too). */
+  canEditMatrix: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  // Role changes are demo-only (no use case yet); everything else comes from the server.
-  const [roleOverride, setRoleOverride] = useState<Record<string, RoleKey>>({});
-  const [perms, setPerms] = useState(MATRIX);
+  const [, startEdit] = useTransition();
+  // Role and matrix edits show at once and fall back to the server's answer when it lands.
+  const [roleOverride, setRoleOverride] = useOptimistic(
+    {} as Record<string, RoleKey>,
+    (o, [id, role]: [string, RoleKey]) => ({ ...o, [id]: role }),
+  );
+  const [perms, setPerm] = useOptimistic(
+    matrix,
+    (m, [role, key, on]: [TeamRole, Permission, boolean]) => ({
+      ...m,
+      [role]: on ? [...m[role], key] : m[role].filter((p) => p !== key),
+    }),
+  );
   const [sec, setSec] = useState({ twofa: true, alert: true, timeout: false });
   const [log, setLog] = useState(DEMO_LOG);
   const [invite, setInvite] = useState(false);
   const { toast, flash, hide } = useFlash();
 
   const members = initialMembers.map((m) => ({ ...m, roleKey: roleOverride[m.id] ?? m.roleKey }));
+
+  const changeRole = (m: AccountMember, role: RoleKey) =>
+    startEdit(async () => {
+      setRoleOverride([m.id, role]);
+      const result = await setMemberRoleAction({ userId: m.id, roleKey: role });
+      if (!result.ok) return flash(result.error);
+      flash(`اتغيّر دور ${m.name} لـ ${ROLE[role]}`);
+      router.refresh();
+    });
+
+  const togglePerm = (role: TeamRole, key: Permission, label: string, on: boolean) =>
+    startEdit(async () => {
+      setPerm([role, key, on]);
+      const result = await setRolePermissionAction({ roleKey: role, permission: key, granted: on });
+      if (!result.ok) return flash(result.error);
+      flash(`${on ? "اتضافت" : "اتشالت"} صلاحية «${label}» لـ ${ROLE[role]}`);
+      router.refresh();
+    });
 
   const toggleStatus = (m: AccountMember) => {
     const status = m.status === "paused" ? "active" : "paused";
@@ -263,11 +288,7 @@ export function AccountsBoard({
                       className={k.fld}
                       value={m.roleKey}
                       aria-label={`دور ${m.name}`}
-                      onChange={(e) => {
-                        const v = e.target.value as RoleKey;
-                        setRoleOverride((o) => ({ ...o, [m.id]: v }));
-                        flash(`اتغيّر دور ${m.name} لـ ${ROLE[v]}`);
-                      }}
+                      onChange={(e) => changeRole(m, e.target.value as RoleKey)}
                       style={{ width: "auto", minHeight: 38, padding: "4px 10px", fontSize: 13 }}
                     >
                       {ROLE_OPTIONS.map((r) => (
@@ -344,7 +365,7 @@ export function AccountsBoard({
           style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12 }}
         >
           {ROLE_VIEWS.map(([role, href, icon]) => {
-            const n = PERMS.filter(([key]) => perms[key]?.[role]).length;
+            const n = perms[role].length;
             const people = members.filter((m) => m.roleKey === role).length;
             return (
               <Link
@@ -436,7 +457,7 @@ export function AccountsBoard({
                       {label}
                     </span>
                     {(["admin", "desk", "design", "prod", "delivery"] as RoleKey[]).map((r) => {
-                      const on = r === "admin" ? true : !!perms[key]?.[r];
+                      const on = r === "admin" ? true : perms[r].includes(key);
                       return (
                         <span key={r} role="cell" style={{ textAlign: "center" }}>
                           <button
@@ -445,14 +466,10 @@ export function AccountsBoard({
                             role="checkbox"
                             aria-checked={on}
                             aria-label={`${ROLE[r]}: ${label}`}
-                            disabled={r === "admin"}
+                            disabled={r === "admin" || !canEditMatrix}
                             onClick={() => {
                               if (r === "admin") return;
-                              const next = !on;
-                              setPerms((p) => ({ ...p, [key]: { ...p[key]!, [r]: next } }));
-                              flash(
-                                `${next ? "اتضافت" : "اتشالت"} صلاحية «${label}» لـ ${ROLE[r]}`,
-                              );
+                              togglePerm(r, key, label, !on);
                             }}
                           >
                             <Ic d={P.ok} size={15} stroke={3} />

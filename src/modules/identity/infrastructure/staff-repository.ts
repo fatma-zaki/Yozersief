@@ -229,3 +229,29 @@ export async function updateStaffStatus(userId: string, status: "active" | "paus
     .set({ status, updatedAt: new Date() })
     .where(eq(staffUsers.id, userId));
 }
+
+export async function updateStaffRole(userId: string, roleId: number, tx: DbOrTx) {
+  await tx
+    .update(staffUsers)
+    .set({ roleId, updatedAt: new Date() })
+    .where(eq(staffUsers.id, userId));
+}
+
+/** Every granted (role, permission) pair, by key. */
+export async function listRolePermissionKeys() {
+  return db
+    .select({ roleKey: roles.key, permissionKey: permissions.key })
+    .from(rolePermissions)
+    .innerJoin(roles, eq(roles.id, rolePermissions.roleId))
+    .innerJoin(permissions, eq(permissions.id, rolePermissions.permissionId));
+}
+
+export async function grantRolePermission(roleId: number, permissionId: number, tx: DbOrTx) {
+  await tx.insert(rolePermissions).values({ roleId, permissionId }).onConflictDoNothing();
+}
+
+export async function revokeRolePermission(roleId: number, permissionId: number, tx: DbOrTx) {
+  await tx
+    .delete(rolePermissions)
+    .where(and(eq(rolePermissions.roleId, roleId), eq(rolePermissions.permissionId, permissionId)));
+}

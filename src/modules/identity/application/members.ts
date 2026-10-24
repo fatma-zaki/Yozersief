@@ -1,13 +1,15 @@
 import { logActivity } from "@/modules/audit";
 import { withTransaction } from "@/db/tx";
 import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
-import { assertCan, type StaffContext } from "@/lib/rbac";
+import { assertCan, type RoleKey, type StaffContext } from "@/lib/rbac";
 import { maskPhone } from "@/lib/phone";
 import { displayEmail } from "../domain/staff";
 import {
   deleteAllSessions,
+  findRoleByKey,
   findStaffRole,
   listStaffMembers,
+  updateStaffRole,
   updateStaffStatus,
 } from "../infrastructure/staff-repository";
 
@@ -23,8 +25,9 @@ export async function listMembers(actor: StaffContext) {
 }
 
 /**
- * Pause or reactivate a member (brief A6.2). Pausing deletes every session at once, so the
- * member is signed out everywhere; they also cannot sign in again until reactivated.
+ * Pause or reactivate any member but yourself (brief A6.2). Pausing deletes every session at
+ * once, so the member is signed out everywhere; they also cannot sign in again until
+ * reactivated. Only an admin can pause another admin.
  */
 export async function setMemberStatus(
   actor: StaffContext,
@@ -35,8 +38,8 @@ export async function setMemberStatus(
   await withTransaction(async (tx) => {
     const target = await findStaffRole(input.userId, tx);
     if (!target) throw new NotFoundError(`staff ${input.userId}`);
-    if (target.roleKey === "admin")
-      throw new ForbiddenError(undefined, "حساب المدير مينفعش يتوقف.");
+    if (target.roleKey === "admin" && actor.roleKey !== "admin")
+      throw new ForbiddenError(undefined, "المدير بس هو اللي يقدر يوقف حساب مدير.");
     await updateStaffStatus(input.userId, input.status, tx);
     if (input.status === "paused") await deleteAllSessions(input.userId, tx);
     await logActivity(tx, {
@@ -44,6 +47,35 @@ export async function setMemberStatus(
       action: input.status === "paused" ? "accounts.paused" : "accounts.reactivated",
       entityType: "staff_user",
       entityId: input.userId,
+    });
+  });
+}
+
+/**
+ * Move a member to another role (brief B9). Takes effect on their next request: the session
+ * reads `role_id` from the database. Only an admin can promote to, or change, an admin.
+ */
+export async function setMemberRole(
+  actor: StaffContext,
+  input: { userId: string; roleKey: RoleKey },
+) {
+  assertCan(actor, "accounts.manage");
+  if (input.userId === actor.id) throw new ValidationError({}, "مينفعش تغيّر دورك انت.");
+  await withTransaction(async (tx) => {
+    const target = await findStaffRole(input.userId, tx);
+    if (!target) throw new NotFoundError(`staff ${input.userId}`);
+    if (target.roleKey === input.roleKey) return;
+    if ((target.roleKey === "admin" || input.roleKey === "admin") && actor.roleKey !== "admin")
+      throw new ForbiddenError(undefined, "المدير بس هو اللي يقدر يدّي أو يشيل دور المدير.");
+    const role = await findRoleByKey(input.roleKey, tx);
+    if (!role) throw new NotFoundError(`role ${input.roleKey}`);
+    await updateStaffRole(input.userId, role.id, tx);
+    await logActivity(tx, {
+      userId: actor.id,
+      action: "accounts.role_changed",
+      entityType: "staff_user",
+      entityId: input.userId,
+      meta: { from: target.roleKey, to: input.roleKey },
     });
   });
 }

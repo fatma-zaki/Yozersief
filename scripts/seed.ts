@@ -80,6 +80,9 @@ async function seedRbac() {
       .values(role)
       .onConflictDoUpdate({ target: schema.roles.key, set: { nameAr: role.nameAr } });
   }
+  const known = new Set(
+    (await db.select({ key: schema.permissions.key }).from(schema.permissions)).map((p) => p.key),
+  );
   for (const p of PERMISSIONS) {
     await db
       .insert(schema.permissions)
@@ -94,9 +97,12 @@ async function seedRbac() {
   const permRows = await db.select().from(schema.permissions);
   const permId = new Map(permRows.map((p) => [p.key, p.id]));
 
-  // Only add missing defaults: the admin may have toggled cells since the last seed.
+  // Defaults only for permissions new to this database: the admin may have switched cells off
+  // since the last seed, and re-adding them would silently undo that.
   for (const role of roleRows) {
-    const keys = defaultPermissionsFor(role.key as (typeof ROLES)[number]["key"]);
+    const keys = defaultPermissionsFor(role.key as (typeof ROLES)[number]["key"]).filter(
+      (k) => !known.has(k),
+    );
     const values = keys.map((k) => ({ roleId: role.id, permissionId: permId.get(k)! }));
     if (values.length) await db.insert(schema.rolePermissions).values(values).onConflictDoNothing();
   }

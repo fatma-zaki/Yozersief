@@ -5,21 +5,27 @@ import {
 import { requirePagePermission } from "@/lib/auth/session";
 import { formatDateTime } from "@/lib/format";
 import { ROLES } from "@/lib/rbac";
-import { listMembers, listMySessions } from "@/modules/identity";
+import { getRoleMatrix, listMembers, listMySessions } from "@/modules/identity";
 
 // Session-bound data: load it on click, not ahead of time (see dashboard/loading.tsx).
 export const prefetch = "force-disabled";
 
 /**
- * Accounts & permissions (brief A6.2, B9), from docs/design/Admin-Accounts.html. Members,
- * invitations, pausing and the signed-in devices are live; the role matrix, security switches
+ * Accounts & permissions (brief A6.2, B9), from docs/design/Admin-Accounts.html. Members, roles,
+ * invitations, pausing, the role matrix and the signed-in devices are live; security switches
  * and admin log are the design's demo until their use cases land (brief Phase 5).
  */
 export default async function AccountsPage() {
   const staff = await requirePagePermission("accounts.manage");
-  const [members, sessions] = await Promise.all([listMembers(staff), listMySessions(staff)]);
+  const [members, sessions, matrix] = await Promise.all([
+    listMembers(staff),
+    listMySessions(staff),
+    getRoleMatrix(staff),
+  ]);
   return (
     <AccountsBoard
+      matrix={matrix}
+      canEditMatrix={staff.roleKey === "admin"}
       members={members.map((m): AccountMember => ({
         id: m.id,
         name: m.name,
