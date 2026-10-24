@@ -74,10 +74,17 @@ vi.mock("next/headers", () => ({
 const { verifyTrackingLookup } = await import("@/modules/tracking/application/verify-lookup");
 const { getCustomerTrackingView } =
   await import("@/modules/tracking/application/get-tracking-view");
-const { setTrackingSessionCookie, readTrackingSessionOrderId, clearTrackingSessionCookie } =
-  await import("@/modules/tracking/application/session-cookie");
+const {
+  setTrackingSessionCookie,
+  readTrackingSession,
+  readTrackingSessionOrderId,
+  clearTrackingSessionCookie,
+} = await import("@/modules/tracking/application/session-cookie");
 const {
   openTrackingSession,
+  sealTrackingSession,
+  trackingSessionClearCookieOptions,
+  trackingSessionGateMessage,
   TRACKING_COOKIE_NAME,
   TRACKING_COOKIE_PATH,
   TRACKING_SESSION_TTL_SECONDS,
@@ -252,6 +259,9 @@ describe("tracking session cookie", () => {
 
     await clearTrackingSessionCookie();
     const clearCall = holder.cookieSets.at(-1);
+    expect(clearCall?.options).toEqual(
+      trackingSessionClearCookieOptions(env.NODE_ENV === "production"),
+    );
     expect(clearCall?.options).toMatchObject({
       httpOnly: true,
       secure: false,
@@ -261,6 +271,47 @@ describe("tracking session cookie", () => {
     });
     expect(holder.cookieStore.has(TRACKING_COOKIE_NAME)).toBe(false);
     expect(await readTrackingSessionOrderId()).toBeNull();
+  });
+
+  it("readTrackingSession distinguishes absent, invalid, and authenticated", async () => {
+    expect(await readTrackingSession()).toEqual({ status: "absent" });
+
+    holder.cookieStore.set(TRACKING_COOKIE_NAME, "v1.not-a-valid.session");
+    expect(await readTrackingSession()).toEqual({ status: "invalid" });
+
+    const expired = await sealTrackingSession(
+      orderId,
+      env.TRACKING_COOKIE_SECRET,
+      new Date("2020-01-01T00:00:00.000Z"),
+      60,
+    );
+    holder.cookieStore.set(TRACKING_COOKIE_NAME, expired);
+    expect(await readTrackingSession()).toEqual({ status: "invalid" });
+
+    await setTrackingSessionCookie(orderId);
+    expect(await readTrackingSession()).toEqual({
+      status: "authenticated",
+      orderId,
+    });
+  });
+
+  it("clears an invalid cookie with the same options as logout", async () => {
+    holder.cookieStore.set(TRACKING_COOKIE_NAME, "v1.tampered.payload");
+    expect(await readTrackingSession()).toEqual({ status: "invalid" });
+
+    await clearTrackingSessionCookie();
+    const clearCall = holder.cookieSets.at(-1);
+    expect(clearCall?.name).toBe(TRACKING_COOKIE_NAME);
+    expect(clearCall?.options).toEqual(trackingSessionClearCookieOptions(false));
+    expect(holder.cookieStore.has(TRACKING_COOKIE_NAME)).toBe(false);
+    expect(await readTrackingSession()).toEqual({ status: "absent" });
+  });
+
+  it("mismatch and order-missing gates request cookie clear; absent does not", () => {
+    expect(trackingSessionGateMessage("absent").clearCookie).toBe(false);
+    expect(trackingSessionGateMessage("invalid").clearCookie).toBe(true);
+    expect(trackingSessionGateMessage("mismatch").clearCookie).toBe(true);
+    expect(trackingSessionGateMessage("order_missing").clearCookie).toBe(true);
   });
 
   it("logout action clears the cookie", async () => {
@@ -276,6 +327,10 @@ describe("tracking session cookie", () => {
     expect(sessionOrderId).toBe(orderId);
     const wrong = await getCustomerTrackingView(sessionOrderId!, otherRef);
     expect(wrong.ok).toBe(false);
+    if (!wrong.ok) {
+      expect(wrong.error.code).toBe("unauthorized");
+      expect(trackingSessionGateMessage("mismatch").clearCookie).toBe(true);
+    }
     const right = await getCustomerTrackingView(otherOrderId, otherRef);
     expect(right.ok).toBe(true);
   });

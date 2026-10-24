@@ -2,7 +2,7 @@ import { cn } from "@/lib/cn";
 import { WHY } from "./data";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
-import { Curve, Glow, Neon, Ornament, SectionHead, type Bp, type Vars } from "./parts";
+import { Curve, Glow, Neon, SectionHead, type Bp, type Vars } from "./parts";
 
 const TITLE = (
   <>
@@ -24,18 +24,6 @@ export function WhyUs() {
         <Glow
           light="radial-gradient(ellipse 50% 70% at 50% 50%, rgba(0,92,88,0.85) 0%, rgba(0,92,88,0) 100%)"
           dark="radial-gradient(ellipse 50% 70% at 50% 50%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%)"
-        />
-        <Ornament
-          tone="mint"
-          style={{ top: -40, right: -260, width: 480, height: 480, transform: "rotate(180deg)" }}
-          light=".35"
-          dark=".28"
-        />
-        <Ornament
-          tone="mint"
-          style={{ bottom: -180, left: -240, width: 480, height: 480 }}
-          light=".35"
-          dark=".25"
         />
         <div
           style={{
@@ -107,12 +95,6 @@ export function WhyUs() {
           light="radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,92,88,0.85) 0%, rgba(0,92,88,0) 100%)"
           dark="radial-gradient(ellipse 60% 60% at 50% 50%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Ornament
-          tone="mint"
-          style={{ top: -40, right: -240, width: 440, height: 440, transform: "rotate(180deg)" }}
-          light=".35"
-          dark=".28"
-        />
         <Head bp="t" style={{ marginBottom: 32 }} />
         <ul
           style={{
@@ -170,12 +152,6 @@ export function WhyUs() {
         <Glow
           light="radial-gradient(ellipse 90% 50% at 50% 50%, rgba(0,92,88,0.85) 0%, rgba(0,92,88,0) 100%)"
           dark="radial-gradient(ellipse 90% 50% at 50% 50%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%)"
-        />
-        <Ornament
-          tone="mint"
-          style={{ top: 20, right: -200, width: 360, height: 360, transform: "rotate(180deg)" }}
-          light=".35"
-          dark=".25"
         />
         <Head bp="m" style={{ marginBottom: 24 }} />
         <ul

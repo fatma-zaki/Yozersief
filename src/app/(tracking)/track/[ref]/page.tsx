@@ -2,7 +2,13 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/Feedback";
 import { ar } from "@/i18n/ar";
 import { normalizeOrderRef } from "@/lib/ids";
-import { getCustomerTrackingView, readTrackingSessionOrderId } from "@/modules/tracking";
+import {
+  getCustomerTrackingView,
+  readTrackingSession,
+  trackingSessionGateMessage,
+  type TrackingSessionGateMessage,
+} from "@/modules/tracking";
+import { ClearTrackingSessionOnMount } from "../../ClearTrackingSession.client";
 import { TrackingSessionMessage } from "../../TrackingSessionMessage";
 import { TrackingView } from "../../TrackingView";
 
@@ -21,29 +27,43 @@ export default function TrackOrderPage({ params }: PageProps<"/track/[ref]">) {
   );
 }
 
+function GateMessage({ msg }: { msg: TrackingSessionGateMessage }) {
+  return (
+    <>
+      {msg.clearCookie ? <ClearTrackingSessionOnMount /> : null}
+      <TrackingSessionMessage title={msg.title} body={msg.body} />
+    </>
+  );
+}
+
 async function TrackOrder({ params }: Pick<PageProps<"/track/[ref]">, "params">) {
   const { ref: rawRef } = await params;
   const ref = normalizeOrderRef(rawRef);
 
-  const sessionOrderId = await readTrackingSessionOrderId();
-  if (!sessionOrderId) {
-    return (
-      <TrackingSessionMessage title={ar.tracking.sessionExpired} body={ar.tracking.unauthorized} />
-    );
+  const session = await readTrackingSession();
+  if (session.status === "absent") {
+    return <GateMessage msg={trackingSessionGateMessage("absent")} />;
+  }
+  if (session.status === "invalid") {
+    return <GateMessage msg={trackingSessionGateMessage("invalid")} />;
   }
 
   if (!ref) {
-    return <TrackingSessionMessage title={ar.tracking.loadError} body={ar.tracking.refInvalid} />;
+    return <GateMessage msg={trackingSessionGateMessage("ref_invalid")} />;
   }
 
-  const result = await getCustomerTrackingView(sessionOrderId, ref);
+  const result = await getCustomerTrackingView(session.orderId, ref);
   if (!result.ok) {
-    const expiredish = result.error.code === "unauthorized" || result.error.code === "not_found";
+    if (result.error.code === "unauthorized") {
+      return <GateMessage msg={trackingSessionGateMessage("mismatch")} />;
+    }
+    if (result.error.code === "not_found") {
+      return (
+        <GateMessage msg={trackingSessionGateMessage("order_missing", result.error.userMessage)} />
+      );
+    }
     return (
-      <TrackingSessionMessage
-        title={expiredish ? ar.tracking.sessionExpired : ar.tracking.loadError}
-        body={result.error.userMessage}
-      />
+      <GateMessage msg={trackingSessionGateMessage("load_failed", result.error.userMessage)} />
     );
   }
 

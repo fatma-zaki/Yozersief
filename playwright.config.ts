@@ -2,7 +2,11 @@ import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.PORT ?? 3000);
 
-/** Smoke tests against a production build (brief A9 step 10). Needs a migrated + seeded DB. */
+/**
+ * Playwright against a production build (brief A9 step 10 + tracking ADR-0007).
+ * Smoke + seeded tracking specs need a migrated DB + `pnpm tsx scripts/seed-e2e.ts`.
+ * Tracking specs that only exercise redirects / cookie UX / client validation run without DB.
+ */
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,

@@ -472,7 +472,15 @@ export const ar = {
     verifyFailed: "رقم الطلب أو رقم الموبايل مش متطابقين. راجع البيانات وجرّب تاني.",
     badLink: "اللينك ده مش شغال أو انتهى. اكتب رقم الطلب يدويًا.",
     notMine: "مش طلبي؟",
+    /** No tracking cookie — user has never authenticated for this browser session. */
+    sessionRequired: "مفيش جلسة تتبّع. اكتب رقم الطلب ورقم الموبايل الأول.",
+    /** Cookie present but expired, tampered, or malformed. */
     sessionExpired: "انتهت جلسة التتبّع. اكتب رقم الطلب ورقم الموبايل تاني.",
+    /**
+     * Valid session bound to a different order than the URL ref.
+     * Must not imply whether the URL ref exists as an order.
+     */
+    sessionMismatch: "الجلسة دي مش لنفس رقم الطلب. اكتب رقم الطلب ورقم الموبايل تاني.",
     unauthorized: "محتاج تتأكد من الطلب الأول عشان تشوف التفاصيل.",
     loadError: "مش قادرين نجيب حالة الطلب دلوقتي. جرّب تاني بعد شوية.",
     emptyTimeline: "لسه مفيش تحديثات ظاهرة على الطلب.",

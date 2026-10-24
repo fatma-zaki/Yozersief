@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/cn";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
-import { Glow, Neon, Ornament, type Vars } from "./parts";
+import { Glow, Neon, type Vars } from "./parts";
 
 const TITLE = (
   <>
@@ -41,12 +41,6 @@ export function IdeaBanner() {
           <Glow
             light="radial-gradient(ellipse 50% 90% at 80% 50%, rgba(0,92,88,0.9) 0%, rgba(0,92,88,0) 100%)"
             dark="none"
-          />
-          <Ornament
-            tone="mint"
-            style={{ top: -180, right: -200, width: 440, height: 440, transform: "rotate(180deg)" }}
-            light="0"
-            dark=".3"
           />
           {/* `fill` images are always 100% wide, so the wrapper sets the 52% width. */}
           <div

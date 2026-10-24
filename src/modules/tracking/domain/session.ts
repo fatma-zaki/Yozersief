@@ -41,6 +41,16 @@ export function trackingSessionCookieOptions(
   };
 }
 
+/**
+ * Cookie options for clearing the tracking session.
+ * Must match set flags (`path`, `sameSite`, `secure`, `httpOnly`) or the browser keeps the cookie.
+ */
+export function trackingSessionClearCookieOptions(
+  isProduction: boolean,
+): TrackingSessionCookieOptions {
+  return trackingSessionCookieOptions(0, isProduction);
+}
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function toBase64Url(text: string): string {

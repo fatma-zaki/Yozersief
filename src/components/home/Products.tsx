@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import { PRODUCTS_GRID, PRODUCTS_MOBILE, type Product } from "./data";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
-import { Glow, NeonDark, Ornament, SectionHead, type Bp, type Vars } from "./parts";
+import { Glow, NeonDark, SectionHead, type Bp, type Vars } from "./parts";
 
 /** «منتجاتنا» (design: products section on all three breakpoints). */
 export function Products() {
@@ -29,12 +29,6 @@ export function Products() {
         <Glow
           light="radial-gradient(circle at 12% 30%, rgba(126,232,199,0.35) 0, rgba(126,232,199,0) 28%), radial-gradient(circle at 88% 75%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 26%)"
           dark="radial-gradient(ellipse 35% 50% at 12% 30%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 35% 50% at 88% 75%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"
-        />
-        <Ornament tone="teal" style={{ top: 40, left: -280, width: 520, height: 520 }} dark=".22" />
-        <Ornament
-          tone="teal"
-          style={{ top: -60, right: -280, width: 480, height: 480, transform: "rotate(180deg)" }}
-          dark=".18"
         />
         <div
           style={{
@@ -67,7 +61,6 @@ export function Products() {
           light="radial-gradient(circle at 10% 25%, rgba(126,232,199,0.35) 0, rgba(126,232,199,0) 32%), radial-gradient(circle at 90% 80%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 30%)"
           dark="radial-gradient(ellipse 45% 45% at 10% 25%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 45% 45% at 90% 80%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Ornament tone="teal" style={{ top: 40, left: -240, width: 440, height: 440 }} dark=".2" />
         <Head bp="t" style={{ marginBottom: 32 }} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 18 }}>
           {PRODUCTS_GRID.map((p) => (
@@ -87,7 +80,6 @@ export function Products() {
           light="radial-gradient(circle at 10% 20%, rgba(126,232,199,0.35) 0, rgba(126,232,199,0) 40%), radial-gradient(circle at 90% 80%, rgba(126,232,199,0.3) 0, rgba(126,232,199,0) 40%)"
           dark="radial-gradient(ellipse 70% 40% at 10% 20%, rgba(5,64,57,0.6) 0%, rgba(5,64,57,0) 100%), radial-gradient(ellipse 70% 40% at 90% 80%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Ornament tone="teal" style={{ top: 60, left: -200, width: 360, height: 360 }} dark=".18" />
         <Head bp="m" style={{ marginBottom: 24 }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {PRODUCTS_MOBILE.map((p) => (
