@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  CircleCheck,
   ClipboardCheck,
   LayoutGrid,
   Send,
@@ -29,8 +30,8 @@ import {
   type DraftFile,
   type RequestDraft,
 } from "../../domain/request";
-import { BuilderHeader, MobileHeader, ReadinessAside, type StepState } from "./chrome";
-import { Confirmation } from "./Confirmation";
+import { BuilderHeader, MobileHeader, type StepState } from "./chrome";
+import { Confirmation } from "./Confirmation.client";
 import { builderCatalog, StepContact, StepDetails, StepFiles, StepReview, StepType } from "./steps";
 import { clearSubmissionKey, DEMO_MODE, getOrCreateSubmissionKey, submitRequest } from "./submit";
 import s from "./builder.module.css";
@@ -72,9 +73,10 @@ function save(value: Saved | null) {
 }
 
 /**
- * Request builder (brief B5; design: docs/design/Request.html, Flow-P1…6, Flow-B1…6,
- * Request-Mobile.html). Five steps + confirmation, a live readiness checklist with "fix it",
- * per-step validation on "next", and a review that blocks sending until everything is ready.
+ * Request builder (brief B5; design: docs/design/youzersef-order-journey.html, Flow-P1…6,
+ * Flow-B1…6, Request-Mobile.html). Five steps + confirmation, a live "what's next" hint (and a
+ * readiness checklist with "fix it" on phones), per-step validation on "next", and a review
+ * that blocks sending until everything is ready.
  */
 export function RequestBuilder({
   initialCategory,
@@ -230,20 +232,6 @@ export function RequestBuilder({
     }
   };
 
-  const restart = () => {
-    for (const f of draft.files) if (f.thumb) URL.revokeObjectURL(f.thumb);
-    fileBlobs.current.clear();
-    clearSubmissionKey();
-    save(null);
-    setDraft(emptyDraft());
-    setShowErr({});
-    setOrderRef("");
-    setSubmitError(null);
-    setStep(1);
-    setMaxStep(1);
-    focusLater("step-h");
-  };
-
   const stepStates: StepState[] = [1, 2, 3, 4, 5].map((n) => {
     if (n === step) return "current";
     const hasIssue = checks.some((c) => c.step === n && c.status === "attn");
@@ -261,6 +249,26 @@ export function RequestBuilder({
   const mobileSub =
     t(b.stepOf, { n: current }) + (productName && current > 1 ? ` · ${productName}` : "");
   const done = step === 6;
+
+  const attention = ready.attention;
+  const tip =
+    attention.length === 0
+      ? b.tipReady
+      : current === 5 && attention.some((c) => showErr[c.step])
+        ? b.tipPastSteps
+        : current < 5 && stepIssues.length === 0
+          ? t(b.tipStepDone, { action: current === 4 ? b.toReview : b.next })
+          : current < 5
+            ? t(b.tipNext, {
+                label: stepIssues[0]!.label,
+                more:
+                  stepIssues.length === 1
+                    ? ""
+                    : stepIssues.length === 2
+                      ? b.tipMoreOne
+                      : t(b.tipMoreMany, { n: stepIssues.length - 1 }),
+              })
+            : b.tipReview;
 
   return (
     <div className={s.root}>
@@ -286,7 +294,7 @@ export function RequestBuilder({
 
       <main
         id="main"
-        className="relative isolate mx-auto flex max-w-[1280px] flex-col gap-6 px-4 pt-4 pb-32 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:px-6 lg:pt-2 lg:pb-16"
+        className="relative isolate mx-auto flex max-w-[1280px] flex-col gap-6 px-4 pt-4 pb-32 lg:px-6 lg:pt-2 lg:pb-16"
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- decorative SVG */}
         <img
@@ -304,147 +312,158 @@ export function RequestBuilder({
         />
 
         {done ? (
-          <div className="lg:col-span-2">
-            <Confirmation draft={draft} orderRef={orderRef} onRestart={restart} />
-          </div>
+          <Confirmation draft={draft} orderRef={orderRef} />
         ) : (
-          <>
-            <form
-              noValidate
-              aria-labelledby="step-h"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void onSubmit();
-              }}
+          <form
+            noValidate
+            aria-labelledby="step-h"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void onSubmit();
+            }}
+            className={cn(
+              s.card,
+              s.formCard,
+              s.animUp,
+              "mx-auto flex w-full max-w-[920px] min-w-0 flex-col gap-[26px] rounded-[30px] px-4 py-6 sm:px-8 sm:py-[30px]",
+            )}
+          >
+            <div className="flex items-center gap-3.5">
+              <span
+                aria-hidden="true"
+                className={cn(s.tile, "size-[52px] rounded-2xl! [&_svg]:size-[26px]")}
+              >
+                <StepIcon strokeWidth={1.75} />
+              </span>
+              <div className="flex flex-col">
+                <span className={cn(s.muted, "text-[13px] font-bold")}>
+                  {t(b.stepOf, { n: current })}
+                </span>
+                <h1
+                  id="step-h"
+                  tabIndex={-1}
+                  className={cn(
+                    s.strong,
+                    "m-0 text-2xl leading-9 font-extrabold sm:text-[28px] sm:leading-10",
+                  )}
+                >
+                  {b.titles[current - 1]}
+                </h1>
+              </div>
+            </div>
+            <p className={cn(s.muted, "-mt-3.5 mb-0 text-[15px] leading-[26px]")}>
+              {b.hints[current - 1]}
+            </p>
+
+            {showErr[current] && stepIssues.length > 0 && current < 5 ? (
+              <div role="alert" className={cn(s.alert, s.pop)}>
+                <TriangleAlert aria-hidden="true" className="size-5 shrink-0" strokeWidth={1.75} />
+                <span>{t(b.stepErrors, { n: stepIssues.length })}</span>
+              </div>
+            ) : null}
+
+            {current === 1 ? <StepType d={draft} set={set} e={errors} catalog={catalog} /> : null}
+            {current === 2 ? (
+              <StepDetails d={draft} set={set} e={errors} catalog={catalog} />
+            ) : null}
+            {current === 3 ? (
+              <StepFiles d={draft} set={set} e={errors} onFiles={onFiles} onRemove={removeFile} />
+            ) : null}
+            {current === 4 ? <StepContact d={draft} set={set} e={errors} today={today} /> : null}
+            {current === 5 ? (
+              <StepReview
+                catalog={catalog}
+                d={draft}
+                checks={checks}
+                onEdit={(n) => goStep(n)}
+                submitError={submitError}
+              />
+            ) : null}
+
+            {/* Actions: in the card on desktop, a sticky bar on phones (Request-Mobile.html). */}
+            <div
               className={cn(
-                s.card,
-                s.formCard,
-                s.animUp,
-                "flex min-w-0 flex-col gap-[26px] rounded-[30px] px-4 py-6 sm:px-8 sm:py-[30px]",
+                s.line,
+                s.actionBar,
+                "flex items-center gap-3 border-t pt-5 [&_button]:whitespace-nowrap",
+                "max-lg:fixed max-lg:inset-x-3 max-lg:bottom-3 max-lg:z-40 max-lg:rounded-[26px] max-lg:border max-lg:p-2.5 max-lg:pb-[max(0.625rem,env(safe-area-inset-bottom))]",
               )}
             >
-              <div className="flex items-center gap-3.5">
-                <span
-                  aria-hidden="true"
-                  className={cn(s.tile, "size-[52px] rounded-2xl! [&_svg]:size-[26px]")}
+              {current > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => goStep((current - 1) as Step)}
+                  className={cn(
+                    s.btn,
+                    s.soft,
+                    "min-h-[50px] px-5 text-[15px] sm:px-6 [&_svg]:size-[18px]",
+                  )}
                 >
-                  <StepIcon strokeWidth={1.75} />
-                </span>
-                <div className="flex flex-col">
-                  <span className={cn(s.muted, "text-[13px] font-bold")}>
-                    {t(b.stepOf, { n: current })}
-                  </span>
-                  <h1
-                    id="step-h"
-                    tabIndex={-1}
-                    className={cn(
-                      s.strong,
-                      "m-0 text-2xl leading-9 font-extrabold sm:text-[28px] sm:leading-10",
-                    )}
-                  >
-                    {b.titles[current - 1]}
-                  </h1>
-                </div>
-              </div>
-              <p className={cn(s.muted, "-mt-3.5 mb-0 text-[15px] leading-[26px]")}>
-                {b.hints[current - 1]}
-              </p>
-
-              {showErr[current] && stepIssues.length > 0 && current < 5 ? (
-                <div role="alert" className={cn(s.alert, s.pop)}>
-                  <TriangleAlert
-                    aria-hidden="true"
-                    className="size-5 shrink-0"
-                    strokeWidth={1.75}
-                  />
-                  <span>{t(b.stepErrors, { n: stepIssues.length })}</span>
-                </div>
+                  <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+                  {b.back}
+                </button>
               ) : null}
-
-              {current === 1 ? <StepType d={draft} set={set} e={errors} catalog={catalog} /> : null}
-              {current === 2 ? (
-                <StepDetails d={draft} set={set} e={errors} catalog={catalog} />
-              ) : null}
-              {current === 3 ? (
-                <StepFiles d={draft} set={set} e={errors} onFiles={onFiles} onRemove={removeFile} />
-              ) : null}
-              {current === 4 ? <StepContact d={draft} set={set} e={errors} today={today} /> : null}
-              {current === 5 ? (
-                <StepReview
-                  catalog={catalog}
-                  d={draft}
-                  checks={checks}
-                  onEdit={(n) => goStep(n)}
-                  submitError={submitError}
-                />
-              ) : null}
-
-              {/* Actions: in the card on desktop, a sticky bar on phones (Request-Mobile.html). */}
-              <div
+              <span
+                aria-live="polite"
                 className={cn(
-                  s.line,
-                  s.actionBar,
-                  "flex items-center gap-3 border-t pt-5 [&_button]:whitespace-nowrap",
-                  "max-lg:fixed max-lg:inset-x-3 max-lg:bottom-3 max-lg:z-40 max-lg:rounded-[26px] max-lg:border max-lg:p-2.5 max-lg:pb-[max(0.625rem,env(safe-area-inset-bottom))]",
+                  s.muted,
+                  "hidden min-w-0 flex-[1_1_200px] items-center justify-center gap-2 text-center text-[13px] leading-5 lg:flex",
                 )}
               >
-                {current > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => goStep((current - 1) as Step)}
-                    className={cn(
-                      s.btn,
-                      s.soft,
-                      "min-h-[50px] px-5 text-[15px] sm:px-6 [&_svg]:size-[18px]",
-                    )}
-                  >
-                    <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-                    {b.back}
-                  </button>
-                ) : null}
-                <span className="hidden grow lg:block" />
-                {current < 5 ? (
-                  <button
-                    key="next"
-                    type="button"
-                    onClick={next}
-                    className={cn(
-                      s.btn,
-                      s.cta,
-                      "min-h-[52px] grow px-[34px] text-base font-extrabold lg:grow-0 [&_svg]:size-5",
-                    )}
-                  >
-                    <span className="lg:hidden">
-                      {current === 4
-                        ? b.toReview
-                        : t(b.nextTo, { step: b.stepShort[current as 1 | 2 | 3 | 4] })}
-                    </span>
-                    <span className="max-lg:hidden">{current === 4 ? b.toReview : b.next}</span>
-                    <ArrowLeft aria-hidden="true" strokeWidth={1.75} />
-                  </button>
+                {attention.length === 0 ? (
+                  <CircleCheck
+                    aria-hidden="true"
+                    className={cn(s.accent, "size-4 shrink-0")}
+                    strokeWidth={1.75}
+                  />
                 ) : (
-                  // Distinct key: reusing the "next" element as a submit button mid-click would
-                  // submit the form the moment the review step opens.
-                  <button
-                    key="submit"
-                    type="submit"
-                    disabled={submitting}
-                    aria-busy={submitting}
-                    className={cn(
-                      s.btn,
-                      s.cta,
-                      "min-h-14 grow px-10 text-[17px] font-extrabold lg:grow-0 [&_svg]:size-5",
-                    )}
-                  >
-                    <Send aria-hidden="true" strokeWidth={1.75} />
-                    {submitting ? b.submitting : submitError ? b.resubmit : b.submit}
-                  </button>
+                  <ArrowLeft
+                    aria-hidden="true"
+                    className={cn(s.accent, "size-4 shrink-0")}
+                    strokeWidth={1.75}
+                  />
                 )}
-              </div>
-            </form>
-
-            <ReadinessAside checks={checks} readiness={ready} onFix={fix} />
-          </>
+                {tip}
+              </span>
+              {current < 5 ? (
+                <button
+                  key="next"
+                  type="button"
+                  onClick={next}
+                  className={cn(
+                    s.btn,
+                    s.cta,
+                    "min-h-[52px] grow px-[34px] text-base font-extrabold lg:grow-0 [&_svg]:size-5",
+                  )}
+                >
+                  <span className="lg:hidden">
+                    {current === 4
+                      ? b.toReview
+                      : t(b.nextTo, { step: b.stepShort[current as 1 | 2 | 3 | 4] })}
+                  </span>
+                  <span className="max-lg:hidden">{current === 4 ? b.toReview : b.next}</span>
+                  <ArrowLeft aria-hidden="true" strokeWidth={1.75} />
+                </button>
+              ) : (
+                // Distinct key: reusing the "next" element as a submit button mid-click would
+                // submit the form the moment the review step opens.
+                <button
+                  key="submit"
+                  type="submit"
+                  disabled={submitting}
+                  aria-busy={submitting}
+                  className={cn(
+                    s.btn,
+                    s.cta,
+                    "min-h-14 grow px-10 text-[17px] font-extrabold lg:grow-0 [&_svg]:size-5",
+                  )}
+                >
+                  <Send aria-hidden="true" strokeWidth={1.75} />
+                  {submitting ? b.submitting : submitError ? b.resubmit : b.submit}
+                </button>
+              )}
+            </div>
+          </form>
         )}
       </main>
     </div>

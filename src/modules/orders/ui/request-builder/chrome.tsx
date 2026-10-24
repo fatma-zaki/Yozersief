@@ -289,7 +289,7 @@ export function MobileHeader({
   );
 }
 
-/* ───────────── Readiness panel ───────────── */
+/* ───────────── Readiness checklist (phone header) ───────────── */
 
 function ChecksList({
   checks,
@@ -357,76 +357,5 @@ function ChecksList({
         </li>
       ))}
     </ul>
-  );
-}
-
-export function ReadinessAside({
-  checks,
-  readiness,
-  onFix,
-}: {
-  checks: readonly ReadinessCheck[];
-  readiness: Readiness;
-  onFix: (c: ReadinessCheck) => void;
-}) {
-  const pct = readiness.total ? Math.round((readiness.done / readiness.total) * 100) : 0;
-  const n = readiness.attention.length;
-  return (
-    <aside
-      aria-labelledby="ra-h"
-      className={cn(
-        s.panelBg,
-        s.dk,
-        s.animUp,
-        s.d1,
-        "border-mint/45 sticky top-4 isolate hidden min-w-0 flex-col gap-4 overflow-hidden rounded-[30px] border p-6 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_0_30px_rgb(126_232_199/0.2),0_20px_44px_rgb(0_0_0/0.2)] lg:flex",
-      )}
-    >
-      <div aria-hidden="true" className={cn(s.panelGlow, "absolute inset-0 -z-10")} />
-      {/* eslint-disable-next-line @next/next/no-img-element -- decorative SVG */}
-      <img
-        src="/brand/ornament-mint.svg"
-        alt=""
-        aria-hidden="true"
-        className={cn(
-          s.mintGlow,
-          "pointer-events-none absolute -right-40 -bottom-[150px] -z-10 size-[380px] opacity-35",
-        )}
-      />
-      <div className="flex items-center gap-4">
-        <span
-          aria-hidden="true"
-          className={cn(
-            s.ringIn,
-            "flex size-[84px] shrink-0 items-center justify-center rounded-full shadow-[0_0_22px_rgb(126_232_199/0.45)] transition-[background] duration-500",
-          )}
-          style={{
-            background: `conic-gradient(#7ee8c7 0 ${pct}%, rgb(255 255 255 / 0.12) ${pct}% 100%)`,
-          }}
-        >
-          <span
-            className={cn(
-              s.panelBg,
-              "flex size-[66px] flex-col items-center justify-center rounded-full leading-none",
-            )}
-          >
-            <strong className="text-xl">{readiness.done}</strong>
-            <span className="text-[11px] text-white/70">
-              {t(b.readyOf, { n: readiness.total })}
-            </span>
-          </span>
-        </span>
-        <div className="flex flex-col gap-0.5">
-          <h2 id="ra-h" className="m-0 text-xl leading-[30px] font-extrabold">
-            {b.readyTitleStart} <span className={s.neon}>{b.readyTitleNeon}</span>
-          </h2>
-          <p aria-live="polite" className="m-0 text-sm leading-[22px] text-white/82">
-            {n === 0 ? b.readyAll : n === 1 ? b.readyOne : t(b.readyMany, { n })}
-          </p>
-        </div>
-      </div>
-      <ChecksList checks={checks} onFix={onFix} />
-      <p className="m-0 text-xs leading-5 text-white/70">{b.readyNote}</p>
-    </aside>
   );
 }
