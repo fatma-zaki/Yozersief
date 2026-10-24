@@ -24,6 +24,8 @@ export const products = pgTable(
     key: text("key").notNull().unique(),
     nameAr: text("name_ar").notNull(),
     description: text("description"),
+    /** Product photo; null falls back to the category image. */
+    imageUrl: text("image_url"),
     isVisible: boolean("is_visible").notNull().default(false),
     updatedAt: timestamptz("updated_at").notNull().defaultNow(),
   },

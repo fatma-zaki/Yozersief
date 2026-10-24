@@ -1,0 +1,51 @@
+/* Gallery screen extras (Admin-Gallery.html). Shared classes: kit.module.css. */
+.gcard {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.gimg {
+  position: relative;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: var(--img-bg);
+}
+.gimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition:
+    transform 0.9s var(--yz-ease),
+    filter 0.5s var(--yz-ease);
+}
+.gcard:hover .gimg img {
+  transform: scale(1.06);
+}
+.hidden .gimg img {
+  filter: grayscale(1) opacity(0.5);
+}
+span.glass {
+  background: rgba(0, 20, 18, 0.62);
+}
+/* Smaller caption field than the shared .fld. */
+input.fld {
+  min-height: 42px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.drop {
+  position: relative;
+  cursor: pointer;
+}
+.drop input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.drop:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

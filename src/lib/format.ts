@@ -34,6 +34,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat(LOCALE, {
   minute: "2-digit",
 });
 
+const shortDateTimeFormatter = new Intl.DateTimeFormat(LOCALE, {
+  timeZone: TIME_ZONE,
+  day: "numeric",
+  month: "long",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
 const numberFormatter = new Intl.NumberFormat(LOCALE);
 
 export function formatDate(date: Date): string {
@@ -42,6 +50,14 @@ export function formatDate(date: Date): string {
 
 export function formatDateTime(date: Date): string {
   return dateTimeFormatter.format(date);
+}
+
+/** Activity-log style, without the year: "22 أكتوبر 10:12 ص". */
+export function formatShortDateTime(date: Date): string {
+  const parts = shortDateTimeFormatter.formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? "";
+  return `${part("day")} ${part("month")} ${part("hour")}:${part("minute")} ${part("dayPeriod")}`;
 }
 
 export function formatNumber(value: number): string {

@@ -1,0 +1,27 @@
+/* Products screen extras (Admin-Products.html). Shared classes: kit.module.css. */
+.pcard {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.pimg {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  background: var(--img-bg);
+}
+.pimg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition:
+    transform 0.9s var(--yz-ease),
+    filter 0.5s var(--yz-ease);
+}
+.pcard:hover .pimg img {
+  transform: scale(1.05);
+}
+.off .pimg img {
+  filter: grayscale(1) opacity(0.55);
+}

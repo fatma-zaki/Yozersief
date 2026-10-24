@@ -1,10 +1,18 @@
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { customers, messages, messageTemplates } from "@/db/schema";
 import type { DbOrTx, Tx } from "@/db/tx";
 
 export async function findTemplate(key: string, tx: DbOrTx) {
   const [row] = await tx.select().from(messageTemplates).where(eq(messageTemplates.key, key));
   return row ?? null;
+}
+
+export async function findTemplates(keys: readonly string[], tx: DbOrTx) {
+  if (!keys.length) return [];
+  return tx
+    .select({ key: messageTemplates.key, body: messageTemplates.body })
+    .from(messageTemplates)
+    .where(inArray(messageTemplates.key, [...keys]));
 }
 
 export async function insertQueuedMessage(

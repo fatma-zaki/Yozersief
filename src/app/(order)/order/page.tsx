@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { isCategoryKey } from "@/modules/catalog";
+import { getHiddenProductKeys, isCategoryKey } from "@/modules/catalog";
 import { ar } from "@/i18n/ar";
 import { blobUploadMode, RequestBuilder } from "@/modules/orders";
 
@@ -17,10 +17,12 @@ export default function OrderPage({ searchParams }: PageProps<"/order">) {
 async function Builder({ searchParams }: Pick<PageProps<"/order">, "searchParams">) {
   const { category } = await searchParams;
   const value = typeof category === "string" ? category : null;
+  const hiddenProducts = await getHiddenProductKeys();
   return (
     <RequestBuilder
       initialCategory={value && isCategoryKey(value) ? value : null}
       uploadMode={blobUploadMode()}
+      hiddenProducts={hiddenProducts}
     />
   );
 }

@@ -38,13 +38,13 @@ export async function findCategoryIdByKey(key: string, tx: DbOrTx = db): Promise
   return row?.id ?? null;
 }
 
-export async function findProductIdByKey(key: string, tx: DbOrTx = db): Promise<number | null> {
+export async function findProductByKey(key: string, tx: DbOrTx = db) {
   const [row] = await tx
-    .select({ id: products.id })
+    .select({ id: products.id, isVisible: products.isVisible })
     .from(products)
     .where(eq(products.key, key))
     .limit(1);
-  return row?.id ?? null;
+  return row ?? null;
 }
 
 /**

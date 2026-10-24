@@ -31,7 +31,7 @@ export async function enqueueMessage(
   const template = await findTemplate(input.templateKey, tx);
   if (!template) throw new Error(`message template "${input.templateKey}" not found`);
   const body = input.bodyOverride?.trim() || renderTemplate(template.body, input.vars);
-  return insertQueuedMessage(
+  const row = await insertQueuedMessage(
     {
       orderId: input.orderId,
       customerId: input.customerId,
@@ -41,6 +41,8 @@ export async function enqueueMessage(
     },
     tx,
   );
+  // The body is returned so the caller can hand staff a wa.me link (manual provider).
+  return { id: row.id, body };
 }
 
 export type DispatchSummary = { claimed: number; sent: number; prepared: number; failed: number };

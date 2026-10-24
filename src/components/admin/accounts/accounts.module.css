@@ -1,0 +1,60 @@
+/* Accounts screen extras (Admin-Accounts.html). Shared classes: kit.module.css. */
+.mh {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.mrow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(
+      0,
+      0.8fr
+    );
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: var(--tint);
+  box-shadow: inset 0 0 0 1px var(--tint-bd);
+  font-size: 14px;
+}
+.xrow {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) repeat(5, minmax(0, 1fr));
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.cb {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.5s var(--yz-ease),
+    box-shadow 0.5s var(--yz-ease),
+    opacity 0.4s var(--yz-ease) !important;
+}
+.cb[disabled] {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+.cbOn {
+  background: linear-gradient(180deg, #00a08f, #00706a);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(126, 232, 199, 0.55);
+}
+.cbOff {
+  background: transparent;
+  color: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--field-bd);
+}
+.root a.view {
+  color: inherit;
+}

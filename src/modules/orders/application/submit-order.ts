@@ -15,7 +15,7 @@ import {
   createOrganization,
   findCategoryIdByKey,
   findOrderRefByIdempotencyHash,
-  findProductIdByKey,
+  findProductByKey,
   insertOrderPlaces,
   insertOrderSizes,
   insertSubmittedEvent,
@@ -106,10 +106,16 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
 
   let productId: number | null = null;
   if (input.prod) {
-    productId = await findProductIdByKey(input.prod);
-    if (productId === null) {
+    const product = await findProductByKey(input.prod);
+    if (!product) {
       return err(new ValidationError({ prod: ["المنتج مش موجود."] }, "المنتج مش موجود."));
     }
+    // Hidden from the dashboard while the customer was filling the form.
+    if (!product.isVisible) {
+      const msg = "المنتج ده مش متاح دلوقتي، اختار نوع تاني.";
+      return err(new ValidationError({ prod: [msg] }, msg));
+    }
+    productId = product.id;
   }
 
   const drafts = await listLiveDrafts(idempotencyKeyHash);

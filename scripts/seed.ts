@@ -118,10 +118,24 @@ async function seedCatalog() {
       .returning();
 
     for (const product of category.products) {
+      // Fill the description and photo only while empty: the admin may have edited them.
       const [prod] = await db
         .insert(schema.products)
-        .values({ categoryId: cat!.id, key: product.key, nameAr: product.nameAr, isVisible: true })
-        .onConflictDoUpdate({ target: schema.products.key, set: { key: product.key } })
+        .values({
+          categoryId: cat!.id,
+          key: product.key,
+          nameAr: product.nameAr,
+          description: product.description,
+          imageUrl: product.imageUrl,
+          isVisible: true,
+        })
+        .onConflictDoUpdate({
+          target: schema.products.key,
+          set: {
+            description: sql`coalesce(${schema.products.description}, excluded.description)`,
+            imageUrl: sql`coalesce(${schema.products.imageUrl}, excluded.image_url)`,
+          },
+        })
         .returning();
 
       const existing = await db

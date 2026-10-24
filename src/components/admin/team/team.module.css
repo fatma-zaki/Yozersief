@@ -1,0 +1,27 @@
+/* Team activity extras (Admin-Team.html). Shared classes: kit.module.css. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--chip-off-bd);
+  background: var(--chip-off-bg);
+  color: var(--chip-off-ink);
+  font-family: inherit;
+}
+.chip[aria-pressed="true"] {
+  background: var(--chip-on-bg);
+  color: var(--chip-on-ink);
+  border-color: rgba(126, 232, 199, 0.7);
+  box-shadow: 0 0 12px rgba(126, 232, 199, 0.35);
+}
+button.member[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 2px #00a08f,
+    0 0 20px rgba(126, 232, 199, 0.4);
+}

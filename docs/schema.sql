@@ -129,6 +129,7 @@ CREATE TABLE products (
   key text NOT NULL UNIQUE,
   name_ar text NOT NULL,
   description text,
+  image_url text,  -- صورة المنتج؛ لو فاضية بتظهر صورة التصنيف
   is_visible boolean NOT NULL DEFAULT false,  -- الأسعار مش ظاهرة للعميل
   updated_at timestamptz NOT NULL DEFAULT now()
 );

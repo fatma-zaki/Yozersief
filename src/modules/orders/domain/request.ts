@@ -6,7 +6,7 @@
  * field it belongs to, so the panel can say what is missing and jump to it. The same function
  * gates "next" on each step and the final submit, so the rules live in one place.
  */
-import { WEAR_SIZES } from "@/modules/catalog";
+import { WEAR_SIZES } from "@/modules/catalog/schemas";
 import type { CategoryKey } from "@/modules/catalog";
 import { ar, t } from "@/i18n/ar";
 import { normalizeDigits } from "@/lib/format";

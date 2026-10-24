@@ -1,15 +1,93 @@
 /**
- * Clearly marked demo data (SEED_DEMO=true only). Every demo name starts with «[تجريبي]» and
- * every demo phone uses the 0100000xxxx range, so it is easy to spot and delete.
+ * Clearly marked demo data (SEED_DEMO=true only). Every demo name starts with «[تجريبي]», every
+ * demo phone uses the 0100000xxxx range and every demo product key starts with `demo-`, so it is
+ * easy to spot and delete.
  */
 import { eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "../src/db/schema";
 import { generateOrderRef } from "../src/lib/ids";
+import { CATALOG_OPTION_LABELS } from "../src/modules/catalog/domain/catalog-seed";
 
 const DEMO = "[تجريبي]";
 
+/** Items from docs/design/Admin-Products.html with no B4 product behind them. */
+const DEMO_PRODUCTS = [
+  {
+    key: "demo-phone-case",
+    category: "phone",
+    nameAr: "كفرات موبايل",
+    description: "حسب موديل الموبايل [الموديلات المتاحة للتأكيد].",
+    imageUrl: "/images/home/phone-cases.jpg",
+    isVisible: true,
+    places: [],
+  },
+  {
+    key: "demo-sticker",
+    category: "sticker",
+    nameAr: "استيكرات",
+    description: "استيكرات بأي مقاس وشكل.",
+    imageUrl: "/images/home/sticker.jpg",
+    isVisible: true,
+    places: [],
+  },
+  {
+    key: "demo-heat-press",
+    category: "custom",
+    nameAr: "الطباعة الحرارية",
+    description: "طباعة حرارية على قطع العميل نفسه.",
+    imageUrl: "/images/home/heat-press.jpg",
+    isVisible: true,
+    places: ["front", "back"],
+  },
+  {
+    key: "demo-shop-sign",
+    category: "custom",
+    nameAr: "هدايا ولافتات مخصصة",
+    description: "لافتات محلات وهدايا بتصميم خاص.",
+    imageUrl: "/images/home/shop-sign.jpg",
+    isVisible: false,
+    places: [],
+  },
+] as const;
+
+async function seedDemoProducts(db: NodePgDatabase<typeof schema>) {
+  const categories = await db.select().from(schema.productCategories);
+  const categoryId = new Map(categories.map((c) => [c.key, c.id]));
+  let added = 0;
+  for (const p of DEMO_PRODUCTS) {
+    const [row] = await db
+      .insert(schema.products)
+      .values({
+        categoryId: categoryId.get(p.category)!,
+        key: p.key,
+        nameAr: `${DEMO} ${p.nameAr}`,
+        description: p.description,
+        imageUrl: p.imageUrl,
+        isVisible: p.isVisible,
+      })
+      .onConflictDoNothing({ target: schema.products.key })
+      .returning();
+    if (!row) continue;
+    added++;
+    if (p.places.length) {
+      await db.insert(schema.productOptions).values(
+        p.places.map((value, i) => ({
+          productId: row.id,
+          type: "place" as const,
+          value,
+          labelAr: CATALOG_OPTION_LABELS.place[value] ?? value,
+          sortOrder: i + 1,
+        })),
+      );
+    }
+  }
+  console.log(`Demo products: ${added} added.`);
+}
+
 export async function seedDemo(db: NodePgDatabase<typeof schema>, adminId: string) {
+  await seedDemoProducts(db);
+
   const [existing] = await db
     .select({ id: schema.customers.id })
     .from(schema.customers)
