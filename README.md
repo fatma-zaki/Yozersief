@@ -67,3 +67,12 @@ Health check: `GET /api/health` returns DB status and the deployed commit.
 
 - `docs/schema.sql`: database ERD (source for `src/db/schema`)
 - `docs/design/`: HTML design export (open `index.html`). Rebuilt with real components, not copied.
+
+## Brand and social media
+
+- [Youzersef-Brand-Guidelines.pdf](Youzersef-Brand-Guidelines.pdf): brand guidelines (logo, colours,
+  type, ornaments).
+- Social media posts (1080×1080): [Social-1.html](docs/design/Social-1.html) and
+  [Social-2.html](docs/design/Social-2.html), open in a browser.
+- [يوزرسيف — منشورات السوشيال/](<يوزرسيف — منشورات السوشيال/>): the exported post images and
+  their pieces (headlines, product shots, shapes and ornaments).
