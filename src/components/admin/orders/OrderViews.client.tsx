@@ -1204,7 +1204,7 @@ export function OrdersMobile({ state, list, patch, open }: ViewProps) {
     <div className={s.m} style={{ position: "relative", isolation: "isolate" }}>
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-teal.svg"
+        src="/brand/ornament-teal.svg"
         alt=""
         aria-hidden="true"
         className={s.lightOnly}

@@ -12,17 +12,17 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         src="/brand/ornament-mint.svg"
         alt=""
         aria-hidden="true"
-        width={520}
-        height={520}
-        className="pointer-events-none absolute -bottom-28 -left-48 opacity-30"
+        width={220}
+        height={220}
+        className="pointer-events-none absolute bottom-0 left-0 opacity-30"
       />
       <Image
         src="/brand/ornament-mint.svg"
         alt=""
         aria-hidden="true"
-        width={480}
-        height={480}
-        className="pointer-events-none absolute -top-24 -right-44 rotate-180 opacity-25"
+        width={200}
+        height={200}
+        className="pointer-events-none absolute top-0 right-0 rotate-180 opacity-25"
       />
       <div className="relative flex w-full max-w-md flex-col items-center gap-6">
         <Logo size={72} />

@@ -12,8 +12,6 @@
   --sp-ink: #005c58;
   --sp-text: #030909;
   --sp-muted: rgba(3, 9, 9, 0.62);
-  --sp-motif: #00706a;
-  --sp-motif-op: 0.4;
   --sp-track: rgba(0, 92, 88, 0.12);
   --sp-btn-bg: rgba(255, 255, 255, 0.75);
   --sp-btn-ink: #005c58;
@@ -57,8 +55,6 @@
   --sp-ink: #f2fbf8;
   --sp-text: #f2fbf8;
   --sp-muted: rgba(242, 251, 248, 0.66);
-  --sp-motif: #7ee8c7;
-  --sp-motif-op: 0.5;
   --sp-track: rgba(126, 232, 199, 0.14);
   --sp-btn-bg: rgba(126, 232, 199, 0.08);
   --sp-btn-ink: #b8f2de;
@@ -83,29 +79,6 @@
   inset: 0;
   z-index: -1;
   background: var(--sp-glow);
-}
-
-/* ===== زخارف الخلفية ===== */
-.motif {
-  position: absolute;
-  z-index: -1;
-  left: 50%;
-  top: 46%;
-  width: min(1040px, 120vw);
-  height: min(1040px, 120vw);
-  transform: translate(-50%, -50%);
-  fill: none;
-  stroke: var(--sp-motif);
-  stroke-opacity: var(--sp-motif-op);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: motifDim 1s ease var(--splash-write-end) both;
-}
-.motif path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: draw 1.6s var(--e) both;
 }
 
 /* ===== الشعار ===== */
@@ -329,11 +302,6 @@
 @keyframes bar {
   to {
     transform: scaleX(1);
-  }
-}
-@keyframes motifDim {
-  to {
-    opacity: 0.3;
   }
 }
 @keyframes logoGlow {

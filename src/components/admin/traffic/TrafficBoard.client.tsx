@@ -1200,7 +1200,7 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
     <div className={s.m} style={{ position: "relative", isolation: "isolate" }}>
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-teal.svg"
+        src="/brand/ornament-teal.svg"
         alt=""
         aria-hidden="true"
         className={s.lightOnly}
@@ -1216,7 +1216,7 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
       />
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-mint.svg"
+        src="/brand/ornament-mint.svg"
         alt=""
         aria-hidden="true"
         className={cn(s.darkOnly, s.ornament)}

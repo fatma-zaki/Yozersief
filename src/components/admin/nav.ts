@@ -15,8 +15,8 @@ export const ADMIN_NAV: readonly AdminNavItem[] = [
   { href: "/dashboard/traffic", label: "الزيارات والترافيك", short: "الزيارات", icon: P.traffic },
   { href: "/dashboard/products", label: "الخدمات والمنتجات", short: "المنتجات", icon: P.grid },
   { href: "/dashboard/gallery", label: "أعمالنا", short: "أعمالنا", icon: P.photo },
-  { href: "/dashboard/content", label: "التواصل والمحتوى", short: "المحتوى", icon: P.chat },
-  { href: "/dashboard/team", label: "نشاط الفريق", short: "الفريق", icon: P.pulse },
+  // { href: "/dashboard/content", label: "التواصل والمحتوى", short: "المحتوى", icon: P.chat },
+  // { href: "/dashboard/team", label: "نشاط الفريق", short: "الفريق", icon: P.pulse },
   { href: "/dashboard/accounts", label: "الحسابات والصلاحيات", short: "الحسابات", icon: P.lock },
 ];
 

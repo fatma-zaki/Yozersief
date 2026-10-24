@@ -31,7 +31,7 @@ export function ShellFrame({
     <div className={cn(s.page, shell.root)}>
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-teal.svg"
+        src="/brand/ornament-teal.svg"
         alt=""
         aria-hidden="true"
         className={cn(s.lightOnly, shell.orn)}
@@ -57,7 +57,7 @@ export function ShellFrame({
       />
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-mint.svg"
+        src="/brand/ornament-mint.svg"
         alt=""
         aria-hidden="true"
         className={cn(s.darkOnly, s.ornament, shell.orn, shell.ornDark)}
@@ -129,17 +129,17 @@ export function SidebarFrame({ children }: { children: ReactNode }) {
       />
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets */}
       <img
-        src="/images/admin/ornament-mint.svg"
+        src="/brand/ornament-mint.svg"
         alt=""
         aria-hidden="true"
         {...sx(
           {
             position: "absolute",
             zIndex: -1,
-            bottom: -170,
-            right: -190,
-            width: 460,
-            height: 460,
+            bottom: -10,
+            right: 20,
+            width: 280,
+            height: 280,
             opacity: 0.55,
             pointerEvents: "none",
           },

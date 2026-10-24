@@ -2,7 +2,6 @@ import { logActivity } from "@/modules/audit";
 import { withTransaction } from "@/db/tx";
 import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
 import { assertCan, type StaffContext } from "@/lib/rbac";
-import { maskPhone } from "@/lib/phone";
 import { displayEmail } from "../domain/staff";
 import {
   deleteAllSessions,
@@ -11,13 +10,12 @@ import {
   updateStaffStatus,
 } from "../infrastructure/staff-repository";
 
-/** Accounts page (B10): team members with roles. Staff phones are masked like customers'. */
+/** Accounts page (B10): team members with roles. Full phone for admins managing accounts. */
 export async function listMembers(actor: StaffContext) {
   assertCan(actor, "accounts.manage");
   const rows = await listStaffMembers();
   return rows.map((m) => ({
     ...m,
-    phone: maskPhone(m.phone),
     email: displayEmail(m.email),
   }));
 }
