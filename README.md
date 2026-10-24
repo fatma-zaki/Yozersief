@@ -76,3 +76,4 @@ Health check: `GET /api/health` returns DB status and the deployed commit.
   [Social-2.html](docs/design/Social-2.html), open in a browser.
 - [يوزرسيف — منشورات السوشيال/](<يوزرسيف — منشورات السوشيال/>): the exported post images and
   their pieces (headlines, product shots, shapes and ornaments).
+  (https://www.figma.com/design/3vOFwxmIC1wyoAScc7kdw8)
