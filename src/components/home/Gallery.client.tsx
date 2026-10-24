@@ -3,13 +3,16 @@
 import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
-import { GALLERY_CHIPS, GALLERY_ITEMS, type GalleryCategory } from "./data";
+import type { PublicGalleryItem } from "@/modules/content";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
 import { Glow, NeonDark, SectionHead, type Bp, type Vars } from "./parts";
 
-/** «معرض الأعمال» with category chips and a stepping slider (design: gallery section). */
-export function Gallery() {
+/**
+ * «معرض الأعمال» with category chips and a stepping slider (design: gallery section). Shows the
+ * photos published from the dashboard (consent required); chips are the photos' categories.
+ */
+export function Gallery({ items }: { items: PublicGalleryItem[] }) {
   return (
     <section
       id="gallery"
@@ -36,7 +39,7 @@ export function Gallery() {
             gap: 26,
           }}
         >
-          <Slider bp="d" headId="gal-h" />
+          <Slider bp="d" headId="gal-h" items={items} />
         </div>
       </div>
       <div
@@ -49,7 +52,7 @@ export function Gallery() {
           light="radial-gradient(circle at 50% 60%, rgba(126,232,199,0.28) 0, rgba(126,232,199,0) 45%)"
           dark="radial-gradient(ellipse 60% 50% at 50% 60%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Slider bp="t" />
+        <Slider bp="t" items={items} />
       </div>
       <div
         className={cn(s.m, s.pad)}
@@ -59,7 +62,7 @@ export function Gallery() {
           light="radial-gradient(circle at 50% 60%, rgba(126,232,199,0.28) 0, rgba(126,232,199,0) 55%)"
           dark="radial-gradient(ellipse 80% 50% at 50% 60%, rgba(5,64,57,0.5) 0%, rgba(5,64,57,0) 100%)"
         />
-        <Slider bp="m" />
+        <Slider bp="m" items={items} />
       </div>
     </section>
   );
@@ -107,12 +110,19 @@ const CFG = {
   },
 } as const;
 
-function Slider({ bp, headId }: { bp: Bp; headId?: string }) {
+const ALL = "all";
+
+function Slider({ bp, headId, items }: { bp: Bp; headId?: string; items: PublicGalleryItem[] }) {
   const c = CFG[bp];
-  const [cat, setCat] = useState<GalleryCategory>("all");
+  const [cat, setCat] = useState(ALL);
   const [start, setStart] = useState(0);
 
-  const images = GALLERY_ITEMS.filter((x) => cat === "all" || x.cat === cat);
+  const chipList = [
+    { key: ALL, label: "الكل" },
+    ...[...new Set(items.map((x) => x.cat))].map((x) => ({ key: x, label: x })),
+  ];
+  const hasSamples = items.some((x) => x.isSample);
+  const images = items.filter((x) => cat === ALL || x.cat === cat);
   const n = images.length;
   const first = n ? start % n : 0;
   const visible = Array.from({ length: Math.min(c.show, n) }, (_, i) => images[(first + i) % n]!);
@@ -130,9 +140,11 @@ function Slider({ bp, headId }: { bp: Bp; headId?: string }) {
         </>
       }
       lead={
-        bp === "m"
-          ? "الصور الحالية نماذج عرض لحين إضافة أعمال العملاء بموافقتهم"
-          : "الصور الحالية نماذج عرض لحين إضافة صور أعمال العملاء بموافقتهم"
+        !hasSamples
+          ? "صور من شغلنا، منشورة بموافقة أصحابها"
+          : bp === "m"
+            ? "الصور الحالية نماذج عرض لحين إضافة أعمال العملاء بموافقتهم"
+            : "الصور الحالية نماذج عرض لحين إضافة صور أعمال العملاء بموافقتهم"
       }
       leadStyle={
         bp === "m"
@@ -166,7 +178,7 @@ function Slider({ bp, headId }: { bp: Bp; headId?: string }) {
             }
       }
     >
-      {GALLERY_CHIPS.map((chip) => {
+      {chipList.map((chip) => {
         const on = cat === chip.key;
         return (
           <button
@@ -221,7 +233,7 @@ function Slider({ bp, headId }: { bp: Bp; headId?: string }) {
         >
           {visible.map((g, i) => (
             <li
-              key={`${g.img}-${i}`}
+              key={`${g.id}-${i}`}
               className={cn(s.galItem, s.glLight)}
               style={{
                 position: "relative",
@@ -247,18 +259,21 @@ function Slider({ bp, headId }: { bp: Bp; headId?: string }) {
               >
                 <Image
                   src={g.img}
-                  alt={g.alt}
+                  alt={g.caption || g.cat}
                   fill
+                  unoptimized={!g.img.startsWith("/images/")}
                   sizes="(min-width: 1100px) 290px, (min-width: 700px) 240px, 50vw"
                   style={{ objectFit: "cover" }}
                 />
               </div>
-              <span
-                className={s.demoTag}
-                style={{ bottom: c.tag.b, right: c.tag.b, padding: c.tag.p, fontSize: c.tag.f }}
-              >
-                نموذج عرض
-              </span>
+              {g.isSample ? (
+                <span
+                  className={s.demoTag}
+                  style={{ bottom: c.tag.b, right: c.tag.b, padding: c.tag.p, fontSize: c.tag.f }}
+                >
+                  نموذج عرض
+                </span>
+              ) : null}
             </li>
           ))}
         </ul>

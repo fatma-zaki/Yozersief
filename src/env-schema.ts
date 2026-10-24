@@ -34,8 +34,6 @@ const serverSchema = z.object({
   WHATSAPP_CLOUD_TOKEN: z.string().optional(),
   WHATSAPP_CLOUD_PHONE_NUMBER_ID: z.string().optional(),
 
-  ANALYTICS_PROVIDER: z.enum(["none", "plausible", "ga4"]).default("none"),
-
   SENTRY_DSN: z.url().optional(),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).optional(),
 

@@ -1,11 +1,14 @@
 import { Suspense } from "react";
-import { getHiddenProductKeys, isCategoryKey } from "@/modules/catalog";
+import { getPublicCatalog, isCategoryKey } from "@/modules/catalog";
 import { ar } from "@/i18n/ar";
 import { blobUploadMode, RequestBuilder } from "@/modules/orders";
 
 export const metadata = { title: ar.order.title };
 
-/** Request builder (B5). `?category=mug` preselects the product (links from home/services). */
+/**
+ * Request builder (B5). The categories and product types come from the catalog (dashboard →
+ * products). `?category=mug` preselects an offered category (links from home/services).
+ */
 export default function OrderPage({ searchParams }: PageProps<"/order">) {
   return (
     <Suspense>
@@ -15,14 +18,14 @@ export default function OrderPage({ searchParams }: PageProps<"/order">) {
 }
 
 async function Builder({ searchParams }: Pick<PageProps<"/order">, "searchParams">) {
-  const { category } = await searchParams;
+  const [{ category }, categories] = await Promise.all([searchParams, getPublicCatalog()]);
   const value = typeof category === "string" ? category : null;
-  const hiddenProducts = await getHiddenProductKeys();
+  const offered = value && isCategoryKey(value) && categories.some((c) => c.key === value);
   return (
     <RequestBuilder
-      initialCategory={value && isCategoryKey(value) ? value : null}
+      initialCategory={offered ? value : null}
       uploadMode={blobUploadMode()}
-      hiddenProducts={hiddenProducts}
+      categories={categories}
     />
   );
 }

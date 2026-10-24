@@ -33,6 +33,7 @@ import {
   type Decision,
   type OrderFacts,
 } from "../domain/admin-view";
+import { quoteSummary } from "../domain/desk";
 import {
   planTransition,
   type Actor,
@@ -60,7 +61,17 @@ import {
   updateInternalNote,
   type AdminOrderRow,
 } from "../infrastructure/admin-repository";
-import { insertOrderEvent, loadGuardFacts, lockOrder } from "../infrastructure/order-repository";
+import { listPendingQuotesFor, settlePendingQuote } from "../infrastructure/desk-repository";
+import {
+  confirmPendingDeposits,
+  listOrdersWithPendingDeposit,
+} from "../infrastructure/workspace-repository";
+import {
+  insertOrderEvent,
+  loadGuardFacts,
+  loadGuardFactsFor,
+  lockOrder,
+} from "../infrastructure/order-repository";
 import { createFileStorage } from "../infrastructure/vercel-blob-storage";
 import { applyTransitionInTx, type AppliedTransition } from "./apply-transition";
 
@@ -71,6 +82,7 @@ const TEMPLATE_KEYS = ["approve", "quote", "info", "reject", "update", "ready", 
 
 export type AdminOrderFile = {
   id: string;
+  kind: "design" | "reference" | "names_sheet" | "mockup";
   name: string;
   url: string;
   isImage: boolean;
@@ -90,6 +102,11 @@ export type AdminOrderView = {
   categoryKey: string;
   productKey: string | null;
   status: AdminStatus;
+  /** The lifecycle state behind `status`, for the team workspaces. */
+  orderStatus: OrderState["status"];
+  bizStage: OrderState["bizStage"];
+  /** Pieces: the size split's sum, else the order quantity (1 when none was given). */
+  quantity: number;
   /** Badge text for an individual's order. */
   statusLabel: string;
   when: string;
@@ -106,6 +123,8 @@ export type AdminOrderView = {
   bulk: { sample: boolean; perPiece: boolean; batches: boolean };
   invoice: boolean;
   internalNote: string;
+  /** The desk's quote draft waiting for the admin, as the quote text to send. */
+  quoteDraft: string | null;
   can: { approve: boolean; info: boolean; reject: boolean; note: boolean };
   /** «سجّل المرحلة الجاية» on a business order; `blocked` explains why it can't run yet. */
   next: { label: string; blocked: string | null } | null;
@@ -134,12 +153,13 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
   const rows = await listAdminOrderRows(LIST_LIMIT);
   const ids = rows.map((r) => r.id);
   const since = new Date(Date.now() - 7 * 86_400_000);
-  const [sizes, places, files, events, templates, nNew, nAwaiting, nApproved, nRejected] =
+  const [sizes, places, files, events, quotes, templates, nNew, nAwaiting, nApproved, nRejected] =
     await Promise.all([
       listSizesFor(ids),
       listPlacesFor(ids),
       listFilesFor(ids),
       listEventsFor(ids),
+      listPendingQuotesFor(ids),
       getTemplateBodies(TEMPLATE_KEYS),
       countOrdersInStatus("submitted"),
       countOrdersInStatus("awaiting_customer"),
@@ -156,7 +176,13 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
   const placesBy = group(places);
   const filesBy = group(files);
   const eventsBy = group(events);
+  const quoteBy = group(quotes);
   const storage = files.length ? createFileStorage() : null;
+  const [pendingDeposit, guardsBy] = await Promise.all([
+    listOrdersWithPendingDeposit(rows.filter((r) => r.bizStage === "deposit").map((r) => r.id)),
+    // Business orders only: they are the ones with a «سجّل المرحلة الجاية» to check.
+    loadGuardFactsFor(rows.filter((r) => r.customerType !== "person").map((r) => r.id)),
+  ]);
   const now = new Date();
   const actorD = domainActor(actor);
 
@@ -172,7 +198,11 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
       const next = nextStage(state, bulk);
       let nextView: AdminOrderView["next"] = null;
       if (next) {
-        const guards = await loadGuardFacts(r.id, db);
+        const guards = guardsBy.get(r.id) ?? (await loadGuardFacts(r.id, db));
+        // The admin's «اتسجل استلام العربون» confirms the deposit the delivery person recorded.
+        if (next.transition === "confirm_deposit" && pendingDeposit.has(r.id)) {
+          guards.depositConfirmed = can(actor, "payments.confirm");
+        }
         const planned = planTransition(state, next.transition, actorD, guards);
         nextView = { label: next.label, blocked: planned.ok ? null : planned.error.message };
       }
@@ -186,6 +216,9 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
         categoryKey: r.categoryKey,
         productKey: r.productKey,
         status: adminStatus(r.status),
+        orderStatus: r.status,
+        bizStage: r.bizStage,
+        quantity: pieceCount(r.quantity, sizesBy.get(r.id) ?? []),
         statusLabel: personStatusLabel(r.status),
         when: whenLabel(r.createdAt, now),
         receipt: receiptLabel(r.receiptMethod),
@@ -195,6 +228,7 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
         files: await Promise.all(
           (filesBy.get(r.id) ?? []).map(async (f) => ({
             id: f.id,
+            kind: f.kind,
             name: f.fileName,
             url: storage ? await storage.downloadUrl(f.storageKey) : "",
             isImage: f.mimeType.startsWith("image/"),
@@ -212,6 +246,7 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
         bulk,
         invoice: r.needsInvoice,
         internalNote: r.internalNote ?? "",
+        quoteDraft: draftText(quoteBy.get(r.id)?.[0]),
         can: {
           approve: canDecide(state, "approve", actorD),
           info: canDecide(state, "info", actorD),
@@ -229,6 +264,17 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
     templates,
     trackUrl: trackUrl(),
   };
+}
+
+function pieceCount(quantity: number | null, sizes: { qty: number }[]): number {
+  const split = sizes.reduce((sum, s) => sum + s.qty, 0);
+  return split || quantity || 1;
+}
+
+function draftText(
+  q: { unitPrice: string; total: string; leadTimeDays: number } | undefined,
+): string | null {
+  return q ? quoteSummary(q) : null;
 }
 
 function orderFacts(
@@ -270,7 +316,7 @@ export async function countNewOrders(actor: StaffContext): Promise<number> {
 export type StaffActionResult = { ref: string; waLink: string | null };
 
 /** Runs `fn` in a transaction; an AppError thrown inside rolls back and becomes `err`. */
-async function inTransaction<T>(fn: (tx: Tx) => Promise<T>): Promise<Result<T>> {
+export async function inTransaction<T>(fn: (tx: Tx) => Promise<T>): Promise<Result<T>> {
   try {
     return ok(await withTransaction(fn));
   } catch (error) {
@@ -284,10 +330,10 @@ async function inTransaction<T>(fn: (tx: Tx) => Promise<T>): Promise<Result<T>> 
  * who may send messages, return the wa.me link (manual provider, brief A6.6). The link carries
  * the customer's phone, so handing it out is logged as sensitive access (brief A6.3).
  */
-async function afterMessage(
+export async function afterMessage(
   tx: Tx,
   actor: StaffContext,
-  applied: AppliedTransition,
+  applied: Pick<AppliedTransition, "order" | "message">,
   internalNote: string | null,
 ): Promise<string | null> {
   if (!applied.message) return null;
@@ -317,7 +363,7 @@ async function afterMessage(
 }
 
 /** Customer-message variables every admin template can use (brief B8). */
-async function baseVars(tx: Tx, orderId: string, customerId: string) {
+export async function baseVars(tx: Tx, orderId: string, customerId: string) {
   const [contact, org] = await Promise.all([
     findCustomerContact(customerId, tx),
     findOrgName(orderId, tx),
@@ -376,6 +422,15 @@ export async function decideOrder(
       );
       if (!applied.ok) throw applied.error;
       if (final) {
+        if (business && input.decision !== "info") {
+          await settlePendingQuote(
+            order.id,
+            input.decision === "approve"
+              ? { status: "sent", approvedBy: actor.id }
+              : { status: "declined" },
+            tx,
+          );
+        }
         const note = input.decision === "approve" && input.text ? input.text : null;
         const waLink = await afterMessage(tx, actor, applied.value, note);
         return { ref: order.ref, waLink };
@@ -403,6 +458,19 @@ export async function advanceOrderStage(
     };
     const next = nextStage(state, { sample: order.wantsSample, batches: order.batchedDelivery });
     if (!next) throw new ConflictError("no next stage", "مفيش مرحلة جاية للطلب ده.");
+    if (next.transition === "confirm_deposit") {
+      assertCan(actor, "payments.confirm");
+      const confirmed = await confirmPendingDeposits(order.id, actor.id, tx);
+      for (const p of confirmed) {
+        await logActivity(tx, {
+          userId: actor.id,
+          action: "payments.confirmed",
+          entityType: "payment",
+          entityId: p.id,
+          orderId: order.id,
+        });
+      }
+    }
     const vars = await baseVars(tx, order.id, order.customerId);
     const applied = await applyTransitionInTx(
       tx,

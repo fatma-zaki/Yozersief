@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { ar } from "@/i18n/ar";
 import { actionError, actionOk, type ActionResult } from "@/lib/action";
 import { auth } from "@/lib/auth/auth";
+import { forgetRecentSessions } from "@/lib/auth/session";
 import { normalizeEgyptianMobile } from "@/lib/phone";
 import { clientIp, enforceRateLimit } from "@/lib/ratelimit";
 import {
@@ -93,5 +94,6 @@ export async function acceptInvitationAction(
 
 export async function signOutAction() {
   await auth.api.signOut({ headers: await headers() });
+  forgetRecentSessions();
   redirect("/login");
 }

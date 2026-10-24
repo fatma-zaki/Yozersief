@@ -1,10 +1,10 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { cache, type ReactNode } from "react";
 import { signOutAction } from "@/app/(auth)/login/actions";
 import { getStaffContext } from "@/lib/auth/session";
 import { cn } from "@/lib/cn";
 import { can, DASHBOARD_SECTIONS, ROLES } from "@/lib/rbac";
-import { countNewOrders } from "@/modules/orders";
+import { countNewOrders, countWorkspaceBadges } from "@/modules/orders";
 import s from "../admin.module.css";
 import { Ic, P } from "../Ic";
 import { ADMIN_NAV, TEAM_NAV, type AdminNavItem, type NavCounts } from "../nav";
@@ -190,34 +190,55 @@ function SidebarTitle({ team }: { team: boolean }) {
   );
 }
 
-/** The nav items this member may open: the design's admin list, or their team workspaces. */
-async function navFor(): Promise<{
-  items: AdminNavItem[];
-  team: boolean;
-  name: string;
-  role: string;
-  newOrders: number;
-} | null> {
-  const staff = await getStaffContext();
-  if (!staff) return null;
-  const allowed = (href: string) => {
-    const section = DASHBOARD_SECTIONS.find((x) => x.href === href);
-    return !!section && (!section.permission || can(staff, section.permission));
-  };
-  const team = staff.roleKey !== "admin";
-  const items = (team ? [...TEAM_NAV, ...ADMIN_NAV] : ADMIN_NAV).filter((i) => allowed(i.href));
-  const role = ROLES.find((r) => r.key === staff.roleKey)?.nameAr ?? "";
-  return { items, team, name: staff.name, role, newOrders: await countNewOrders(staff) };
-}
+/**
+ * The nav items this member may open: the design's admin list, or their team workspaces.
+ * The sidebar and the phone bottom bar both need it: `cache` runs the badge queries once.
+ */
+const navFor = cache(
+  async (): Promise<{
+    items: AdminNavItem[];
+    team: boolean;
+    name: string;
+    role: string;
+    newOrders: number;
+    workspaces: NavCounts;
+  } | null> => {
+    const staff = await getStaffContext();
+    if (!staff) return null;
+    const allowed = (href: string) => {
+      const section = DASHBOARD_SECTIONS.find((x) => x.href === href);
+      return !!section && (!section.permission || can(staff, section.permission));
+    };
+    const team = staff.roleKey !== "admin";
+    const items = (team ? [...TEAM_NAV, ...ADMIN_NAV] : ADMIN_NAV).filter((i) => allowed(i.href));
+    const role = ROLES.find((r) => r.key === staff.roleKey)?.nameAr ?? "";
+    const [newOrders, workspaces] = await Promise.all([
+      countNewOrders(staff),
+      countWorkspaceBadges(staff),
+    ]);
+    return { items, team, name: staff.name, role, newOrders, workspaces };
+  },
+);
 
-/** `counts` are demo badges from screens without a backend yet; «الطلبات» counts real orders. */
+/**
+ * `counts` are demo badges from screens without a backend yet; «الطلبات», «استقبال الطلبات» and
+ * the team workspaces count real orders.
+ */
 export async function SidebarContent({ counts }: { counts: NavCounts }) {
   const nav = await navFor();
   if (!nav) return null;
   return (
     <>
       <SidebarTitle team={nav.team} />
-      <SidebarLinks items={nav.items} counts={{ ...counts, "/dashboard/orders": nav.newOrders }} />
+      <SidebarLinks
+        items={nav.items}
+        counts={{
+          ...counts,
+          ...nav.workspaces,
+          "/dashboard/orders": nav.newOrders,
+          "/dashboard/desk": nav.newOrders,
+        }}
+      />
       {nav.team ? (
         <p
           style={{

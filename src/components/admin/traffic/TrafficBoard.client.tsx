@@ -1,24 +1,22 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { liveVisitorsAction } from "@/app/(dashboard)/dashboard/traffic/actions";
 import { cn } from "@/lib/cn";
+import type { TrafficPeriod, TrafficReport } from "@/modules/content";
 import s from "../admin.module.css";
 import { Ic } from "../Ic";
 import { MobileHeader, Neon } from "../MobileHeader";
 import { PageHeader } from "../PageHeader";
 import { sx } from "../theme";
 import {
-  DELTAS,
   deltaText,
-  DEVICES,
+  DEVICE_META,
   DOWN,
   fmt,
-  FUNNEL,
   KPI_ICONS,
-  PAGES,
-  series,
   smoothPath,
-  SOURCES,
+  SOURCE_META,
   UP,
   type Range,
 } from "./data";
@@ -26,22 +24,25 @@ import t from "./traffic.module.css";
 
 const INFO = "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 16v-4M12 8h.01";
 
+/** How often the live pill asks the server again. */
+const LIVE_POLL_MS = 30_000;
+
 /**
  * Traffic (brief B12), from docs/design/Admin-Traffic.html and Admin-Traffic-Mobile.html.
- * Demo figures with the design's notice until an analytics provider is connected.
+ * Real figures from `getTrafficReport` (first-party page views, ADR-0008).
  */
-export function TrafficBoard() {
+export function TrafficBoard({ data }: { data: TrafficReport }) {
   const [range, setRange] = useState<Range>("d7");
   const [hov, setHov] = useState(-1);
   const [table, setTable] = useState(false);
-  const [live, setLive] = useState(7);
+  const [live, setLive] = useState(data.live);
 
-  // The design's demo "live visitors" figure drifts by ±1 every 4 seconds.
   useEffect(() => {
-    const iv = setInterval(
-      () => setLive((v) => Math.max(3, Math.min(14, v + (Math.random() < 0.5 ? -1 : 1)))),
-      4000,
-    );
+    const iv = setInterval(async () => {
+      if (document.hidden) return;
+      const result = await liveVisitorsAction();
+      if (result.ok) setLive(result.data);
+    }, LIVE_POLL_MS);
     return () => clearInterval(iv);
   }, []);
 
@@ -49,7 +50,8 @@ export function TrafficBoard() {
     setRange(r);
     setHov(-1);
   };
-  const props = { range, pick, hov, setHov, table, setTable, live };
+  const d = derived(data.periods[range]);
+  const props = { d, since: data.since, range, pick, hov, setHov, table, setTable, live };
   return (
     <>
       <Desktop {...props} />
@@ -59,6 +61,8 @@ export function TrafficBoard() {
 }
 
 type Props = {
+  d: Derived;
+  since: Date | null;
   range: Range;
   pick: (r: Range) => void;
   hov: number;
@@ -68,33 +72,59 @@ type Props = {
   live: number;
 };
 
-function derived(range: Range) {
-  const d = series(range);
-  const uniq = Math.round(d.total * 0.72);
-  const orders = Math.max(1, Math.round(d.total * 0.021));
-  const conv = (orders / d.total) * 100;
-  return { ...d, uniq, orders, conv, deltas: DELTAS[range] };
+function derived(p: TrafficPeriod) {
+  const max = Math.max(0, ...p.vals);
+  return {
+    ...p,
+    n: p.vals.length,
+    total: p.visits,
+    max,
+    top: Math.ceil(max / 10) * 10 || 10,
+  };
+}
+
+const sinceFmt = new Intl.DateTimeFormat("ar-EG-u-nu-latn", {
+  timeZone: "Africa/Cairo",
+  day: "numeric",
+  month: "long",
+});
+
+/** The notice under the header: what the numbers are, and since when. */
+function notice(since: Date | null, mobile: boolean) {
+  if (!since) {
+    return mobile
+      ? "لسه مفيش زيارات متسجلة. الأرقام هتبدأ تظهر مع أول زائر."
+      : "لسه مفيش زيارات متسجلة. الأرقام هتبدأ تظهر مع أول زائر للموقع، من غير cookies ومن غير أي بيانات شخصية للزوار.";
+  }
+  const from = sinceFmt.format(since);
+  return mobile
+    ? `أرقام حقيقية من الموقع من يوم ${from}، مجمّعة ومن غير بيانات شخصية.`
+    : `الأرقام دي زيارات حقيقية للموقع، متسجلة من يوم ${from}. بنعدّها من غير cookies ومن غير أي بيانات شخصية للزوار، وزيارات الفريق وهو مسجّل دخول مش محسوبة.`;
 }
 
 /* ================================ Desktop ================================ */
 
-function Desktop({ range, pick, hov, setHov, table, setTable, live }: Props) {
-  const d = derived(range);
+function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: Props) {
   const kpis = [
     {
       label: "الزيارات",
       value: fmt(d.total),
       icon: KPI_ICONS.visits,
-      delta: d.deltas[0],
+      delta: d.deltas.visits,
       hero: true,
     },
-    { label: "زوار مختلفين", value: fmt(d.uniq), icon: KPI_ICONS.unique, delta: d.deltas[1] },
-    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas[2] },
+    {
+      label: "زوار مختلفين",
+      value: fmt(d.visitors),
+      icon: KPI_ICONS.unique,
+      delta: d.deltas.visitors,
+    },
+    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
     {
       label: "معدل التحويل",
       value: `${d.conv.toFixed(1)}%`,
       icon: KPI_ICONS.conv,
-      delta: d.deltas[3],
+      delta: d.deltas.conv,
     },
   ];
   const ranges: [Range, string][] = [
@@ -173,10 +203,7 @@ function Desktop({ range, pick, hov, setHov, table, setTable, live }: Props) {
         )}
       >
         <Ic d={INFO} size={18} {...sx({ color: "#005c58" }, { color: "#7ee8c7" })} />
-        <span>
-          الأرقام دي بيانات تجريبية لعرض الشكل. هتتربط بأداة تحليلات [Google Analytics 4 أو
-          Plausible — بانتظار الاختيار]، وبنعرض أرقام مجمّعة بس من غير أي بيانات شخصية للزوار.
-        </span>
+        <span>{notice(since, false)}</span>
       </p>
 
       <section
@@ -274,7 +301,7 @@ function Desktop({ range, pick, hov, setHov, table, setTable, live }: Props) {
         }}
       >
         <Card id="src-h" title="الزوار جايين منين؟" note="نسبة من الزيارات" delay={s.d3}>
-          <Sources total={d.total} mobile={false} />
+          <Sources d={d} mobile={false} />
         </Card>
         <Card id="pg-h" title="أكتر الصفحات زيارة" note="مشاهدات" delay={s.d3}>
           <ol
@@ -287,8 +314,9 @@ function Desktop({ range, pick, hov, setHov, table, setTable, live }: Props) {
               gap: 8,
             }}
           >
-            {PAGES.map(([name, path, share], i) => {
-              const n = Math.round(d.total * 0.9 * share);
+            {d.pages.length === 0 ? <Empty /> : null}
+            {d.pages.map(({ name, path, views: n }, i) => {
+              const share = n / (d.pages[0]?.views || 1);
               return (
                 <li
                   key={path}
@@ -356,13 +384,15 @@ function Desktop({ range, pick, hov, setHov, table, setTable, live }: Props) {
           </ol>
         </Card>
         <Card id="fn-h" title="من الزيارة للطلب" note="مسار التحويل" delay={s.d4} gap={12}>
-          <Funnel total={d.total} mobile={false} />
+          <Funnel d={d} mobile={false} />
         </Card>
         <Card id="dv-h" title="الأجهزة" note="نسبة من الزيارات" delay={s.d4}>
-          <Devices mobile={false} />
-          <p className={t.muted} style={{ margin: 0, fontSize: 12, lineHeight: "20px" }}>
-            أغلب الزوار من الموبايل، فأي تعديل في الموقع لازم يتجرب على الموبايل الأول.
-          </p>
+          <Devices d={d} mobile={false} />
+          {mostlyMobile(d) ? (
+            <p className={t.muted} style={{ margin: 0, fontSize: 12, lineHeight: "20px" }}>
+              أغلب الزوار من الموبايل، فأي تعديل في الموقع لازم يتجرب على الموبايل الأول.
+            </p>
+          ) : null}
         </Card>
       </div>
     </div>
@@ -380,11 +410,12 @@ function Kpi({
   label: string;
   value: string;
   icon: string;
-  delta: string;
+  /** Null when the previous span has no data to compare with. */
+  delta: string | null;
   hero?: boolean;
   mobile?: boolean;
 }) {
-  const up = delta.startsWith("+");
+  const up = !delta || delta.startsWith("+");
   const base: CSSProperties = mobile
     ? { display: "flex", flexDirection: "column", gap: 0, padding: "12px 14px", borderRadius: 20 }
     : { display: "flex", flexDirection: "column", gap: 2, padding: "16px 18px", borderRadius: 24 };
@@ -476,18 +507,24 @@ function Kpi({
       >
         {value}
       </strong>
-      <span {...deltaColor}>
-        <Ic d={up ? UP : DOWN} size={mobile ? 13 : 14} stroke={2.4} />
-        {deltaText(delta)}
-        {mobile ? null : (
-          <>
-            {" "}
-            <span {...sx({ fontWeight: 500, opacity: 0.8 }, { color: "rgba(242,251,248,0.7)" })}>
-              عن الفترة اللي قبلها
-            </span>
-          </>
-        )}
-      </span>
+      {delta === null ? (
+        <span style={{ fontSize: mobile ? 11 : 12, fontWeight: 600, opacity: 0.75 }}>
+          {mobile ? "مفيش مقارنة" : "مفيش بيانات للفترة اللي قبلها"}
+        </span>
+      ) : (
+        <span {...deltaColor}>
+          <Ic d={up ? UP : DOWN} size={mobile ? 13 : 14} stroke={2.4} />
+          {deltaText(delta)}
+          {mobile ? null : (
+            <>
+              {" "}
+              <span {...sx({ fontWeight: 500, opacity: 0.8 }, { color: "rgba(242,251,248,0.7)" })}>
+                عن الفترة اللي قبلها
+              </span>
+            </>
+          )}
+        </span>
+      )}
     </div>
   );
 }
@@ -561,8 +598,10 @@ function Rank({ n }: { n: number }) {
 const BAR_L = "linear-gradient(270deg,#00706a,#2fbfa6)";
 const BAR_D = "linear-gradient(270deg,#7ee8c7,#3fc9ae)";
 
-function Sources({ total, mobile }: { total: number; mobile: boolean }) {
-  const first = SOURCES[0]?.[1] ?? 1;
+function Sources({ d, mobile }: { d: Derived; mobile: boolean }) {
+  if (!d.sources.length) return <Empty />;
+  const total = d.sources.reduce((a, x) => a + x.visits, 0) || 1;
+  const first = (d.sources[0]?.visits ?? 1) / total;
   return (
     <ul
       style={{
@@ -574,8 +613,9 @@ function Sources({ total, mobile }: { total: number; mobile: boolean }) {
         gap: mobile ? 10 : 12,
       }}
     >
-      {SOURCES.map(([name, share, icon], i) => {
-        const n = Math.round(total * share);
+      {d.sources.map(({ key, visits: n }, i) => {
+        const [name, icon] = SOURCE_META[key];
+        const share = n / total;
         return (
           <li
             key={name}
@@ -647,7 +687,15 @@ function Sources({ total, mobile }: { total: number; mobile: boolean }) {
   );
 }
 
-function Funnel({ total, mobile }: { total: number; mobile: boolean }) {
+function Funnel({ d, mobile }: { d: Derived; mobile: boolean }) {
+  const steps: [string, number][] = [
+    ["زاروا الموقع", d.funnel.visitors],
+    ["فتحوا منشئ الطلب", d.funnel.builder],
+    ["بعتوا طلب", d.funnel.submitted],
+    ["اتوافق على طلبهم", d.funnel.approved],
+  ];
+  // The largest step, not visits: orders from before recording began can outnumber them.
+  const base = Math.max(1, ...steps.map(([, n]) => n));
   return (
     <ol
       style={{
@@ -659,9 +707,10 @@ function Funnel({ total, mobile }: { total: number; mobile: boolean }) {
         gap: 6,
       }}
     >
-      {FUNNEL.map(([name, share], i) => {
-        const next = FUNNEL[i + 1];
-        const step = next ? Math.round((next[1] / share) * 100) : 0;
+      {steps.map(([name, count], i) => {
+        const next = steps[i + 1];
+        const share = Math.min(1, count / base);
+        const step = next && count > 0 ? Math.round((next[1] / count) * 100) : 0;
         return (
           <li key={name} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <span
@@ -672,9 +721,7 @@ function Funnel({ total, mobile }: { total: number; mobile: boolean }) {
               }}
             >
               <span style={{ fontWeight: 700 }}>{name}</span>
-              <strong {...sx({}, { color: "#ffffff" })}>
-                {fmt(Math.max(1, Math.round(total * share)))}
-              </strong>
+              <strong {...sx({}, { color: "#ffffff" })}>{fmt(count)}</strong>
             </span>
             <span
               aria-hidden="true"
@@ -729,7 +776,21 @@ function Funnel({ total, mobile }: { total: number; mobile: boolean }) {
   );
 }
 
-function Devices({ mobile }: { mobile: boolean }) {
+function mostlyMobile(d: Derived) {
+  const mobile = d.devices.find((x) => x.key === "mobile")?.pct ?? 0;
+  return mobile > 0 && d.devices.every((x) => x.key === "mobile" || x.pct < mobile);
+}
+
+/** No data yet for this period. */
+function Empty() {
+  return (
+    <p className={t.muted} style={{ margin: 0, fontSize: 13, lineHeight: "22px" }}>
+      لسه مفيش زيارات في الفترة دي.
+    </p>
+  );
+}
+
+function Devices({ d, mobile }: { d: Derived; mobile: boolean }) {
   const ring = mobile ? 54 : 66;
   const inner = mobile ? 42 : 52;
   return (
@@ -740,69 +801,72 @@ function Devices({ mobile }: { mobile: boolean }) {
         gap: mobile ? 8 : 10,
       }}
     >
-      {DEVICES.map(([name, pct, icon]) => (
-        <div
-          key={name}
-          {...sx(
-            {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: mobile ? 6 : 8,
-              padding: mobile ? "10px 4px" : "14px 8px",
-              borderRadius: mobile ? 16 : 18,
-              background: "rgba(255,255,255,0.6)",
-              boxShadow: "inset 0 0 0 1px rgba(0,92,88,0.08)",
-            },
-            {
-              background: "rgba(126,232,199,0.04)",
-              boxShadow: "inset 0 0 0 1px rgba(126,232,199,0.14)",
-            },
-          )}
-        >
-          <span
-            aria-hidden="true"
+      {d.devices.map(({ key, pct }) => {
+        const [name, icon] = DEVICE_META[key];
+        return (
+          <div
+            key={key}
             {...sx(
               {
-                width: ring,
-                height: ring,
-                borderRadius: 999,
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
-                background: `conic-gradient(#00706a 0 ${pct}%, rgba(0,92,88,0.1) ${pct}% 100%)`,
-                boxShadow: `0 0 ${mobile ? 12 : 14}px rgba(126,232,199,0.35)`,
+                gap: mobile ? 6 : 8,
+                padding: mobile ? "10px 4px" : "14px 8px",
+                borderRadius: mobile ? 16 : 18,
+                background: "rgba(255,255,255,0.6)",
+                boxShadow: "inset 0 0 0 1px rgba(0,92,88,0.08)",
               },
               {
-                background: `conic-gradient(#7ee8c7 0 ${pct}%, rgba(126,232,199,0.12) ${pct}% 100%)`,
-                boxShadow: `0 0 ${mobile ? 14 : 16}px rgba(126,232,199,0.3)`,
+                background: "rgba(126,232,199,0.04)",
+                boxShadow: "inset 0 0 0 1px rgba(126,232,199,0.14)",
               },
             )}
           >
             <span
+              aria-hidden="true"
               {...sx(
                 {
-                  width: inner,
-                  height: inner,
+                  width: ring,
+                  height: ring,
                   borderRadius: 999,
-                  background: "#f3faf8",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#005c58",
+                  background: `conic-gradient(#00706a 0 ${pct}%, rgba(0,92,88,0.1) ${pct}% 100%)`,
+                  boxShadow: `0 0 ${mobile ? 12 : 14}px rgba(126,232,199,0.35)`,
                 },
-                { background: "#032722", color: "#7ee8c7" },
+                {
+                  background: `conic-gradient(#7ee8c7 0 ${pct}%, rgba(126,232,199,0.12) ${pct}% 100%)`,
+                  boxShadow: `0 0 ${mobile ? 14 : 16}px rgba(126,232,199,0.3)`,
+                },
               )}
             >
-              <Ic d={icon} size={mobile ? 18 : 22} />
+              <span
+                {...sx(
+                  {
+                    width: inner,
+                    height: inner,
+                    borderRadius: 999,
+                    background: "#f3faf8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#005c58",
+                  },
+                  { background: "#032722", color: "#7ee8c7" },
+                )}
+              >
+                <Ic d={icon} size={mobile ? 18 : 22} />
+              </span>
             </span>
-          </span>
-          <strong {...sx({ fontSize: mobile ? 16 : 20 }, { color: "#ffffff" })}>{pct}%</strong>
-          <span className={t.muted} style={{ fontSize: mobile ? 11 : 13, fontWeight: 700 }}>
-            {name}
-          </span>
-        </div>
-      ))}
+            <strong {...sx({ fontSize: mobile ? 16 : 20 }, { color: "#ffffff" })}>{pct}%</strong>
+            <span className={t.muted} style={{ fontSize: mobile ? 11 : 13, fontWeight: 700 }}>
+              {name}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1089,23 +1153,27 @@ function Themed({ children }: { children: (dark: boolean) => ReactNode }) {
 
 /* ================================ Mobile ================================ */
 
-function Mobile({ range, pick, hov, setHov, table, setTable, live }: Props) {
-  const d = derived(range);
+function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: Props) {
   const kpis = [
     {
       label: "الزيارات",
       value: fmt(d.total),
       icon: KPI_ICONS.visits,
-      delta: d.deltas[0],
+      delta: d.deltas.visits,
       hero: true,
     },
-    { label: "زوار مختلفين", value: fmt(d.uniq), icon: KPI_ICONS.uniqueM, delta: d.deltas[1] },
-    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas[2] },
+    {
+      label: "زوار مختلفين",
+      value: fmt(d.visitors),
+      icon: KPI_ICONS.uniqueM,
+      delta: d.deltas.visitors,
+    },
+    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
     {
       label: "معدل التحويل",
       value: `${d.conv.toFixed(1)}%`,
       icon: KPI_ICONS.conv,
-      delta: d.deltas[3],
+      delta: d.deltas.conv,
     },
   ];
   const ranges: [Range, string][] = [
@@ -1114,6 +1182,7 @@ function Mobile({ range, pick, hov, setHov, table, setTable, live }: Props) {
     ["d30", "30 يوم"],
   ];
   const rangeWord = { today: "النهارده", d7: "آخر 7 أيام", d30: "آخر 30 يوم" }[range];
+  const topInner = d.pages.find((x) => x.path !== "/");
   const mCard = (id: string, title: string, gap: number, children: ReactNode, pad = "14px") => (
     <section
       className={cn(s.glass, s.up, s.d3)}
@@ -1226,7 +1295,7 @@ function Mobile({ range, pick, hov, setHov, table, setTable, live }: Props) {
             s.up,
           )}
         >
-          بيانات تجريبية — هتتربط بأداة تحليلات [بانتظار الاختيار]، وبنعرض أرقام مجمّعة بس.
+          {notice(since, true)}
         </p>
         <section
           className={cn(s.up, s.d1)}
@@ -1290,14 +1359,14 @@ function Mobile({ range, pick, hov, setHov, table, setTable, live }: Props) {
             <Chart d={d} hov={hov} setHov={setHov} height={200} mobile />
           )}
         </section>
-        {mCard("ms-h", "الزوار جايين منين؟", 12, <Sources total={d.total} mobile />)}
-        {mCard("mf-h", "من الزيارة للطلب", 10, <Funnel total={d.total} mobile />)}
+        {mCard("ms-h", "الزوار جايين منين؟", 12, <Sources d={d} mobile />)}
+        {mCard("mf-h", "من الزيارة للطلب", 10, <Funnel d={d} mobile />)}
         {mCard(
           "md-h",
           "الأجهزة وأكتر صفحة",
           12,
           <>
-            <Devices mobile />
+            <Devices d={d} mobile />
             <div
               {...sx(
                 {
@@ -1316,13 +1385,15 @@ function Mobile({ range, pick, hov, setHov, table, setTable, live }: Props) {
             >
               <Rank n={1} />
               <span style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
-                <strong {...sx({ fontSize: 13 }, { color: "#ffffff" })}>منشئ الطلب</strong>
+                <strong {...sx({ fontSize: 13 }, { color: "#ffffff" })}>
+                  {topInner?.name ?? "لسه مفيش"}
+                </strong>
                 <span className={t.muted} style={{ fontSize: 11 }}>
                   أكتر صفحة اتشافت بعد الرئيسية
                 </span>
               </span>
               <strong {...sx({ fontSize: 13 }, { color: "#ffffff" })}>
-                {fmt(Math.round(d.total * 0.9 * 0.46))}
+                {fmt(topInner?.views ?? 0)}
               </strong>
             </div>
           </>,

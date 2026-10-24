@@ -3,10 +3,10 @@
  *
  * Categories:
  * - Auth-sensitive (`auth.login`, `access.request`, `otp.send`, `otp.verify`,
- *   `tracking.lookup`):
+ *   `tracking.lookup`, `delivery.handover` — the 3-digit handover code):
  *   FAIL CLOSED when Redis throws or times out — deny the request rather than silently
  *   disabling protection for credential / tracking verification attempts.
- * - Public / availability-oriented (`upload.token`, `order.submit`):
+ * - Public / availability-oriented (`upload.token`, `order.submit`, `analytics.collect`):
  *   FAIL OPEN on Redis throw/timeout so a Redis blip does not take down customer-facing
  *   flows. Abuse is still bounded when Redis is healthy.
  *
@@ -22,6 +22,8 @@ export const LIMITS = {
   "upload.token": { requests: 60, window: "1 h" },
   "auth.login": { requests: 10, window: "15 m" },
   "access.request": { requests: 10, window: "1 h" },
+  "analytics.collect": { requests: 120, window: "10 m" },
+  "delivery.handover": { requests: 30, window: "10 m" },
 } as const satisfies Record<string, { requests: number; window: `${number} ${"s" | "m" | "h"}` }>;
 
 export type LimitName = keyof typeof LIMITS;
@@ -32,6 +34,7 @@ const AUTH_SENSITIVE = new Set<LimitName>([
   "otp.send",
   "otp.verify",
   "tracking.lookup",
+  "delivery.handover",
 ]);
 
 export function isAuthSensitiveLimit(name: LimitName): boolean {

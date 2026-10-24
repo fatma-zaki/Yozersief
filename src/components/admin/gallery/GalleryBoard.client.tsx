@@ -1,8 +1,17 @@
 "use client";
 
+import { upload, uploadPresigned } from "@vercel/blob/client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  addGallerySampleAction,
+  addGalleryUploadAction,
+  deleteGalleryAction,
+  updateGalleryAction,
+} from "@/app/(dashboard)/dashboard/gallery/actions";
 import { cn } from "@/lib/cn";
+import type { GalleryData, GalleryView } from "@/modules/content";
 import s from "../admin.module.css";
 import { Ic, P } from "../Ic";
 import { KitHeader, KitToast, Switch, useFlash } from "../Kit.client";
@@ -11,100 +20,95 @@ import shell from "../shell/shell.module.css";
 import g from "./gallery.module.css";
 
 /**
- * Gallery (brief B11), from docs/design/Admin-Gallery.html. Publishing is locked until the
- * customer's consent is ticked (brief A6.8). Demo pictures, as in the design.
+ * Gallery (brief B11), from docs/design/Admin-Gallery.html, on the content module's gallery use
+ * cases. Publishing is locked until the customer's consent is ticked (brief A6.8); the server
+ * enforces the same rule. Changes show at once and roll back if the server refuses them.
  */
 
-type Item = {
-  id: number;
-  img: string;
-  cat: string;
-  caption: string;
-  consent: boolean;
-  pub: boolean;
-};
+type Item = GalleryView;
 type Filter = "all" | "pub" | "hidden" | "pending";
 
-const DEMO: Item[] = [
-  {
-    id: 1,
-    img: "/images/home/hoodie.jpg",
-    cat: "هوديز",
-    caption: "هوديز دفعة",
-    consent: true,
-    pub: true,
-  },
-  {
-    id: 2,
-    img: "/images/home/mug-bottle.jpg",
-    cat: "مجات",
-    caption: "مجات هدايا",
-    consent: true,
-    pub: true,
-  },
-  {
-    id: 3,
-    img: "/images/home/cap.jpg",
-    cat: "كابات",
-    caption: "كابات بلوجو",
-    consent: true,
-    pub: true,
-  },
-  {
-    id: 4,
-    img: "/images/home/phone-cases.jpg",
-    cat: "كفرات",
-    caption: "كفرات بصور",
-    consent: false,
-    pub: false,
-  },
-  {
-    id: 5,
-    img: "/images/home/tshirt.jpg",
-    cat: "تيشيرتات",
-    caption: "تيشيرتات فريق",
-    consent: true,
-    pub: false,
-  },
-  {
-    id: 6,
-    img: "/images/home/sticker.jpg",
-    cat: "استيكرات",
-    caption: "",
-    consent: false,
-    pub: false,
-  },
-  {
-    id: 7,
-    img: "/images/home/heat-press.jpg",
-    cat: "طباعة حرارية",
-    caption: "طباعة حرارية",
-    consent: true,
-    pub: true,
-  },
-];
-const DEMO_UPLOADS = [
-  "/images/home/tshirt.jpg",
-  "/images/home/shop-sign.jpg",
-  "/images/home/mug-bottle.jpg",
-];
-
-const state = (x: Item): Exclude<Filter, "all"> =>
+const state = (x: Pick<Item, "pub" | "consent">): Exclude<Filter, "all"> =>
   x.pub ? "pub" : x.consent ? "hidden" : "pending";
 
-export function GalleryBoard() {
-  const [items, setItems] = useState(DEMO);
-  const [filter, setFilter] = useState<Filter>("all");
-  const [del, setDel] = useState<number | null>(null);
-  const nextId = useRef(100);
-  const { toast, flash, hide } = useFlash();
+/** ASCII Blob pathname (presigned uploads reject non-ASCII names); Blob adds a random suffix. */
+function galleryPath(file: File): string {
+  const ext = (file.name.split(".").pop() ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 5);
+  return `gallery/photo${ext ? `.${ext}` : ""}`;
+}
 
-  const upd = (id: number, patch: Partial<Item>) =>
+export function GalleryBoard({ data }: { data: GalleryData }) {
+  const router = useRouter();
+  const [busy, startTransition] = useTransition();
+  const [items, setItems] = useState(data.items);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [del, setDel] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(0);
+  const { toast, flash, hide } = useFlash();
+  // A server refresh brings the saved state; it replaces the optimistic one.
+  const [synced, setSynced] = useState(data.items);
+  if (synced !== data.items) {
+    setSynced(data.items);
+    setItems(data.items);
+  }
+  const savedCaption = (id: string) => data.items.find((x) => x.id === id)?.caption ?? "";
+
+  const upd = (id: string, patch: Partial<Item>) =>
     setItems((all) => all.map((x) => (x.id === id ? { ...x, ...patch } : x)));
-  const addOne = (img: string) => {
-    nextId.current += 1;
-    const id = nextId.current;
-    setItems((all) => [{ id, img, cat: "جديدة", caption: "", consent: false, pub: false }, ...all]);
+
+  /** Shows the change now, saves it, and rolls back with the server's message if refused. */
+  const save = (
+    x: Item,
+    change: { consent?: boolean; published?: boolean; caption?: string },
+    okMessage?: string,
+  ) => {
+    const before = { consent: x.consent, pub: x.pub, caption: x.caption };
+    startTransition(async () => {
+      const result = await updateGalleryAction({ id: x.id, ...change });
+      if (!result.ok) {
+        upd(x.id, before);
+        flash(result.error);
+        return;
+      }
+      if (result.data.unpublishedByConsent)
+        flash(`اتشالت صورة «${x.cat}» من الموقع لأن الموافقة اتلغت`);
+      else if (okMessage) flash(okMessage);
+      router.refresh();
+    });
+  };
+
+  const uploadFiles = async (files: File[]) => {
+    const images = files.filter((f) => /^image\//.test(f.type));
+    if (!images.length) return;
+    if (!data.uploadMode) {
+      flash("رفع الملفات مش متاح دلوقتي.");
+      return;
+    }
+    const put = data.uploadMode === "presigned" ? uploadPresigned : upload;
+    setUploading((n) => n + images.length);
+    let added = 0;
+    let error = "";
+    for (const file of images) {
+      try {
+        const blob = await put(galleryPath(file), file, {
+          access: "public",
+          handleUploadUrl: "/api/gallery/upload",
+        });
+        const result = await addGalleryUploadAction({ url: blob.url, pathname: blob.pathname });
+        if (result.ok) added += 1;
+        else error = result.error;
+      } catch (e) {
+        // Blob's own errors are English; show ours unless the server sent an Arabic one.
+        error =
+          e instanceof Error && /[\u0600-\u06FF]/.test(e.message)
+            ? e.message
+            : "رفع الصورة فشل. جرّب تاني.";
+      } finally {
+        setUploading((n) => n - 1);
+      }
+    }
+    flash(added ? `اتضافت ${added} صورة كمخفية` : error);
+    if (added) router.refresh();
   };
 
   const pubN = items.filter((x) => x.pub).length;
@@ -160,7 +164,8 @@ export function GalleryBoard() {
         <Ic d={P.shieldCheck} size={20} style={{ color: "var(--warn-ink)" }} />
         <span>
           <strong>قاعدة النشر:</strong> مفيش صورة لشغل عميل تتنشر غير بموافقته. زرار النشر بيتقفل
-          لحد ما تتعلّم «موافقة العميل». الصور الحالية نماذج عرض.
+          لحد ما تتعلّم «موافقة العميل».
+          {items.some((x) => x.isSample) ? " الصور الحالية نماذج عرض." : ""}
         </span>
       </p>
 
@@ -234,11 +239,11 @@ export function GalleryBoard() {
               type="file"
               accept="image/*"
               multiple
+              disabled={uploading > 0}
               onChange={(e) => {
                 const files = Array.from(e.target.files ?? []);
-                for (const f of files) if (/^image\//.test(f.type)) addOne(URL.createObjectURL(f));
                 e.target.value = "";
-                if (files.length) flash(`اتضافت ${files.length} صورة كمخفية`);
+                void uploadFiles(files);
               }}
             />
             <span
@@ -249,7 +254,7 @@ export function GalleryBoard() {
               <Ic d={P.upload} />
             </span>
             <strong className={k.strong} style={{ fontSize: 15 }}>
-              ارفع صور جديدة
+              {uploading ? `جاري رفع ${uploading} صورة…` : "ارفع صور جديدة"}
             </strong>
             <span className={k.muted} style={{ fontSize: 12 }}>
               JPG أو PNG — هتتضاف مخفية لحد ما تنشرها
@@ -258,10 +263,14 @@ export function GalleryBoard() {
           <button
             className={cn(k.btn, k.soft)}
             type="button"
-            onClick={() => {
-              addOne(DEMO_UPLOADS[(nextId.current + 1) % DEMO_UPLOADS.length] ?? "");
-              flash("اتضافت صورة جديدة كمخفية لحد الموافقة");
-            }}
+            disabled={busy}
+            onClick={() =>
+              startTransition(async () => {
+                const result = await addGallerySampleAction();
+                flash(result.ok ? "اتضافت صورة جديدة كمخفية لحد الموافقة" : result.error);
+                if (result.ok) router.refresh();
+              })
+            }
             style={{ minHeight: 40, borderRadius: 999, fontSize: 13 }}
           >
             أضف صورة تجريبية
@@ -277,7 +286,7 @@ export function GalleryBoard() {
                   alt={x.caption || x.cat}
                   fill
                   sizes="(max-width: 700px) 100vw, 320px"
-                  unoptimized={x.img.startsWith("blob:")}
+                  unoptimized={!x.img.startsWith("/images/")}
                 />
                 <span
                   className={cn(k.badge, k.bGlass, g.glass)}
@@ -294,12 +303,14 @@ export function GalleryBoard() {
                 >
                   {st === "pub" ? "منشورة" : st === "pending" ? "بانتظار موافقة العميل" : "مخفية"}
                 </span>
-                <span
-                  className={cn(k.badge, k.bGlass, g.glass)}
-                  style={{ position: "absolute", bottom: 10, right: 10 }}
-                >
-                  نموذج عرض
-                </span>
+                {x.isSample ? (
+                  <span
+                    className={cn(k.badge, k.bGlass, g.glass)}
+                    style={{ position: "absolute", bottom: 10, right: 10 }}
+                  >
+                    نموذج عرض
+                  </span>
+                ) : null}
               </div>
               <div
                 style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}
@@ -309,6 +320,11 @@ export function GalleryBoard() {
                   type="text"
                   value={x.caption}
                   onChange={(e) => upd(x.id, { caption: e.target.value })}
+                  onBlur={(e) => {
+                    const caption = e.target.value.trim();
+                    if (caption === savedCaption(x.id)) return;
+                    save(x, { caption });
+                  }}
                   aria-label={`وصف صورة ${x.cat}`}
                   placeholder="وصف قصير يظهر تحت الصورة"
                 />
@@ -319,7 +335,7 @@ export function GalleryBoard() {
                     onChange={(e) => {
                       const c = e.target.checked;
                       upd(x.id, { consent: c, pub: c ? x.pub : false });
-                      if (!c && x.pub) flash(`اتشالت صورة «${x.cat}» من الموقع لأن الموافقة اتلغت`);
+                      save(x, { consent: c });
                     }}
                   />
                   <span
@@ -365,7 +381,11 @@ export function GalleryBoard() {
                     onToggle={() => {
                       if (!x.consent) return;
                       upd(x.id, { pub: !x.pub });
-                      flash(x.pub ? "اتخفت الصورة من المعرض" : "اتنشرت الصورة في معرض الأعمال");
+                      save(
+                        x,
+                        { published: !x.pub },
+                        x.pub ? "اتخفت الصورة من المعرض" : "اتنشرت الصورة في معرض الأعمال",
+                      );
                     }}
                   />
                   <span style={{ flexGrow: 1, fontSize: 13, fontWeight: 700 }}>
@@ -396,9 +416,16 @@ export function GalleryBoard() {
         <ConfirmDelete
           onCancel={() => setDel(null)}
           onDelete={() => {
-            setItems((all) => all.filter((x) => x.id !== del));
+            const id = del;
             setDel(null);
-            flash("اتمسحت الصورة");
+            startTransition(async () => {
+              const result = await deleteGalleryAction({ id });
+              flash(result.ok ? "اتمسحت الصورة" : result.error);
+              if (result.ok) {
+                setItems((all) => all.filter((x) => x.id !== id));
+                router.refresh();
+              }
+            });
           }}
         />
       ) : null}

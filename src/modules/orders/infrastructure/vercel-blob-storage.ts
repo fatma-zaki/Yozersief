@@ -1,6 +1,6 @@
-import { del, head } from "@vercel/blob";
+import { del, get, head } from "@vercel/blob";
 import { env } from "@/env";
-import type { FileStorage, StoredBlobMeta } from "../application/file-storage";
+import type { FileStorage, StoredBlobContent, StoredBlobMeta } from "../application/file-storage";
 import type { BlobUploadMode } from "../domain/files";
 
 /**
@@ -16,8 +16,15 @@ export class VercelBlobStorage implements FileStorage {
   }
 
   async downloadUrl(storageKey: string) {
-    // Blob URLs are unguessable; access control happens before we hand the URL out.
-    return storageKey;
+    return `/api/orders/files?key=${encodeURIComponent(storageKey)}`;
+  }
+
+  async read(storageKey: string): Promise<StoredBlobContent | null> {
+    // Stores can be private (URLs on *.private.blob…): those need credentials to read.
+    const access = new URL(storageKey).hostname.includes(".private.") ? "private" : "public";
+    const result = await get(storageKey, { access, token: this.token });
+    if (!result || result.statusCode !== 200) return null;
+    return { stream: result.stream, contentType: result.blob.contentType, size: result.blob.size };
   }
 
   async head(storageKey: string): Promise<StoredBlobMeta> {

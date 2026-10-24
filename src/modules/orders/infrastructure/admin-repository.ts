@@ -1,4 +1,4 @@
-import { and, asc, count, countDistinct, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, asc, count, countDistinct, desc, eq, gte, inArray, lt } from "drizzle-orm";
 import {
   customers,
   orderEvents,
@@ -154,4 +154,31 @@ export async function findOrgName(orderId: string, tx: DbOrTx) {
     .innerJoin(organizations, eq(organizations.id, orders.organizationId))
     .where(eq(orders.id, orderId));
   return row?.name ?? null;
+}
+
+export async function countOrdersCreatedBetween(from: Date, to: Date, tx: DbOrTx = db) {
+  const [row] = await tx
+    .select({ n: count() })
+    .from(orders)
+    .where(and(gte(orders.createdAt, from), lt(orders.createdAt, to)));
+  return row?.n ?? 0;
+}
+
+export async function countOrdersWithEventBetween(
+  types: string[],
+  from: Date,
+  to: Date,
+  tx: DbOrTx = db,
+) {
+  const [row] = await tx
+    .select({ n: countDistinct(orderEvents.orderId) })
+    .from(orderEvents)
+    .where(
+      and(
+        inArray(orderEvents.type, types),
+        gte(orderEvents.createdAt, from),
+        lt(orderEvents.createdAt, to),
+      ),
+    );
+  return row?.n ?? 0;
 }

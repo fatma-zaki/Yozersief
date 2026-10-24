@@ -16,7 +16,6 @@ vi.mock("@/env", () => ({
     TRACKING_COOKIE_SECRET: "test-tracking-cookie-secret-32ch!",
     CRON_SECRET: "test-cron-secret-16",
     MESSAGING_PROVIDER: "manual",
-    ANALYTICS_PROVIDER: "none",
     RATE_LIMIT_DISABLED: true,
   },
 }));

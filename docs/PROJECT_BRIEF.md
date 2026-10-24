@@ -41,7 +41,7 @@ The goal of the first engagement (**Phase 0**) is a professional, scalable, prod
 | Background work          | Transactional **outbox** table + Vercel Cron worker route. Keep the interface swappable for a queue service later.                                                                  |
 | Env vars                 | Validated at boot with Zod (`src/env.ts`). The app must fail fast on missing or invalid env.                                                                                        |
 | Errors / logs            | Sentry for errors. Structured JSON logs through one `logger` module.                                                                                                                |
-| Analytics (site traffic) | Plausible or GA4 (decision pending, B12). Behind an `AnalyticsReader` interface. Traffic is **not** stored in our database.                                                         |
+| Analytics (site traffic) | First-party page views in our database, no cookies and no personal data (ADR-0008). Behind an `AnalyticsReader` interface.                                                         |
 | Tests                    | Vitest (unit, domain), Playwright (e2e), and a disposable Postgres for integration tests.                                                                                           |
 | CI                       | GitHub Actions: install, lint, typecheck, unit tests, migration check, build. Vercel Preview per PR, with a Neon branch per preview.                                                |
 | Hosting                  | Vercel. Region close to Egypt (e.g. `fra1`), and the Neon database in the same region.                                                                                              |
@@ -422,7 +422,7 @@ The admin can toggle any non-admin cell. Changes are audited.
 ### B12. Traffic dashboard
 
 - Visitors, sessions, top pages, sources, devices, funnel (home → request builder → submitted), live visitors.
-- Read from the analytics provider through `AnalyticsReader` (Plausible or GA4, pending). Show a "demo data" notice until connected.
+- Read through `AnalyticsReader` from first-party page views (ADR-0008): no cookies, no IP stored, a visitor hash that changes daily. The notice says since when data is recorded.
 
 ### B13. Open decisions (mark as `[pending]` in code and UI; do not invent values)
 
@@ -432,7 +432,7 @@ The admin can toggle any non-admin cell. Changes are audited.
 4. Number of free mockup revisions.
 5. Max file size (assumed 20 MB).
 6. OTP channel: WhatsApp Business API vs SMS fallback. (Tracking ships without OTP this release — ADR-0007; this decision still gates any future OTP restore.)
-7. Analytics provider (Plausible vs GA4).
+7. ~~Analytics provider (Plausible vs GA4).~~ Decided: first-party (ADR-0008). Data retention period still pending.
 8. Delivery areas, fees and pickup address/hours.
 9. First-response SLA for the desk (used by alerts).
 10. Final production domain.

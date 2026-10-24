@@ -49,6 +49,9 @@ function memoryStorage(meta: StoredBlobMeta | null, deleted: string[] = []): Fil
       if (!meta) throw new Error("not found");
       return meta;
     },
+    async read() {
+      return null;
+    },
   };
 }
 

@@ -40,7 +40,7 @@ export async function findCategoryIdByKey(key: string, tx: DbOrTx = db): Promise
 
 export async function findProductByKey(key: string, tx: DbOrTx = db) {
   const [row] = await tx
-    .select({ id: products.id, isVisible: products.isVisible })
+    .select({ id: products.id, categoryId: products.categoryId, isVisible: products.isVisible })
     .from(products)
     .where(eq(products.key, key))
     .limit(1);

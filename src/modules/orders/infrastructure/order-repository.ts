@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { activityLogs, mockups, orderEvents, orders, payments, productionJobs } from "@/db/schema";
 import { db } from "@/db/client";
 import type { DbOrTx, Tx } from "@/db/tx";
@@ -100,4 +100,53 @@ export async function findPausedFrom(orderId: string, tx: DbOrTx): Promise<Order
 export async function countOrders(tx: DbOrTx) {
   const [row] = await tx.select({ n: sql<number>`count(*)::int` }).from(orders);
   return row?.n ?? 0;
+}
+
+export type GuardFacts = Awaited<ReturnType<typeof loadGuardFacts>>;
+
+/** `loadGuardFacts` for many orders in three queries (the admin list), not four per order. */
+export async function loadGuardFactsFor(
+  orderIds: string[],
+  tx: DbOrTx = db,
+): Promise<Map<string, GuardFacts>> {
+  const facts = new Map<string, GuardFacts>(
+    orderIds.map((id) => [
+      id,
+      { mockupApproved: false, mockupSent: false, depositConfirmed: false, qcPassed: false },
+    ]),
+  );
+  if (!orderIds.length) return facts;
+  const [mockupRows, depositRows, jobRows] = await Promise.all([
+    tx
+      .select({ orderId: mockups.orderId, status: mockups.status })
+      .from(mockups)
+      .where(
+        and(inArray(mockups.orderId, orderIds), inArray(mockups.status, ["approved", "sent"])),
+      ),
+    tx
+      .select({ orderId: payments.orderId })
+      .from(payments)
+      .where(
+        and(
+          inArray(payments.orderId, orderIds),
+          eq(payments.kind, "deposit"),
+          eq(payments.status, "confirmed"),
+        ),
+      ),
+    tx.select().from(productionJobs).where(inArray(productionJobs.orderId, orderIds)),
+  ]);
+  for (const m of mockupRows) {
+    const f = facts.get(m.orderId);
+    if (f && m.status === "approved") f.mockupApproved = true;
+    if (f && m.status === "sent") f.mockupSent = true;
+  }
+  for (const p of depositRows) {
+    const f = facts.get(p.orderId);
+    if (f) f.depositConfirmed = true;
+  }
+  for (const job of jobRows) {
+    const f = facts.get(job.orderId);
+    if (f && job.qcSizesOk && job.qcNamesOk && job.qcPrintOk && job.qcCountOk) f.qcPassed = true;
+  }
+  return facts;
 }

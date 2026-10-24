@@ -11,7 +11,13 @@ export const galleryItems = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
     imageUrl: text("image_url").notNull(),
+    /** Blob URL of an uploaded photo (deleted with the item); null for bundled sample images. */
+    storageKey: text("storage_key").unique(),
+    /** Short label on the photo, e.g. «هوديز». */
+    category: text("category"),
     caption: text("caption"),
+    /** Sample photo from the design, shown with «نموذج عرض» until real work replaces it. */
+    isSample: boolean("is_sample").notNull().default(false),
     customerConsent: boolean("customer_consent").notNull().default(false),
     consentAt: timestamptz("consent_at"),
     isPublished: boolean("is_published").notNull().default(false),

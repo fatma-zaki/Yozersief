@@ -6,7 +6,7 @@ import s from "../admin.module.css";
 import { Ic, P } from "../Ic";
 import { sx } from "../theme";
 import type { Order } from "./data";
-import { dialogSpec, previewMessage } from "./logic";
+import { dialogSpec, isOrg, previewMessage } from "./logic";
 import type { Dialog, ToastState } from "./OrdersBoard.client";
 import o from "./orders.module.css";
 
@@ -37,7 +37,8 @@ export function DecisionDialog({
   const { kind, mobile } = dialog;
   const spec = dialogSpec(kind, r, mobile);
   const isApprove = kind === "approve";
-  const [text, setText] = useState("");
+  // Approving an organisation order starts from the desk's quote draft, when there is one.
+  const [text, setText] = useState(isApprove && isOrg(r) ? (r.quoteDraft ?? "") : "");
   const [err, setErr] = useState("");
   const [waOn, setWaOn] = useState(true);
   const [copied, setCopied] = useState(false);

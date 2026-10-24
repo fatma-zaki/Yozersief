@@ -70,7 +70,16 @@ export function useFlash() {
   return { toast, flash, hide: () => setToast("") };
 }
 
-export function KitToast({ text, onClose }: { text: string; onClose: () => void }) {
+/** `children` sit before the close button (e.g. a «افتح واتساب» link). */
+export function KitToast({
+  text,
+  onClose,
+  children,
+}: {
+  text: string;
+  onClose: () => void;
+  children?: ReactNode;
+}) {
   if (!text) return null;
   return (
     <div className={cn(k.toast, s.pop)} role="status">
@@ -91,6 +100,7 @@ export function KitToast({ text, onClose }: { text: string; onClose: () => void 
         <Ic d={P.ok} size={16} stroke={2.6} />
       </span>
       <span style={{ flexGrow: 1 }}>{text}</span>
+      {children}
       <button
         type="button"
         onClick={onClose}

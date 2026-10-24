@@ -1,13 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { PRODUCTS_GRID, PRODUCTS_MOBILE, type Product } from "./data";
+import type { PublicCategory } from "@/modules/catalog";
+import { productCards, type Product } from "./data";
 import s from "./home.module.css";
 import { Icon } from "./Icon";
 import { Glow, NeonDark, SectionHead, type Bp, type Vars } from "./parts";
 
-/** «منتجاتنا» (design: products section on all three breakpoints). */
-export function Products() {
+/**
+ * «منتجاتنا» (design: products section on all three breakpoints). The cards are the categories
+ * the catalog offers right now; hiding products or categories in the dashboard updates them.
+ */
+export function Products({ categories }: { categories: PublicCategory[] }) {
+  const cards = productCards(categories);
   return (
     <section
       id="products"
@@ -43,7 +48,7 @@ export function Products() {
           <div
             style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 24 }}
           >
-            {PRODUCTS_GRID.map((p) => (
+            {cards.map((p) => (
               <Card key={p.key} p={p} bp="d" />
             ))}
           </div>
@@ -63,7 +68,7 @@ export function Products() {
         />
         <Head bp="t" style={{ marginBottom: 32 }} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 18 }}>
-          {PRODUCTS_GRID.map((p) => (
+          {cards.map((p) => (
             <Card key={p.key} p={p} bp="t" />
           ))}
         </div>
@@ -82,7 +87,7 @@ export function Products() {
         />
         <Head bp="m" style={{ marginBottom: 24 }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {PRODUCTS_MOBILE.map((p) => (
+          {cards.map((p) => (
             <Card key={p.key} p={p} bp="m" />
           ))}
         </div>

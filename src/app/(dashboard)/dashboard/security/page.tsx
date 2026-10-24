@@ -6,6 +6,9 @@ import { requireStaffPage } from "@/lib/auth/session";
 import { listMySessions } from "@/modules/identity";
 import { SignOutOthersButton, TwoFactorSetup } from "./SecurityControls.client";
 
+// Session-bound data: load it on click, not ahead of time (see dashboard/loading.tsx).
+export const prefetch = "force-disabled";
+
 /** My account security (A6.2): signed-in devices + optional 2FA. */
 export default function SecurityPage() {
   return (

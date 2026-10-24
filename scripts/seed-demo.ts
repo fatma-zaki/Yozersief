@@ -51,6 +51,84 @@ const DEMO_PRODUCTS = [
   },
 ] as const;
 
+/** Sample photos from docs/design/Admin-Gallery.html, with the design's consent / publish states. */
+const DEMO_GALLERY = [
+  {
+    imageUrl: "/images/home/hoodie.jpg",
+    category: "هوديز",
+    caption: "هوديز دفعة",
+    consent: true,
+    published: true,
+  },
+  {
+    imageUrl: "/images/home/mug-bottle.jpg",
+    category: "مجات",
+    caption: "مجات هدايا",
+    consent: true,
+    published: true,
+  },
+  {
+    imageUrl: "/images/home/cap.jpg",
+    category: "كابات",
+    caption: "كابات بلوجو",
+    consent: true,
+    published: true,
+  },
+  {
+    imageUrl: "/images/home/phone-cases.jpg",
+    category: "كفرات",
+    caption: "كفرات بصور",
+    consent: false,
+    published: false,
+  },
+  {
+    imageUrl: "/images/home/tshirt.jpg",
+    category: "تيشيرتات",
+    caption: "تيشيرتات فريق",
+    consent: true,
+    published: false,
+  },
+  {
+    imageUrl: "/images/home/sticker.jpg",
+    category: "استيكرات",
+    caption: null,
+    consent: false,
+    published: false,
+  },
+  {
+    imageUrl: "/images/home/heat-press.jpg",
+    category: "طباعة حرارية",
+    caption: "طباعة حرارية",
+    consent: true,
+    published: true,
+  },
+] as const;
+
+/** Adds the sample photos once; they carry is_sample so the dashboard marks them «نموذج عرض». */
+async function seedDemoGallery(db: NodePgDatabase<typeof schema>, adminId: string) {
+  const [existing] = await db
+    .select({ id: schema.galleryItems.id })
+    .from(schema.galleryItems)
+    .where(eq(schema.galleryItems.isSample, true))
+    .limit(1);
+  if (existing) return;
+  const now = Date.now();
+  // Oldest first, so the newest-first gallery lists them in the design's order.
+  const rows = [...DEMO_GALLERY].reverse().map((g, i) => ({
+    imageUrl: g.imageUrl,
+    category: g.category,
+    caption: g.caption,
+    isSample: true,
+    customerConsent: g.consent,
+    consentAt: g.consent ? new Date(now) : null,
+    isPublished: g.published,
+    createdBy: adminId,
+    createdAt: new Date(now - (DEMO_GALLERY.length - i) * 60_000),
+  }));
+  await db.insert(schema.galleryItems).values(rows);
+  console.log(`Demo gallery: ${rows.length} sample photos.`);
+}
+
 async function seedDemoProducts(db: NodePgDatabase<typeof schema>) {
   const categories = await db.select().from(schema.productCategories);
   const categoryId = new Map(categories.map((c) => [c.key, c.id]));
@@ -87,6 +165,7 @@ async function seedDemoProducts(db: NodePgDatabase<typeof schema>) {
 
 export async function seedDemo(db: NodePgDatabase<typeof schema>, adminId: string) {
   await seedDemoProducts(db);
+  await seedDemoGallery(db, adminId);
 
   const [existing] = await db
     .select({ id: schema.customers.id })

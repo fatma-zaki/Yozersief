@@ -1,4 +1,5 @@
 import "server-only";
+import { getSessionCookie } from "better-auth/cookies";
 import { forbidden, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { cache } from "react";
@@ -16,7 +17,36 @@ import { assertTwoFactorEnrollment, resolveStaffForAction } from "./session-guar
  * An incomplete login 2FA challenge never yields a session from Better Auth, so it is null here.
  */
 export const getStaffContext = cache(async (): Promise<StaffContext | null> => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const requestHeaders = await headers();
+  const token = getSessionCookie(requestHeaders, { cookiePrefix: "yz" });
+  if (!token) return null;
+  const hit = recentSessions.get(token);
+  if (hit && hit.expires > Date.now()) return hit.staff;
+
+  // Store the promise, so requests arriving together share one lookup.
+  const staff = loadStaffContext(requestHeaders);
+  if (recentSessions.size >= RECENT_SESSIONS_MAX) recentSessions.clear();
+  recentSessions.set(token, { staff, expires: Date.now() + RECENT_SESSION_TTL_MS });
+  staff.catch(() => recentSessions.delete(token));
+  return staff;
+});
+
+/**
+ * Every dashboard request needs the session, and Better Auth reads it with two queries in a
+ * row. Remembering the answer for a few seconds per server instance makes tab switches skip
+ * that round trip. Sign-out, pausing a member, revoking devices and 2FA changes call
+ * `forgetRecentSessions()`; on other instances the change applies within the TTL.
+ */
+const RECENT_SESSION_TTL_MS = 30_000;
+const RECENT_SESSIONS_MAX = 500;
+const recentSessions = new Map<string, { staff: Promise<StaffContext | null>; expires: number }>();
+
+export function forgetRecentSessions(): void {
+  recentSessions.clear();
+}
+
+async function loadStaffContext(requestHeaders: Headers): Promise<StaffContext | null> {
+  const session = await auth.api.getSession({ headers: requestHeaders });
   if (!session) return null;
   const user = session.user as typeof session.user & {
     roleId: number;
@@ -35,7 +65,7 @@ export const getStaffContext = cache(async (): Promise<StaffContext | null> => {
     twoFactorEnabled: Boolean(user.twoFactorEnabled),
     permissions: new Set(access.permissions),
   };
-});
+}
 
 /** Pages: redirect to login when signed out. */
 export async function requireStaffPage(): Promise<StaffContext> {
