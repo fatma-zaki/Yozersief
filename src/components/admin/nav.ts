@@ -25,13 +25,13 @@ export const TEAM_NAV: readonly AdminNavItem[] = [
   { href: "/dashboard/desk", label: "استقبال الطلبات", short: "الطلبات", icon: P.inbox },
   {
     href: "/dashboard/design",
-    label: "شغل التصميم",
+    label: "الموكابات والتصميم",
     short: "التصميم",
     icon: "M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586M11 11a2 2 0 1 1-4 0 2 2 0 1 1 4 0",
   },
   {
     href: "/dashboard/production",
-    label: "بورد الإنتاج",
+    label: "لوحة الإنتاج",
     short: "الإنتاج",
     icon: "M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",
   },

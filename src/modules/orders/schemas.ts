@@ -8,10 +8,8 @@ import { cairoDateString, normalizeDigits } from "@/lib/format";
 import { normalizeEgyptianMobile } from "@/lib/phone";
 import {
   COLORS,
-  MUG_PRODUCTS,
   PRINT_PLACES,
   STICKER_SHAPES,
-  WEAR_PRODUCTS,
   hasSizeSplit,
   isOrg,
   sizeSum,
@@ -21,9 +19,15 @@ import {
   type WearSize,
 } from "./domain/request";
 
-const wearProduct = z.enum(WEAR_PRODUCTS);
-const mugProduct = z.enum(MUG_PRODUCTS);
-const productKey = z.union([wearProduct, mugProduct]);
+/**
+ * A catalog product key (B4 keys such as `tshirt`, or ones added from the dashboard). Whether it
+ * exists, is visible and belongs to the chosen category is checked against the catalog on submit.
+ */
+const productKey = z
+  .string()
+  .trim()
+  .max(60)
+  .regex(/^[a-z0-9-]*$/, "المنتج مش موجود.");
 
 const emptyWearSizeStrings = (): Record<WearSize, string> =>
   Object.fromEntries(WEAR_SIZES.map((s) => [s, ""])) as Record<WearSize, string>;
@@ -44,7 +48,7 @@ export const submitOrderInputSchema = z
     submissionKey: submissionKeySchema,
     ctype: z.enum(["person", "biz", "group"]),
     cat: z.enum(CATEGORY_KEYS),
-    prod: z.union([productKey, z.literal("")]).default(""),
+    prod: productKey.default(""),
     color: z.union([z.enum(COLORS), z.literal("")]).default(""),
     qty: z.string().default(""),
     sizes: wearSizesInputSchema.default(emptyWearSizeStrings()),
@@ -95,7 +99,7 @@ export const submitOrderInputSchema = z
     }
 
     if (d.cat === "wear") {
-      if (!d.prod || !wearProduct.safeParse(d.prod).success) {
+      if (!d.prod) {
         ctx.addIssue({ code: "custom", path: ["prod"], message: "اختار نوع المنتج." });
       }
       if (!d.color) {
@@ -119,7 +123,7 @@ export const submitOrderInputSchema = z
         });
       }
     } else if (d.cat === "mug") {
-      if (!d.prod || !mugProduct.safeParse(d.prod).success) {
+      if (!d.prod) {
         ctx.addIssue({ code: "custom", path: ["prod"], message: "اختار المنتج." });
       }
       if (qty < 1) {
@@ -280,3 +284,108 @@ export const internalNoteSchema = z.object({
   note: z.string().trim().max(4000),
 });
 export type InternalNoteInput = z.input<typeof internalNoteSchema>;
+
+/* ---------- Desk workspace (brief B10) ---------- */
+
+/** An amount as typed: Arabic digits and thousands commas allowed, up to 2 decimals. */
+const moneyInput = (empty: string) =>
+  z
+    .string()
+    .transform((v) =>
+      normalizeDigits(v)
+        .replace(/[,٬\s]/g, "")
+        .replace("٫", "."),
+    )
+    .pipe(
+      z
+        .string()
+        .min(1, empty)
+        .regex(/^\d{1,10}(\.\d{1,2})?$/, "اكتب رقم صحيح (مثلًا 85 أو 85.50).")
+        .transform((v) => (v.includes(".") ? v : `${v}.00`)),
+    );
+
+/** «مسودة عرض السعر» → goes to the admin for approval. */
+export const deskQuoteSchema = z.object({
+  orderId: orderIdSchema,
+  unitPrice: moneyInput("اكتب سعر القطعة."),
+  total: moneyInput("اكتب الإجمالي."),
+  leadTimeDays: z
+    .string()
+    .transform((v) => normalizeDigits(v).replace(/[^\d]/g, ""))
+    .pipe(
+      z
+        .string()
+        .min(1, "اكتب مدة التنفيذ بالأيام.")
+        .transform(Number)
+        .pipe(z.number().int().min(1, "المدة يوم واحد على الأقل.").max(365, "المدة طويلة جدًا.")),
+    ),
+});
+export type DeskQuoteInput = z.input<typeof deskQuoteSchema>;
+
+/** «حوّل للمدير للموافقة» / «واتساب العميل». */
+export const deskOrderSchema = z.object({ orderId: orderIdSchema });
+export type DeskOrderInput = z.input<typeof deskOrderSchema>;
+
+/* ---------- Design, production and delivery workspaces (brief B10) ---------- */
+
+/** «ارفع نسخة موكاب جديدة»: the Blob the browser just uploaded for this order. */
+export const mockupUploadSchema = z.object({
+  orderId: orderIdSchema,
+  url: z.url(),
+  pathname: z.string().min(1).max(500),
+  contentType: z.string().min(1).max(200),
+  requestedPathname: z.string().min(1).max(500),
+});
+export type MockupUploadInput = z.input<typeof mockupUploadSchema>;
+
+/** «بلّغ الاستقبال بمشكلة في الملف». */
+export const flagFileSchema = z.object({
+  orderId: orderIdSchema,
+  note: z.string().trim().max(500).default(""),
+});
+export type FlagFileInput = z.input<typeof flagFileSchema>;
+
+/** The desk records the customer's answer on the mockup they were sent. */
+export const mockupDecisionSchema = z.object({
+  orderId: orderIdSchema,
+  decision: z.enum(["approve", "changes"]),
+  feedback: z.string().trim().max(2000).default(""),
+});
+export type MockupDecisionInput = z.input<typeof mockupDecisionSchema>;
+
+export const printedCountSchema = z.object({
+  orderId: orderIdSchema,
+  count: z.number().int().min(0).max(1_000_000),
+});
+export type PrintedCountInput = z.input<typeof printedCountSchema>;
+
+export const qcCheckSchema = z.object({
+  orderId: orderIdSchema,
+  key: z.enum(["qcSizesOk", "qcNamesOk", "qcPrintOk", "qcCountOk"]),
+  on: z.boolean(),
+});
+export type QcCheckInput = z.input<typeof qcCheckSchema>;
+
+export const piecePrintedSchema = z.object({
+  pieceId: z.number().int().positive(),
+  printed: z.boolean(),
+});
+export type PiecePrintedInput = z.input<typeof piecePrintedSchema>;
+
+/** «آخر 3 أرقام من موبايل العميل». */
+export const handoverSchema = z.object({
+  orderId: orderIdSchema,
+  code: z
+    .string()
+    .transform((v) => normalizeDigits(v).replace(/\D/g, ""))
+    .pipe(z.string().length(3, "اكتب آخر 3 أرقام من موبايل العميل.")),
+});
+export type HandoverInput = z.input<typeof handoverSchema>;
+
+/** «سجّل الدفعة» — waits for the admin's confirmation. */
+export const recordPaymentSchema = z.object({
+  orderId: orderIdSchema,
+  amount: moneyInput("اكتب المبلغ الأول."),
+  method: z.enum(["cash", "transfer"]),
+});
+export type RecordPaymentInput = z.input<typeof recordPaymentSchema>;

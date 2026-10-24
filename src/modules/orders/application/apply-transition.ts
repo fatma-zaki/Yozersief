@@ -19,6 +19,11 @@ import {
   lockOrder,
   updateOrderState,
 } from "../infrastructure/order-repository";
+import {
+  decideSentMockup,
+  recordDelivered,
+  upsertJob,
+} from "../infrastructure/workspace-repository";
 
 export type TransitionInput = {
   orderId: string;
@@ -109,6 +114,7 @@ export async function applyTransitionInTx(
     plan.transition === "reject" ? { rejectionReason: plan.event.note } : {},
     tx,
   );
+  await syncWorkRecords(tx, plan, { id: order.id, quantity: order.quantity }, actorId);
   await insertOrderEvent(
     {
       orderId: order.id,
@@ -157,4 +163,40 @@ export async function applyTransitionInTx(
     order: { id: order.id, ref: order.ref, customerId: order.customerId },
     message,
   });
+}
+
+/**
+ * Keeps the workspace tables in step with the lifecycle, whoever runs the transition (admin,
+ * desk, production, delivery): the mockup the customer answered, the production job, the handover.
+ */
+async function syncWorkRecords(
+  tx: Tx,
+  plan: TransitionPlan,
+  order: { id: string; quantity: number | null },
+  actorId: string | null,
+) {
+  const now = new Date();
+  switch (plan.transition) {
+    case "approve_mockup":
+      return decideSentMockup(order.id, { status: "approved" }, tx);
+    case "request_mockup_changes":
+      return decideSentMockup(
+        order.id,
+        { status: "changes_requested", feedback: plan.event.note ?? "" },
+        tx,
+      );
+    case "start_production":
+      await upsertJob(order.id, { stage: "printing", startedAt: now, operatorId: actorId }, tx);
+      return;
+    case "send_to_qc":
+      await upsertJob(order.id, { stage: "qc" }, tx);
+      return;
+    case "mark_ready":
+      await upsertJob(order.id, { stage: "ready", finishedAt: now }, tx);
+      return;
+    case "deliver":
+      return recordDelivered(order.id, { quantity: order.quantity ?? 1, deliveredBy: actorId }, tx);
+    default:
+      return;
+  }
 }
