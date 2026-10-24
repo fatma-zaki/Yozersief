@@ -30,9 +30,9 @@ const QUICK = [
 ];
 const PRODUCT_LINKS = [
   { href: "/services/wear", label: "طباعة الملابس" },
-  { href: "/order?category=mug", label: "المجات والكاسات" },
+  { href: "/order?category=mug", label: "الأكواب والكؤوس" },
   { href: "/order?category=custom", label: "الهدايا المخصصة" },
-  { href: "/order?category=sticker", label: "الاستيكرات" },
+  { href: "/order?category=sticker", label: "الملصقات" },
   { href: "#products", label: "جميع المنتجات" },
 ];
 
@@ -77,7 +77,7 @@ type SocialId = "whatsapp" | "instagram" | "facebook" | "tiktok";
 
 const SOCIALS: { id: SocialId; label: string; href?: string }[] = [
   { id: "whatsapp", label: "واتساب", href: WHATSAPP_URL },
-  { id: "instagram", label: "انستجرام", href: INSTAGRAM_URL },
+  { id: "instagram", label: "إنستغرام", href: INSTAGRAM_URL },
   { id: "facebook", label: "فيسبوك: يوزرسيف" },
   { id: "tiktok", label: "تيك توك: يوزرسيف" },
 ];
@@ -210,7 +210,7 @@ function FooterDesktop() {
               className={s.fg}
               style={{ ...muted, margin: 0, maxWidth: 320, fontSize: 14, lineHeight: "26px" }}
             >
-              يوزرسيف للطباعة والتخصيص في أسوان: تيشرتات، هوديز، كابات، مجات، استيكرات وهدايا
+              يوزرسيف للطباعة والتخصيص في أسوان: تيشيرتات، هوديز، قبعات، أكواب، ملصقات وهدايا
               بتصميمك أنت.
             </p>
             <SocialRow />
@@ -272,7 +272,7 @@ function FooterDesktop() {
               style={{ ...muted, display: "flex", alignItems: "center", gap: 8 }}
             >
               <Icon name="mail" size={18} style={{ color: "#7ee8c7" }} />
-              [الإيميل — بانتظار التأكيد]
+              [البريد الإلكتروني — بانتظار التأكيد]
             </span>
             <span
               className={s.fg}
@@ -329,7 +329,7 @@ function FooterTablet() {
             style={{ width: 100, height: 100, borderRadius: 22, display: "block" }}
           />
           <p className={s.fg} style={{ ...muted, margin: 0, fontSize: 14, lineHeight: "24px" }}>
-            يوزرسيف للطباعة والتخصيص في أسوان: تيشرتات، هوديز، كابات، مجات، استيكرات وهدايا بتصميمك
+            يوزرسيف للطباعة والتخصيص في أسوان: تيشيرتات، هوديز، قبعات، أكواب، ملصقات وهدايا بتصميمك
             أنت.
           </p>
           <SocialRow />
@@ -340,7 +340,7 @@ function FooterTablet() {
             01116891025
           </a>
           <span className={s.fg} style={muted}>
-            [الإيميل — بانتظار التأكيد]
+            [البريد الإلكتروني — بانتظار التأكيد]
           </span>
           <span className={s.fg} style={muted}>
             أسوان، مصر
@@ -421,7 +421,7 @@ function FooterMobile() {
             01116891025
           </a>
           <span className={s.fg} style={muted}>
-            [الإيميل — للتأكيد]
+            [البريد الإلكتروني — للتأكيد]
           </span>
           <span className={s.fg} style={muted}>
             أسوان، مصر

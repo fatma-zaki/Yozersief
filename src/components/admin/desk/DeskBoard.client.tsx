@@ -31,9 +31,9 @@ const FILTERS: [Filter, string][] = [
 const STATE: Record<DeskState, [string, string | undefined]> = {
   new: ["جديد", k.bOk],
   awaiting: ["بانتظار العميل", k.bWarn],
-  pending: ["مستني المدير", k.bRole],
+  pending: ["بانتظار المدير", k.bRole],
   mockup: ["موكاب جاهز", k.bOk],
-  mockup_sent: ["الموكاب عند العميل", k.bWarn],
+  mockup_sent: ["الموكاب لدى العميل", k.bWarn],
 };
 
 const WHO: Record<DeskOrderView["ctype"], string> = {
@@ -99,7 +99,7 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
         return;
       }
       setQ(EMPTY_QUOTE);
-      done("اتبعتت مسودة عرض السعر للمدير يعتمدها");
+      done("أُرسلت مسودة عرض السعر إلى المدير لاعتمادها");
     });
   };
 
@@ -108,7 +108,7 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
     startTransition(async () => {
       const result = await forwardToAdminAction({ orderId: sel.id });
       if (!result.ok) flash(result.error);
-      else done("اتحوّل الطلب للمدير للموافقة");
+      else done("حُوّل الطلب إلى المدير للموافقة");
     });
   };
 
@@ -124,8 +124,8 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
       setInfo(false);
       done(
         result.data.waLink
-          ? "اتسجل طلب البيانات — رسالة الواتساب جاهزة"
-          : "اتسجل طلب البيانات من العميل",
+          ? "سُجّل طلب البيانات — رسالة واتساب جاهزة"
+          : "سُجّل طلب البيانات من العميل",
         result.data.waLink ?? "",
       );
     });
@@ -154,7 +154,7 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
     startTransition(async () => {
       const result = await sendMockupAction({ orderId: sel.id });
       if (!result.ok) flash(result.error);
-      else done(`اتبعت الموكاب لعميل ${result.data.ref}`, result.data.waLink ?? "");
+      else done(`أُرسل الموكاب إلى عميل ${result.data.ref}`, result.data.waLink ?? "");
     });
   };
 
@@ -168,21 +168,21 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
       }
       done(
         decision === "approve"
-          ? `اتسجل اعتماد الموكاب لـ ${result.data.ref} — فاضل العربون`
-          : "اتسجلت التعديلات ورجعت للمصمم",
+          ? `سُجّل اعتماد الموكاب لـ ${result.data.ref} — يتبقى العربون`
+          : "سُجّلت التعديلات وأُعيدت إلى المصمم",
         result.data.waLink ?? "",
       );
     });
   };
 
   const stats = [
-    { label: "طلبات جديدة", n: data.stats.new, sub: "محتاجة مراجعة أولية" },
-    { label: "بانتظار رد العميل", n: data.stats.awaiting, sub: "اتطلب منهم بيانات" },
-    { label: "مستنية اعتماد المدير", n: data.stats.pending, sub: "عروض أسعار وموافقات" },
+    { label: "طلبات جديدة", n: data.stats.new, sub: "تحتاج إلى مراجعة أولية" },
+    { label: "بانتظار رد العميل", n: data.stats.awaiting, sub: "طُلبت منهم بيانات" },
+    { label: "بانتظار اعتماد المدير", n: data.stats.pending, sub: "عروض أسعار وموافقات" },
     {
       label: "متوسط أول رد",
       n: data.stats.firstResponse ?? "[—]",
-      sub: data.stats.firstResponse ? "آخر 30 يوم" : "مفيش ردود في آخر 30 يوم",
+      sub: data.stats.firstResponse ? "آخر 30 يومًا" : "لا توجد ردود في آخر 30 يومًا",
     },
   ];
 
@@ -190,7 +190,7 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
     <div className={k.root}>
       <KitHeader
         title="استقبال الطلبات"
-        subtitle="راجع الطلبات الجديدة، كلّم العملاء، وجهّز عروض الأسعار للمدير"
+        subtitle="راجع الطلبات الجديدة، تواصل مع العملاء، وجهّز عروض الأسعار للمدير"
       />
 
       <section
@@ -238,7 +238,7 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
             }}
           >
             <h2 id="q-h" className={k.h2}>
-              الطلبات اللي عليك
+              الطلبات المسندة إليك
             </h2>
             <div role="group" aria-label="فلتر" style={{ display: "flex", gap: 6 }}>
               {FILTERS.map(([key, label]) => (
@@ -308,8 +308,8 @@ export function DeskBoard({ data, canPhone }: { data: DeskData; canPhone: boolea
           ) : (
             <p className={k.muted} style={{ margin: 0, padding: "18px 6px", fontSize: 14 }}>
               {data.orders.length
-                ? "مفيش طلبات بالفلتر ده."
-                : "مفيش طلبات عليك دلوقتي. الطلبات الجديدة هتظهر هنا أول ما توصل."}
+                ? "لا توجد طلبات تطابق هذا الفلتر."
+                : "لا توجد طلبات مسندة إليك حاليًا. ستظهر الطلبات الجديدة هنا فور وصولها."}
             </p>
           )}
         </section>
@@ -485,7 +485,7 @@ function Detail({
             style={{ padding: "12px 14px", display: "flex", flexDirection: "column" }}
           >
             <span className={k.muted} style={{ fontSize: 12, fontWeight: 700 }}>
-              الموبايل{" "}
+              الهاتف{" "}
               {canPhone ? (
                 <span className={cn(k.badge, k.bOk)} style={{ marginInlineStart: 4 }}>
                   ظاهر لدورك
@@ -517,7 +517,7 @@ function Detail({
         </div>
 
         <p style={{ margin: 0, fontSize: 14, lineHeight: "24px", whiteSpace: "pre-line" }}>
-          <strong>ملاحظات العميل:</strong> {sel.notes || "مفيش ملاحظات."}
+          <strong>ملاحظات العميل:</strong> {sel.notes || "لا توجد ملاحظات."}
         </p>
 
         {sel.mockup ? (
@@ -533,8 +533,8 @@ function Detail({
               <Ic d={P.clock} size={18} />
             </span>
             <span style={{ fontSize: 14, lineHeight: "22px" }}>
-              <strong style={{ color: "var(--ink-strong)" }}>مستني اعتماد المدير.</strong> هيوصلك
-              إشعار لما يعتمد، وبعدها الرسالة بتتبعت للعميل.
+              <strong style={{ color: "var(--ink-strong)" }}>بانتظار اعتماد المدير.</strong> سيصلك
+              إشعار عند اعتماده، ثم تُرسل الرسالة إلى العميل.
             </span>
           </div>
         ) : null}
@@ -555,7 +555,7 @@ function Detail({
             <h3 className={k.h2} style={{ fontSize: 15 }}>
               مسودة عرض السعر{" "}
               <span className={k.muted} style={{ fontWeight: 500, fontSize: 12 }}>
-                (بتروح للمدير يعتمدها)
+                (تُرسل إلى المدير لاعتمادها)
               </span>
             </h3>
             <div
@@ -596,7 +596,7 @@ function Detail({
               }}
             >
               <Ic d={P.sent} size={18} />
-              ابعت للمدير للاعتماد
+              أرسل إلى المدير للاعتماد
             </button>
           </form>
         ) : null}
@@ -610,7 +610,7 @@ function Detail({
               disabled={busy}
               style={{ minHeight: 44, padding: "6px 18px", borderRadius: 999, fontSize: 14 }}
             >
-              حوّل للمدير للموافقة
+              حوّل إلى المدير للموافقة
             </button>
           ) : null}
           {sel.can.info && !atMockup ? (
@@ -640,7 +640,8 @@ function Detail({
         <div className={d.lockrow}>
           <Ic d={P.lock} size={18} />
           <span>
-            <strong>الموافقة النهائية والرفض والأسعار</strong> صلاحية المدير بس. إنت بتجهّز وبتحوّل.
+            <strong>الموافقة النهائية والرفض والأسعار</strong> من صلاحيات المدير فقط. دورك هو
+            التجهيز والتحويل.
           </span>
         </div>
       </div>
@@ -691,10 +692,10 @@ function MockupPanel({
         <span style={{ flexGrow: 1, fontSize: 14, lineHeight: "22px" }}>
           <strong style={{ color: "var(--ink-strong)" }}>
             {sent
-              ? `الموكاب نسخة ${m.version} عند العميل.`
-              : `المصمم رفع الموكاب نسخة ${m.version}.`}
+              ? `الموكاب نسخة ${m.version} لدى العميل.`
+              : `رفع المصمم الموكاب نسخة ${m.version}.`}
           </strong>{" "}
-          {sent ? "سجّل رد العميل لما يوصلك على واتساب." : "راجعه وابعته للعميل يعتمده."}{" "}
+          {sent ? "سجّل رد العميل عندما يصلك عبر واتساب." : "راجعه وأرسله إلى العميل لاعتماده."}{" "}
           <a href={m.url} target="_blank" rel="noopener noreferrer" dir="ltr">
             {m.fileName}
           </a>
@@ -704,7 +705,7 @@ function MockupPanel({
         changes ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <label className={k.lbl} htmlFor="mk-f">
-              التعديلات اللي العميل طلبها
+              التعديلات التي طلبها العميل
             </label>
             <textarea
               id="mk-f"
@@ -722,7 +723,7 @@ function MockupPanel({
                 onClick={() => onDecision("changes", feedback)}
                 style={pill}
               >
-                رجّعه للمصمم بالتعديلات
+                أعده إلى المصمم مع التعديلات
               </button>
               <button
                 className={cn(k.btn, k.soft)}
@@ -764,7 +765,7 @@ function MockupPanel({
           style={{ ...pill, alignSelf: "flex-start" }}
         >
           <Ic d={P.sent} size={16} />
-          ابعت الموكاب للعميل
+          أرسل الموكاب إلى العميل
         </button>
       )}
     </div>

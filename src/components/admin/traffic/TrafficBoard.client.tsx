@@ -93,13 +93,13 @@ const sinceFmt = new Intl.DateTimeFormat("ar-EG-u-nu-latn", {
 function notice(since: Date | null, mobile: boolean) {
   if (!since) {
     return mobile
-      ? "لسه مفيش زيارات متسجلة. الأرقام هتبدأ تظهر مع أول زائر."
-      : "لسه مفيش زيارات متسجلة. الأرقام هتبدأ تظهر مع أول زائر للموقع، من غير cookies ومن غير أي بيانات شخصية للزوار.";
+      ? "لا توجد زيارات مسجّلة بعد. ستبدأ الأرقام في الظهور مع أول زائر."
+      : "لا توجد زيارات مسجّلة بعد. ستبدأ الأرقام في الظهور مع أول زائر للموقع، دون ملفات تعريف الارتباط (cookies) ودون أي بيانات شخصية للزوار.";
   }
   const from = sinceFmt.format(since);
   return mobile
-    ? `أرقام حقيقية من الموقع من يوم ${from}، مجمّعة ومن غير بيانات شخصية.`
-    : `الأرقام دي زيارات حقيقية للموقع، متسجلة من يوم ${from}. بنعدّها من غير cookies ومن غير أي بيانات شخصية للزوار، وزيارات الفريق وهو مسجّل دخول مش محسوبة.`;
+    ? `أرقام حقيقية من الموقع منذ ${from}، مجمّعة ودون بيانات شخصية.`
+    : `هذه الأرقام زيارات حقيقية للموقع، مسجّلة منذ ${from}. نحسبها دون ملفات تعريف الارتباط (cookies) ودون أي بيانات شخصية للزوار، ولا تُحتسب زيارات الفريق أثناء تسجيل الدخول.`;
 }
 
 /* ================================ Desktop ================================ */
@@ -114,12 +114,12 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
       hero: true,
     },
     {
-      label: "زوار مختلفين",
+      label: "زوار فريدون",
       value: fmt(d.visitors),
       icon: KPI_ICONS.unique,
       delta: d.deltas.visitors,
     },
-    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
+    { label: "طلبات مُرسلة", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
     {
       label: "معدل التحويل",
       value: `${d.conv.toFixed(1)}%`,
@@ -128,11 +128,11 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
     },
   ];
   const ranges: [Range, string][] = [
-    ["today", "النهارده"],
+    ["today", "اليوم"],
     ["d7", "آخر 7 أيام"],
-    ["d30", "آخر 30 يوم"],
+    ["d30", "آخر 30 يومًا"],
   ];
-  const rangeWord = { today: "النهارده (كل ساعة)", d7: "آخر 7 أيام", d30: "آخر 30 يوم" }[range];
+  const rangeWord = { today: "اليوم (كل ساعة)", d7: "آخر 7 أيام", d30: "آخر 30 يومًا" }[range];
 
   return (
     <div
@@ -141,12 +141,12 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
       style={{ display: "flex", flexDirection: "column", gap: 16 }}
     >
       <PageHeader
-        title="الزيارات والترافيك"
-        subtitle="مين بيزور الموقع، منين جه، وكام واحد منهم بعت طلب"
+        title="الزيارات وحركة الزوار"
+        subtitle="من يزور الموقع، ومن أين أتى، وكم منهم أرسل طلبًا"
       >
         <span className={cn(s.pill, t.pill)}>
           <span className={t.liveDot} aria-hidden="true" />
-          {fmt(live)} زائر على الموقع دلوقتي
+          {fmt(live)} زائر على الموقع الآن
         </span>
         <div
           role="group"
@@ -244,7 +244,7 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
               الزيارات {rangeWord}
             </h2>
             <span className={t.muted} style={{ fontSize: 12 }}>
-              مرّر على الرسم عشان تشوف الرقم بالظبط
+              مرّر المؤشر على الرسم لرؤية الرقم بدقة
             </span>
           </div>
           <button
@@ -300,10 +300,10 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
           gap: 16,
         }}
       >
-        <Card id="src-h" title="الزوار جايين منين؟" note="نسبة من الزيارات" delay={s.d3}>
+        <Card id="src-h" title="من أين يأتي الزوار؟" note="نسبة من الزيارات" delay={s.d3}>
           <Sources d={d} mobile={false} />
         </Card>
-        <Card id="pg-h" title="أكتر الصفحات زيارة" note="مشاهدات" delay={s.d3}>
+        <Card id="pg-h" title="أكثر الصفحات زيارة" note="مشاهدات" delay={s.d3}>
           <ol
             style={{
               listStyle: "none",
@@ -390,7 +390,7 @@ function Desktop({ d, since, range, pick, hov, setHov, table, setTable, live }: 
           <Devices d={d} mobile={false} />
           {mostlyMobile(d) ? (
             <p className={t.muted} style={{ margin: 0, fontSize: 12, lineHeight: "20px" }}>
-              أغلب الزوار من الموبايل، فأي تعديل في الموقع لازم يتجرب على الموبايل الأول.
+              أغلب الزوار من الهواتف، لذا يجب تجربة أي تعديل في الموقع على الهاتف أولًا.
             </p>
           ) : null}
         </Card>
@@ -509,7 +509,7 @@ function Kpi({
       </strong>
       {delta === null ? (
         <span style={{ fontSize: mobile ? 11 : 12, fontWeight: 600, opacity: 0.75 }}>
-          {mobile ? "مفيش مقارنة" : "مفيش بيانات للفترة اللي قبلها"}
+          {mobile ? "لا توجد مقارنة" : "لا توجد بيانات للفترة السابقة"}
         </span>
       ) : (
         <span {...deltaColor}>
@@ -519,7 +519,7 @@ function Kpi({
             <>
               {" "}
               <span {...sx({ fontWeight: 500, opacity: 0.8 }, { color: "rgba(242,251,248,0.7)" })}>
-                عن الفترة اللي قبلها
+                عن الفترة السابقة
               </span>
             </>
           )}
@@ -691,8 +691,8 @@ function Funnel({ d, mobile }: { d: Derived; mobile: boolean }) {
   const steps: [string, number][] = [
     ["زاروا الموقع", d.funnel.visitors],
     ["فتحوا منشئ الطلب", d.funnel.builder],
-    ["بعتوا طلب", d.funnel.submitted],
-    ["اتوافق على طلبهم", d.funnel.approved],
+    ["أرسلوا طلبًا", d.funnel.submitted],
+    ["قُبل طلبهم", d.funnel.approved],
   ];
   // The largest step, not visits: orders from before recording began can outnumber them.
   const base = Math.max(1, ...steps.map(([, n]) => n));
@@ -757,7 +757,7 @@ function Funnel({ d, mobile }: { d: Derived; mobile: boolean }) {
             {next ? (
               mobile ? (
                 <span className={t.muted} style={{ fontSize: 11 }}>
-                  ↓ {step}% كمّلوا
+                  ↓ {step}% أكملوا
                 </span>
               ) : (
                 <span
@@ -765,7 +765,7 @@ function Funnel({ d, mobile }: { d: Derived; mobile: boolean }) {
                   style={{ fontSize: 12, display: "flex", alignItems: "center", gap: 4 }}
                 >
                   <Ic d="M12 5v14M19 12l-7 7-7-7" size={14} />
-                  {step}% كمّلوا للخطوة الجاية
+                  {step}% انتقلوا إلى الخطوة التالية
                 </span>
               )
             ) : null}
@@ -785,7 +785,7 @@ function mostlyMobile(d: Derived) {
 function Empty() {
   return (
     <p className={t.muted} style={{ margin: 0, fontSize: 13, lineHeight: "22px" }}>
-      لسه مفيش زيارات في الفترة دي.
+      لا توجد زيارات في هذه الفترة بعد.
     </p>
   );
 }
@@ -1163,12 +1163,12 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
       hero: true,
     },
     {
-      label: "زوار مختلفين",
+      label: "زوار فريدون",
       value: fmt(d.visitors),
       icon: KPI_ICONS.uniqueM,
       delta: d.deltas.visitors,
     },
-    { label: "طلبات اتبعتت", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
+    { label: "طلبات مُرسلة", value: fmt(d.orders), icon: KPI_ICONS.orders, delta: d.deltas.orders },
     {
       label: "معدل التحويل",
       value: `${d.conv.toFixed(1)}%`,
@@ -1177,11 +1177,11 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
     },
   ];
   const ranges: [Range, string][] = [
-    ["today", "النهارده"],
+    ["today", "اليوم"],
     ["d7", "7 أيام"],
-    ["d30", "30 يوم"],
+    ["d30", "30 يومًا"],
   ];
-  const rangeWord = { today: "النهارده", d7: "آخر 7 أيام", d30: "آخر 30 يوم" }[range];
+  const rangeWord = { today: "اليوم", d7: "آخر 7 أيام", d30: "آخر 30 يومًا" }[range];
   const topInner = d.pages.find((x) => x.path !== "/");
   const mCard = (id: string, title: string, gap: number, children: ReactNode, pad = "14px") => (
     <section
@@ -1234,7 +1234,7 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
       <MobileHeader
         title={
           <>
-            الزيارات <Neon>والترافيك</Neon>
+            الزيارات <Neon>وحركة الزوار</Neon>
           </>
         }
         sub={
@@ -1251,7 +1251,7 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
             )}
           >
             <span className={cn(t.liveDot, t.liveDotM)} aria-hidden="true" />
-            {fmt(live)} زائر دلوقتي
+            {fmt(live)} زائر الآن
           </span>
         }
       >
@@ -1334,7 +1334,7 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
                 الزيارات {rangeWord}
               </h2>
               <span className={t.muted} style={{ fontSize: 11 }}>
-                اضغط على الرسم تشوف الرقم
+                اضغط على الرسم لرؤية الرقم
               </span>
             </div>
             <button
@@ -1359,11 +1359,11 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
             <Chart d={d} hov={hov} setHov={setHov} height={200} mobile />
           )}
         </section>
-        {mCard("ms-h", "الزوار جايين منين؟", 12, <Sources d={d} mobile />)}
+        {mCard("ms-h", "من أين يأتي الزوار؟", 12, <Sources d={d} mobile />)}
         {mCard("mf-h", "من الزيارة للطلب", 10, <Funnel d={d} mobile />)}
         {mCard(
           "md-h",
-          "الأجهزة وأكتر صفحة",
+          "الأجهزة وأكثر صفحة",
           12,
           <>
             <Devices d={d} mobile />
@@ -1386,10 +1386,10 @@ function Mobile({ d, since, range, pick, hov, setHov, table, setTable, live }: P
               <Rank n={1} />
               <span style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                 <strong {...sx({ fontSize: 13 }, { color: "#ffffff" })}>
-                  {topInner?.name ?? "لسه مفيش"}
+                  {topInner?.name ?? "لا يوجد بعد"}
                 </strong>
                 <span className={t.muted} style={{ fontSize: 11 }}>
-                  أكتر صفحة اتشافت بعد الرئيسية
+                  أكثر صفحة شوهدت بعد الرئيسية
                 </span>
               </span>
               <strong {...sx({ fontSize: 13 }, { color: "#ffffff" })}>

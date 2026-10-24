@@ -85,10 +85,10 @@ export function checkUpload(input: {
   const ext = extensionOf(input.fileName);
   if (!(ext in allowedTypesFor(input.kind))) {
     const list = Object.keys(allowedTypesFor(input.kind)).join("، ");
-    return { ok: false, message: `نوع الملف مش مدعوم. الأنواع المتاحة: ${list}.` };
+    return { ok: false, message: `نوع الملف غير مدعوم. الأنواع المتاحة: ${list}.` };
   }
   if (input.sizeBytes !== undefined && input.sizeBytes > MAX_FILE_BYTES) {
-    return { ok: false, message: "حجم الملف أكبر من 20 ميجا. صغّره أو ابعته على واتساب." };
+    return { ok: false, message: "حجم الملف أكبر من 20 ميجابايت. صغّر حجمه أو أرسله عبر واتساب." };
   }
   return { ok: true };
 }

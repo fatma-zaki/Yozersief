@@ -18,7 +18,7 @@ Conventions (brief A3–A5):
   case → `ActionResult`.
 - Every use case starts with `assertCan`. Visible state changes write `order_events` +
   `activity_logs` (+ outbox) in one transaction.
-- UI copy is Egyptian Arabic, RTL, Western digits, kept in `src/i18n/ar.ts`. Open decisions (B13)
+- UI copy is Modern Standard Arabic (فصحى), RTL, Western digits, kept in `src/i18n/ar.ts`. Open decisions (B13)
   show as `[للتأكيد]`; never invent values.
 - Money is `numeric(12,2)` ↔ string (`lib/money.ts`). Time is `timestamptz`, shown in `Africa/Cairo`
   (`lib/format.ts`).

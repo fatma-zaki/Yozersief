@@ -58,7 +58,7 @@ export async function verifyTwoFactorAction(input: {
   trustDevice: boolean;
 }): Promise<ActionResult> {
   const parsed = twoFactorSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "الكود 6 أرقام" };
+  if (!parsed.success) return { ok: false, error: "الرمز مكوّن من 6 أرقام" };
   const h = await headers();
   try {
     await enforceRateLimit("auth.login", `${clientIp(h)}:2fa`);
@@ -66,7 +66,7 @@ export async function verifyTwoFactorAction(input: {
     return actionOk(undefined);
   } catch (error) {
     if (error instanceof APIError)
-      return { ok: false, error: "الكود مش صحيح أو انتهى. جرّب تاني." };
+      return { ok: false, error: "الرمز غير صحيح أو انتهت صلاحيته. حاول مرة أخرى." };
     return actionError(error);
   }
 }

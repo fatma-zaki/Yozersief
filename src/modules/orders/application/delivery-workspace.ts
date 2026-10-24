@@ -44,7 +44,7 @@ export type HandoverView = {
   product: string;
   categoryKey: string;
   productKey: string | null;
-  /** «استلام من المحل» or «توصيل · العنوان». */
+  /** «الاستلام من المتجر» or «توصيل · العنوان». */
   method: string;
   /** Masked; the handover asks for its last 3 digits. */
   phone: string;
@@ -166,7 +166,7 @@ export async function getDeliveryBoard(actor: StaffContext): Promise<DeliveryDat
       .filter((o) => o.invoice && o.orderStatus !== "approved" && !invoiced.has(o.id))
       .map((o) => ({
         id: o.id,
-        title: `${o.org || o.name} — ${o.orderStatus === "delivered" ? "اتسلم" : "بعد التسليم"}`,
+        title: `${o.org || o.name} — ${o.orderStatus === "delivered" ? "سُلّم" : "بعد التسليم"}`,
       })),
   };
 }
@@ -188,13 +188,13 @@ export async function confirmHandover(
     const order = await lockOrder(input.orderId, tx);
     if (!order) throw new NotFoundError(`order ${input.orderId}`);
     if (order.status !== "ready") {
-      throw new ConflictError("not ready", "الطلب ده مش جاهز للتسليم.");
+      throw new ConflictError("not ready", "هذا الطلب ليس جاهزًا للتسليم.");
     }
     const open = await findOpenHandover(order.id, tx);
     if ((open?.failedCodeAttempts ?? 0) >= MAX_CODE_ATTEMPTS) {
       throw new ConflictError(
         "handover locked",
-        "التسليم اتقفل بعد محاولات غلط كتير. كلّم المدير يراجع الطلب.",
+        "أُغلق التسليم بعد محاولات خاطئة كثيرة. تواصل مع المدير ليراجع الطلب.",
       );
     }
     const contact = await findCustomerContact(order.customerId, tx);
@@ -232,7 +232,7 @@ export async function confirmHandover(
   });
 }
 
-/** «سجّل الدفعة»: stays «مستنية تأكيد المدير» until the admin confirms it (B3 step 6). */
+/** «سجّل الدفعة»: stays «بانتظار تأكيد المدير» until the admin confirms it (B3 step 6). */
 export async function recordPayment(
   actor: StaffContext,
   raw: RecordPaymentInput,
@@ -243,7 +243,7 @@ export async function recordPayment(
     const order = await lockOrder(input.orderId, tx);
     if (!order) throw new NotFoundError(`order ${input.orderId}`);
     if (!acceptsPayment(order)) {
-      throw new ConflictError("no payment", "مينفعش تسجّل دفعة على الطلب ده في حالته دي.");
+      throw new ConflictError("no payment", "لا يمكن تسجيل دفعة على هذا الطلب في حالته الحالية.");
     }
     const previous = await listPaymentsFor([order.id], tx);
     const kind = paymentKindFor(
@@ -264,7 +264,7 @@ export async function recordPayment(
       {
         orderId: order.id,
         type: "payment_recorded",
-        titleAr: `اتسجلت دفعة (${PAYMENT_KIND_LABEL[kind]}) — مستنية تأكيد المدير`,
+        titleAr: `سُجّلت دفعة (${PAYMENT_KIND_LABEL[kind]}) — بانتظار تأكيد المدير`,
         note: `${formatMoney(input.amount)} · ${PAYMENT_METHOD_LABEL[input.method]}`,
         visibleToCustomer: false,
         actorId: actor.id,

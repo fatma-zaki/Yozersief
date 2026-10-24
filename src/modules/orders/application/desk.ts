@@ -144,7 +144,7 @@ async function takeForReview(tx: Tx, actor: StaffContext, orderId: string) {
   const order = await lockOrder(orderId, tx);
   if (!order) throw new NotFoundError(`order ${orderId}`);
   if (!["submitted", "in_review", "awaiting_customer"].includes(order.status)) {
-    throw new ConflictError("order decided", "الطلب ده اتاخد فيه قرار خلاص.");
+    throw new ConflictError("order decided", "اتُّخذ قرار بشأن هذا الطلب بالفعل.");
   }
   if (order.status === "submitted") {
     const applied = await applyTransitionInTx(
@@ -158,7 +158,7 @@ async function takeForReview(tx: Tx, actor: StaffContext, orderId: string) {
 }
 
 /**
- * «ابعت للمدير للاعتماد»: the desk's quote for an organisation order (brief B3 step 3). The
+ * «أرسل إلى المدير للاعتماد»: the desk's quote for an organisation order (brief B3 step 3). The
  * admin approves it and sends it from the orders screen; until then nothing reaches the customer.
  */
 export async function draftQuote(
@@ -170,10 +170,10 @@ export async function draftQuote(
   return inTransaction(async (tx) => {
     const order = await takeForReview(tx, actor, input.orderId);
     if (order.customerType === "person") {
-      throw new ConflictError("person order", "عرض السعر الرسمي لطلبات الشركات والجهات بس.");
+      throw new ConflictError("person order", "عرض السعر الرسمي مخصص لطلبات الشركات والجهات فقط.");
     }
     if (await hasPendingQuote(order.id, tx)) {
-      throw new ConflictError("quote pending", "في مسودة عرض سعر مستنية المدير بالفعل.");
+      throw new ConflictError("quote pending", "توجد بالفعل مسودة عرض سعر بانتظار المدير.");
     }
     const quote = await insertQuote(
       {
@@ -189,7 +189,7 @@ export async function draftQuote(
       {
         orderId: order.id,
         type: DESK_EVENTS.quoteDrafted,
-        titleAr: "اتجهزت مسودة عرض السعر للمدير",
+        titleAr: "جُهّزت مسودة عرض السعر للمدير",
         note: quoteSummary(input),
         visibleToCustomer: false,
         actorId: actor.id,
@@ -208,7 +208,7 @@ export async function draftQuote(
   });
 }
 
-/** «حوّل للمدير للموافقة» on an individual's order: the admin takes the final decision. */
+/** «حوّل إلى المدير للموافقة» on an individual's order: the admin takes the final decision. */
 export async function forwardToAdmin(
   actor: StaffContext,
   raw: DeskOrderInput,
@@ -221,7 +221,7 @@ export async function forwardToAdmin(
       {
         orderId: order.id,
         type: DESK_EVENTS.forwarded,
-        titleAr: "اتحوّل للمدير للموافقة",
+        titleAr: "حُوّل إلى المدير للموافقة",
         note: null,
         visibleToCustomer: false,
         actorId: actor.id,
@@ -264,13 +264,13 @@ export async function customerWhatsappLink(
       isSensitive: true,
     });
     const first = contact.name.trim().split(/\s+/)[0] ?? "";
-    const greeting = `أهلًا ${first}، معاك يوزرسيف بخصوص طلبك رقم ${order.ref}.`;
+    const greeting = `مرحبًا ${first}، معك يوزرسيف بخصوص طلبك رقم ${order.ref}.`;
     return { waLink: whatsappLink(toInternational(contact.phone), greeting) };
   });
 }
 
 /**
- * «ابعت الموكاب للعميل» (B3 step 5): the designer's latest version goes to the customer, with a
+ * «أرسل الموكاب إلى العميل» (B3 step 5): the designer's latest version goes to the customer, with a
  * WhatsApp update; tracking shows the step. The customer answers on WhatsApp and the desk records it.
  */
 export async function sendMockupToCustomer(
@@ -284,14 +284,14 @@ export async function sendMockupToCustomer(
     if (!order) throw new NotFoundError(`order ${input.orderId}`);
     const latest = await findLatestMockupFile(order.id, tx);
     if (!isDesignJob(order) || latest?.status !== "with_desk") {
-      throw new ConflictError("no mockup", "مفيش موكاب جديد مستني الإرسال للطلب ده.");
+      throw new ConflictError("no mockup", "لا يوجد موكاب جديد بانتظار الإرسال لهذا الطلب.");
     }
     await markMockupSent(latest.id, tx);
     await insertOrderEvent(
       {
         orderId: order.id,
         type: "mockup_sent",
-        titleAr: "اتبعتلك الموكاب للاعتماد",
+        titleAr: "أُرسل إليك الموكاب للاعتماد",
         note: null,
         visibleToCustomer: true,
         actorId: actor.id,
@@ -312,7 +312,7 @@ export async function sendMockupToCustomer(
       vars: {
         ...(await baseVars(tx, order.id, order.customerId)),
         ref: order.ref,
-        update: `الموكاب جاهز${order.wantsSample ? " ومعاه العينة" : ""}. راجعه ورد علينا بـ «موافق» أو ابعتلنا التعديلات.`,
+        update: `الموكاب جاهز${order.wantsSample ? " ومعه العينة" : ""}. راجعه وأرسل إلينا «موافق» أو أرسل التعديلات المطلوبة.`,
       },
       actorId: actor.id,
     });
@@ -334,7 +334,7 @@ export async function recordMockupDecision(
   assertCan(actor, "messages.send");
   const input = mockupDecisionSchema.parse(raw);
   if (input.decision === "changes" && input.feedback.length < 5) {
-    const m = "اكتب التعديلات اللي العميل طلبها (5 حروف على الأقل).";
+    const m = "اكتب التعديلات التي طلبها العميل (5 أحرف على الأقل).";
     throw new ValidationError({ feedback: [m] }, m);
   }
   return inTransaction(async (tx) => {

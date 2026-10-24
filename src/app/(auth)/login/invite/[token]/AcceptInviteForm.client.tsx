@@ -63,7 +63,7 @@ export function AcceptInviteForm({
         />
       </Field>
       {contactKind === "email" ? (
-        <Field id="phone" label="رقم الموبايل" error={errors.phone?.message}>
+        <Field id="phone" label="رقم الهاتف" error={errors.phone?.message}>
           <Input
             id="phone"
             dir="ltr"
@@ -74,7 +74,7 @@ export function AcceptInviteForm({
           />
         </Field>
       ) : (
-        <Field id="email" label="الإيميل" optional error={errors.email?.message}>
+        <Field id="email" label="البريد الإلكتروني" optional error={errors.email?.message}>
           <Input
             id="email"
             dir="ltr"

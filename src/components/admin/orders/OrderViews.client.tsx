@@ -14,6 +14,7 @@ import {
   CUSTOMER_ICON,
   CUSTOMER_TYPE,
   FILTERS,
+  hasStatusActions,
   isClosed,
   isDecidable,
   isOrg,
@@ -30,6 +31,8 @@ type ViewProps = {
   list: Order[];
   patch: (p: Partial<BoardState>) => void;
   open: (kind: DialogKind, id: string) => void;
+  /** «تعديل الطلب» (shown when `r.can.edit`). */
+  edit: (id: string) => void;
 };
 
 function badge(r: Order, big = false) {
@@ -59,6 +62,7 @@ export function OrdersDesktop({
   list,
   patch,
   open,
+  edit,
   actions,
 }: ViewProps & { actions: BoardActions }) {
   const sel = state.orders.find((r) => r.id === state.selId);
@@ -95,7 +99,9 @@ export function OrdersDesktop({
         <Stats state={state} patch={patch} />
         <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}>
           <OrderList state={state} list={list} patch={patch} />
-          {sel ? <OrderDetail key={sel.id} r={sel} open={open} actions={actions} /> : null}
+          {sel ? (
+            <OrderDetail key={sel.id} r={sel} open={open} edit={edit} actions={actions} />
+          ) : null}
         </div>
       </div>
     </div>
@@ -104,10 +110,10 @@ export function OrdersDesktop({
 
 function Stats({ state, patch }: Pick<ViewProps, "state" | "patch">) {
   const stats = [
-    { key: "new", label: "جديدة بانتظار المراجعة", sub: "محتاجة قرار", icon: P.inbox },
-    { key: "awaiting", label: "بانتظار رد العميل", sub: "اتطلب منه بيانات", icon: P.clock },
-    { key: "approved", label: "اتقبلت", sub: "آخر 7 أيام", icon: P.ok },
-    { key: "rejected", label: "اترفضت", sub: "آخر 7 أيام", icon: P.no },
+    { key: "new", label: "جديدة بانتظار المراجعة", sub: "تحتاج إلى قرار", icon: P.inbox },
+    { key: "awaiting", label: "بانتظار رد العميل", sub: "طُلبت منه بيانات", icon: P.clock },
+    { key: "approved", label: "قُبلت", sub: "آخر 7 أيام", icon: P.ok },
+    { key: "rejected", label: "رُفضت", sub: "آخر 7 أيام", icon: P.no },
   ] as const;
   return (
     <section
@@ -494,7 +500,7 @@ function OrderList({ state, list, patch }: Pick<ViewProps, "state" | "list" | "p
           }}
         >
           <strong style={{ fontSize: 16 }}>
-            {state.orders.length ? "مفيش طلبات بالفلتر ده" : "لسه مفيش طلبات"}
+            {state.orders.length ? "لا توجد طلبات تطابق هذا الفلتر" : "لا توجد طلبات بعد"}
           </strong>
           <button
             className={cn(s.btn, s.soft)}
@@ -502,7 +508,7 @@ function OrderList({ state, list, patch }: Pick<ViewProps, "state" | "list" | "p
             onClick={() => patch({ q: "", filter: "all", tfilter: "all" })}
             style={{ minHeight: 44, padding: "6px 18px", borderRadius: 999, fontWeight: 700 }}
           >
-            امسح الفلاتر
+            مسح الفلاتر
           </button>
         </div>
       ) : null}
@@ -527,10 +533,12 @@ function OrderList({ state, list, patch }: Pick<ViewProps, "state" | "list" | "p
 function OrderDetail({
   r,
   open,
+  edit,
   actions,
 }: {
   r: Order;
   open: ViewProps["open"];
+  edit: ViewProps["edit"];
   actions: BoardActions;
 }) {
   const org = isOrg(r);
@@ -673,7 +681,35 @@ function OrderDetail({
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, gridColumn: "1 / -1" }}>
-          <h3 className={s.h3}>المواصفات</h3>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <h3 className={s.h3}>المواصفات</h3>
+            {r.can.edit ? (
+              <button
+                className={cn(s.btn, s.soft)}
+                type="button"
+                onClick={() => edit(r.id)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 14px",
+                  borderRadius: 999,
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                <Ic d={P.pen} size={16} />
+                تعديل الطلب
+              </button>
+            ) : null}
+          </div>
           <dl
             style={{
               margin: 0,
@@ -770,7 +806,7 @@ function OrderDetail({
                 >
                   {r.next.blocked
                     ? `المرحلة الحالية: ${STAGES[r.stage]}. ${r.next.blocked}`
-                    : `المرحلة الحالية: ${STAGES[r.stage]}. لما تخلص، سجّلها وهيتجهز تحديث للعميل على واتساب.`}
+                    : `المرحلة الحالية: ${STAGES[r.stage]}. عند انتهائها، سجّلها وسيُجهَّز تحديث للعميل عبر واتساب.`}
                 </span>
                 <button
                   className={cn(s.btn, s.cta)}
@@ -791,12 +827,12 @@ function OrderDetail({
             ) : null}
             {waitQuote ? (
               <p {...note}>
-                لسه ما اتبعتش عرض سعر. «موافقة» هنا معناها إنك هتبعت عرض السعر للعميل، والإنتاج مش
-                هيبدأ غير بعد موافقته واعتماد الموكاب.
+                لم يُرسل عرض سعر بعد. «موافقة» هنا تعني أنك سترسل عرض السعر إلى العميل، ولن يبدأ
+                الإنتاج إلا بعد موافقته واعتماد الموكاب.
               </p>
             ) : null}
             {r.invoice ? (
-              <p {...note}>العميل طالب فاتورة باسم الجهة. [نوع الفاتورة بانتظار تأكيد يوزرسيف]</p>
+              <p {...note}>طلب العميل فاتورة باسم الجهة. [نوع الفاتورة بانتظار تأكيد يوزرسيف]</p>
             ) : null}
           </div>
         ) : null}
@@ -805,7 +841,7 @@ function OrderDetail({
           <h3 className={s.h3}>الملفات</h3>
           {r.files.length === 0 ? (
             <p {...muted({ margin: 0, fontSize: 14, color: "rgba(3,9,9,0.65)" })}>
-              مفيش ملفات مرفوعة.
+              لا توجد ملفات مرفوعة.
             </p>
           ) : null}
           {r.files.map((f) => (
@@ -817,7 +853,7 @@ function OrderDetail({
                 </span>
                 {f.lowRes ? (
                   <span {...muted({ fontSize: 12, color: "rgba(3,9,9,0.65)" })}>
-                    دقة الملف قليلة
+                    دقة الملف منخفضة
                   </span>
                 ) : null}
                 <a
@@ -858,7 +894,7 @@ function OrderDetail({
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6, gridColumn: "1 / -1" }}>
           <label htmlFor="a-int" className={s.h3}>
-            ملاحظة داخلية (مش بتظهر للعميل)
+            ملاحظة داخلية (لا تظهر للعميل)
           </label>
           <textarea
             className={s.fld}
@@ -1000,13 +1036,93 @@ function OrderDetail({
             ) : null}
           </div>
         ) : null}
-        {isClosed(r) ? (
+        {hasStatusActions(r) ? <StatusActions r={r} open={open} actions={actions} /> : null}
+        {isClosed(r) && !hasStatusActions(r) ? (
           <p {...muted({ margin: 0, fontSize: 14, color: "rgba(3,9,9,0.65)" })}>
-            تم اتخاذ القرار في الطلب ده. أي تغيير هيتسجل في سجل النشاط.
+            اتُّخذ القرار في هذا الطلب. سيُسجَّل أي تغيير في سجل النشاط.
           </p>
         ) : null}
       </div>
     </section>
+  );
+}
+
+/**
+ * After the decision: the individual order's next step (approved → in production → ready →
+ * delivered; business orders record theirs in the pipeline box) and «إلغاء الطلب». Each step
+ * runs only for whoever holds its permission: production for the first two, delivery for the
+ * handover, the admin for all.
+ */
+function StatusActions({
+  r,
+  open,
+  actions,
+  mobile = false,
+}: {
+  r: Order;
+  open: ViewProps["open"];
+  actions: BoardActions;
+  mobile?: boolean;
+}) {
+  const next = isOrg(r) ? null : r.next;
+  const pill: CSSProperties = mobile
+    ? { minHeight: 46, borderRadius: 999, fontSize: 14, fontWeight: 700 }
+    : { minHeight: 48, padding: "10px 22px", borderRadius: 999, fontSize: 15, fontWeight: 700 };
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: mobile ? "column" : "row",
+        flexWrap: "wrap",
+        gap: mobile ? 8 : 10,
+        alignItems: mobile ? "stretch" : "center",
+        width: "100%",
+        paddingTop: mobile ? 4 : 0,
+      }}
+    >
+      {next ? (
+        <>
+          <span
+            {...sx(
+              {
+                flex: mobile ? undefined : "1 1 220px",
+                fontSize: mobile ? 13 : 14,
+                lineHeight: "22px",
+                fontWeight: 600,
+                color: "rgba(3,9,9,0.8)",
+              },
+              { color: "rgba(242,251,248,0.85)" },
+            )}
+          >
+            {next.blocked
+              ? `الحالة الحالية: ${r.statusLabel}. ${next.blocked}`
+              : `الحالة الحالية: ${r.statusLabel}. عند انتهائها، سجّل الخطوة التالية وسيُجهَّز تحديث للعميل عبر واتساب.`}
+          </span>
+          <button
+            className={cn(s.btn, s.cta, mobile && s.cardBtn)}
+            type="button"
+            disabled={actions.busy || Boolean(next.blocked)}
+            onClick={() => actions.advance(r)}
+            style={{ ...pill, fontWeight: 800 }}
+          >
+            {next.label}
+          </button>
+        </>
+      ) : mobile ? null : (
+        <span style={{ flexGrow: 1 }} />
+      )}
+      {r.can.cancel ? (
+        <button
+          className={cn(s.btn, s.line, mobile && s.cardBtn)}
+          type="button"
+          disabled={actions.busy}
+          onClick={() => open("cancel", r.id)}
+          style={pill}
+        >
+          {mobile ? "إلغاء الطلب…" : "إلغاء الطلب"}
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -1121,7 +1237,7 @@ function StageRail({ r }: { r: Order }) {
           <li
             key={label}
             aria-current={cur ? "step" : undefined}
-            aria-label={label + (done ? " (خلصت)" : cur ? " (الحالية)" : "")}
+            aria-label={label + (done ? " (مكتملة)" : cur ? " (الحالية)" : "")}
             style={{
               position: "relative",
               display: "flex",
@@ -1174,7 +1290,14 @@ function StageRail({ r }: { r: Order }) {
 
 /* ============================== Mobile (Admin-Mobile.html) ============================== */
 
-export function OrdersMobile({ state, list, patch, open }: ViewProps) {
+export function OrdersMobile({
+  state,
+  list,
+  patch,
+  open,
+  edit,
+  actions,
+}: ViewProps & { actions: BoardActions }) {
   const nNew = state.stats.new;
   const nOn = state.filter === "new";
   const aOn = state.filter === "awaiting";
@@ -1428,6 +1551,8 @@ export function OrdersMobile({ state, list, patch, open }: ViewProps) {
             isOpen={r.id === state.openId}
             toggle={() => patch({ openId: r.id === state.openId ? "" : r.id })}
             open={open}
+            edit={edit}
+            actions={actions}
           />
         ))}
         {list.length === 0 ? (
@@ -1443,14 +1568,16 @@ export function OrdersMobile({ state, list, patch, open }: ViewProps) {
               textAlign: "center",
             }}
           >
-            <strong>{state.orders.length ? "مفيش طلبات بالفلتر ده" : "لسه مفيش طلبات"}</strong>
+            <strong>
+              {state.orders.length ? "لا توجد طلبات تطابق هذا الفلتر" : "لا توجد طلبات بعد"}
+            </strong>
             <button
               className={cn(s.btn, s.soft)}
               type="button"
               onClick={() => patch({ q: "", filter: "all" })}
               style={{ minHeight: 44, padding: "6px 18px", borderRadius: 999, fontWeight: 700 }}
             >
-              امسح الفلاتر
+              مسح الفلاتر
             </button>
           </div>
         ) : null}
@@ -1472,11 +1599,15 @@ function MobileCard({
   isOpen,
   toggle,
   open,
+  edit,
+  actions,
 }: {
   r: Order;
   isOpen: boolean;
   toggle: () => void;
   open: ViewProps["open"];
+  edit: ViewProps["edit"];
+  actions: BoardActions;
 }) {
   const st = STATUS[r.status];
   return (
@@ -1610,7 +1741,7 @@ function MobileCard({
                 dir="ltr"
                 {...sx({ fontSize: 13, fontWeight: 700, textAlign: "right" }, { color: "#ffffff" })}
               >
-                {r.files[0]?.name ?? "مفيش ملفات مرفوعة"}
+                {r.files[0]?.name ?? "لا توجد ملفات مرفوعة"}
               </span>
               <span
                 {...sx(
@@ -1630,6 +1761,26 @@ function MobileCard({
           >
             {r.notes}
           </p>
+          {r.can.edit ? (
+            <button
+              className={cn(s.btn, s.soft, s.cardBtn)}
+              type="button"
+              onClick={() => edit(r.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                minHeight: 46,
+                borderRadius: 999,
+                fontSize: 14,
+                fontWeight: 700,
+              }}
+            >
+              <Ic d={P.pen} size={16} />
+              تعديل الطلب
+            </button>
+          ) : null}
           {isDecidable(r) ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4 }}>
               {r.can.approve ? (
@@ -1682,7 +1833,10 @@ function MobileCard({
               </div>
             </div>
           ) : null}
-          {isClosed(r) ? (
+          {hasStatusActions(r) ? (
+            <StatusActions r={r} open={open} actions={actions} mobile />
+          ) : null}
+          {isClosed(r) && !hasStatusActions(r) ? (
             <p
               {...sx(
                 {
@@ -1696,7 +1850,7 @@ function MobileCard({
                 { background: "rgba(126,232,199,0.08)", color: "rgba(242,251,248,0.68)" },
               )}
             >
-              تم اتخاذ القرار في الطلب ده.
+              اتُّخذ القرار في هذا الطلب.
             </p>
           ) : null}
         </div>

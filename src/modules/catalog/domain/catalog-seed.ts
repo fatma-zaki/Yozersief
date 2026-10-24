@@ -16,15 +16,15 @@ export type SeedCategory = { key: string; nameAr: string; products: SeedProduct[
 const COLORS: SeedOption[] = [
   { type: "color", value: "white", labelAr: "أبيض" },
   { type: "color", value: "black", labelAr: "أسود" },
-  { type: "color", value: "other", labelAr: "لون تاني" },
+  { type: "color", value: "other", labelAr: "لون آخر" },
 ];
 
 export const WEAR_SIZES = ["S", "M", "L", "XL", "XXL"] as const;
 const SIZES: SeedOption[] = WEAR_SIZES.map((s) => ({ type: "size", value: s, labelAr: s }));
 
 const PLACES: SeedOption[] = [
-  { type: "place", value: "front", labelAr: "قدّام" },
-  { type: "place", value: "back", labelAr: "ورا" },
+  { type: "place", value: "front", labelAr: "الأمام" },
+  { type: "place", value: "back", labelAr: "الخلف" },
   { type: "place", value: "sleeve", labelAr: "الكُم" },
 ];
 
@@ -51,7 +51,7 @@ const garment = (
 export const CATALOG_SEED: SeedCategory[] = [
   {
     key: "wear",
-    nameAr: "تيشيرتات وهوديز وكابات",
+    nameAr: "تيشيرتات وهوديز وقبعات",
     products: [
       garment("tshirt", "تيشيرت", "طباعة على تيشيرتات قطن بتصميمك.", "/images/home/tshirt.jpg"),
       garment("hoodie", "هودي", "هوديز للدفعات والفرق والمناسبات.", "/images/home/hoodie.jpg"),
@@ -64,8 +64,8 @@ export const CATALOG_SEED: SeedCategory[] = [
       // Caps have no size split (B4) and no sleeve.
       {
         key: "cap",
-        nameAr: "كاب",
-        description: "كابات مطبوعة بلوجو أو اسم.",
+        nameAr: "قبعة",
+        description: "قبعات مطبوعة بشعار أو اسم.",
         imageUrl: "/images/home/cap.jpg",
         options: [...COLORS, ...PLACES.filter((p) => p.value !== "sleeve")],
       },
@@ -73,25 +73,25 @@ export const CATALOG_SEED: SeedCategory[] = [
   },
   {
     key: "mug",
-    nameAr: "مجات وهدايا",
+    nameAr: "أكواب وهدايا",
     products: [
       {
         key: "mug",
-        nameAr: "مج",
-        description: "مجات بأسماء أو صور للهدايا.",
+        nameAr: "كوب",
+        description: "أكواب بأسماء أو صور للهدايا.",
         imageUrl: "/images/home/mug-bottle.jpg",
         options: [],
       },
       {
         key: "bottle",
-        nameAr: "مطرة",
-        description: "مطرات بأسماء أو صور للهدايا.",
+        nameAr: "قارورة",
+        description: "قوارير بأسماء أو صور للهدايا.",
         imageUrl: "/images/home/mug-bottle.jpg",
         options: [],
       },
     ],
   },
-  { key: "phone", nameAr: "كفرات الموبايل", products: [] },
-  { key: "sticker", nameAr: "استيكرات وملصقات", products: [] },
+  { key: "phone", nameAr: "أغطية الهواتف", products: [] },
+  { key: "sticker", nameAr: "ملصقات", products: [] },
   { key: "custom", nameAr: "فكرة خاصة", products: [] },
 ];

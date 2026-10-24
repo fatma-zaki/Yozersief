@@ -19,14 +19,14 @@ export default function TrackingLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <footer className="text-ink-muted mx-auto w-full max-w-xl px-4 pb-8 text-center text-sm">
-        محتاج مساعدة؟{" "}
+        تحتاج إلى مساعدة؟{" "}
         <Link
           className="text-accent font-bold underline"
           href={`https://wa.me/${publicEnv.NEXT_PUBLIC_WHATSAPP_NUMBER}`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          كلّمنا على واتساب
+          تواصل معنا عبر واتساب
         </Link>
       </footer>
     </>

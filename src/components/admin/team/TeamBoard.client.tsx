@@ -20,7 +20,7 @@ type Range = "today" | "week" | "month";
 type Type = "all" | "orders" | "design" | "prod" | "money" | "access";
 
 const MEMBERS = [
-  { id: 1, name: "صاحب المحل", role: "مدير", ini: "ي", on: true },
+  { id: 1, name: "صاحب المتجر", role: "مدير", ini: "ي", on: true },
   {
     id: 4,
     name: "[اسم الموظف]",
@@ -32,7 +32,7 @@ const MEMBERS = [
       week: ["86", "22 د", "متوسط أول رد"],
       month: ["341", "25 د", "متوسط أول رد"],
     },
-    last: "نشط دلوقتي",
+    last: "نشط الآن",
   },
   {
     id: 2,
@@ -41,11 +41,11 @@ const MEMBERS = [
     ini: "ص",
     on: true,
     k: {
-      today: ["5", "2", "موكابات اترفعت"],
-      week: ["31", "12", "موكابات اترفعت"],
-      month: ["118", "47", "موكابات اترفعت"],
+      today: ["5", "2", "موكابات مرفوعة"],
+      week: ["31", "12", "موكابات مرفوعة"],
+      month: ["118", "47", "موكابات مرفوعة"],
     },
-    last: "نشط من 10 دقايق",
+    last: "نشط منذ 10 دقائق",
   },
   {
     id: 5,
@@ -54,11 +54,11 @@ const MEMBERS = [
     ini: "ط",
     on: true,
     k: {
-      today: ["22", "96", "قطعة اتطبعت"],
-      week: ["140", "610", "قطعة اتطبعت"],
-      month: ["520", "2,380", "قطعة اتطبعت"],
+      today: ["22", "96", "قطعة مطبوعة"],
+      week: ["140", "610", "قطعة مطبوعة"],
+      month: ["520", "2,380", "قطعة مطبوعة"],
     },
-    last: "نشط دلوقتي",
+    last: "نشط الآن",
   },
   {
     id: 3,
@@ -67,9 +67,9 @@ const MEMBERS = [
     ini: "ت",
     on: false,
     k: {
-      today: ["6", "3", "طلبات اتسلمت"],
-      week: ["38", "19", "طلبات اتسلمت"],
-      month: ["150", "74", "طلبات اتسلمت"],
+      today: ["6", "3", "طلبات مُسلّمة"],
+      week: ["38", "19", "طلبات مُسلّمة"],
+      month: ["150", "74", "طلبات مُسلّمة"],
     },
     last: "آخر نشاط 1:40 م",
   },
@@ -96,17 +96,17 @@ const EVENTS: [
   string,
   "warn" | "role" | "off" | "",
 ][] = [
-  [5, "orders", "جهّز مسودة عرض سعر وبعتها للاعتماد", "YZ-T9W4KD", "11:42 ص", "", ""],
-  [5, "prod", "علّم 10 قطع اتطبعت (36 من 60)", "YZ-W4N8TS", "11:30 ص", "", ""],
-  [3, "money", "سجّل عربون [المبلغ] كاش", "YZ-W4N8TS", "11:05 ص", "مستني تأكيدك", "warn"],
+  [5, "orders", "جهّز مسودة عرض سعر وأرسلها للاعتماد", "YZ-T9W4KD", "11:42 ص", "", ""],
+  [5, "prod", "حدّد 10 قطع مطبوعة (36 من 60)", "YZ-W4N8TS", "11:30 ص", "", ""],
+  [3, "money", "سجّل عربونًا [المبلغ] نقدًا", "YZ-W4N8TS", "11:05 ص", "بانتظار تأكيدك", "warn"],
   [2, "design", "رفع نسخة 2 من الموكاب", "YZ-T9W4KD", "10:50 ص", "", ""],
-  [4, "orders", "فتح رقم موبايل العميل", "YZ-Q2M7HP", "10:31 ص", "بيانات حساسة", "role"],
+  [4, "orders", "فتح رقم هاتف العميل", "YZ-Q2M7HP", "10:31 ص", "بيانات حساسة", "role"],
   [4, "orders", "طلب بيانات من العميل على واتساب", "YZ-B6R2NX", "10:20 ص", "", ""],
-  [3, "money", "كود التحقق اتكتب غلط مرتين قبل التسليم", "YZ-M3X9QA", "10:02 ص", "راجعها", "warn"],
-  [5, "prod", "نقل الكابات لفحص الجودة", "YZ-K7D2PM", "9:40 ص", "", ""],
-  [2, "design", "بلّغ الاستقبال إن ملف العميل دقته قليلة", "YZ-R5L1VB", "9:22 ص", "", ""],
-  [2, "access", "حاول يفتح «الزيارات والترافيك» وطلب صلاحية", "", "9:15 ص", "اتمنع", "off"],
-  [1, "orders", "وافق على طلب واتبعتت رسالة واتساب", "YZ-H3J8LC", "9:00 ص", "", ""],
+  [3, "money", "أُدخل رمز التحقق خطأً مرتين قبل التسليم", "YZ-M3X9QA", "10:02 ص", "راجعها", "warn"],
+  [5, "prod", "نقل القبعات إلى فحص الجودة", "YZ-K7D2PM", "9:40 ص", "", ""],
+  [2, "design", "أبلغ الاستقبال بأن دقة ملف العميل منخفضة", "YZ-R5L1VB", "9:22 ص", "", ""],
+  [2, "access", "حاول فتح «الزيارات وحركة الزوار» وطلب صلاحية", "", "9:15 ص", "مُنع", "off"],
+  [1, "orders", "وافق على طلب وأُرسلت رسالة واتساب", "YZ-H3J8LC", "9:00 ص", "", ""],
 ];
 
 const KIND_ROLE: Record<Kind, string> = {
@@ -116,16 +116,16 @@ const KIND_ROLE: Record<Kind, string> = {
   perm: "مصمم",
 };
 const YES_MSG: Record<Kind, string> = {
-  quote: "اتعتمد العرض واتبعت للعميل على واتساب",
-  pay: "اتأكدت الدفعة — الإنتاج يقدر يبدأ",
-  forward: "اتفتح الطلب في صفحة الطلبات",
-  perm: "اتضافت الصلاحية للمصمم",
+  quote: "اعتُمد العرض وأُرسل إلى العميل عبر واتساب",
+  pay: "تم تأكيد الدفعة — يمكن بدء الإنتاج",
+  forward: "فُتح الطلب في صفحة الطلبات",
+  perm: "أُضيفت الصلاحية للمصمم",
 };
 const NO_MSG: Record<Kind, string> = {
-  quote: "رجع العرض للاستقبال بملاحظة",
-  pay: "اترفضت الدفعة واتبلغ مسؤول التسليم",
-  forward: "اتبعت طلب ملف أحسن للعميل",
-  perm: "اترفض طلب الصلاحية",
+  quote: "أُعيد العرض إلى الاستقبال مع ملاحظة",
+  pay: "رُفضت الدفعة وأُبلغ مسؤول التسليم",
+  forward: "أُرسل طلب ملف أفضل إلى العميل",
+  perm: "رُفض طلب الصلاحية",
 };
 
 function avatar(id: MemberId, size: number): CSSProperties {
@@ -159,7 +159,7 @@ export function TeamBoard() {
   const [pending, setPending] = useState(PENDING);
   const { toast, flash, hide } = useFlash();
 
-  const rangeWord = { today: "النهارده", week: "الأسبوع ده", month: "الشهر ده" }[range];
+  const rangeWord = { today: "اليوم", week: "هذا الأسبوع", month: "هذا الشهر" }[range];
   const feed = EVENTS.filter(
     ([m, ty]) => (!member || m === member) && (type === "all" || ty === type),
   );
@@ -170,13 +170,13 @@ export function TeamBoard() {
 
   return (
     <div className={cn(k.root, shell.gutter)}>
-      <KitHeader title="نشاط الفريق" subtitle="كل اللي التيم عمله، واللي مستني قرارك">
+      <KitHeader title="نشاط الفريق" subtitle="كل ما أنجزه الفريق، وما ينتظر قرارك">
         <div role="group" aria-label="الفترة" style={{ display: "flex", gap: 6 }}>
           {(
             [
-              ["today", "النهارده"],
+              ["today", "اليوم"],
               ["week", "7 أيام"],
-              ["month", "30 يوم"],
+              ["month", "30 يومًا"],
             ] as [Range, string][]
           ).map(([key, label]) => (
             <button
@@ -193,7 +193,7 @@ export function TeamBoard() {
         <button
           className={cn(k.btn, k.soft)}
           type="button"
-          onClick={() => flash("اتجهز ملف CSV بالسجل [التصدير الفعلي بعد الربط]")}
+          onClick={() => flash("جُهّز ملف CSV بالسجل [التصدير الفعلي بعد الربط]")}
           style={{ minHeight: 42, padding: "6px 16px", borderRadius: 999, fontSize: 13 }}
         >
           <Ic d={P.download} size={16} />
@@ -216,18 +216,18 @@ export function TeamBoard() {
       >
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
           <h2 id="ap-h" className={k.h2}>
-            مستني قرارك{" "}
+            بانتظار قرارك{" "}
             <span className={cn(k.badge, k.bWarn)} style={{ marginInlineStart: 6 }}>
               {pending.length}
             </span>
           </h2>
           <span className={k.muted} style={{ fontSize: 12 }}>
-            حاجات التيم جهّزها ومحتاجة اعتمادك
+            بنود جهّزها الفريق وتحتاج إلى اعتمادك
           </span>
         </div>
         {pending.length === 0 ? (
           <p className={k.muted} style={{ margin: 0, fontSize: 14 }}>
-            مفيش حاجة مستنياك دلوقتي.
+            لا يوجد ما ينتظرك حاليًا.
           </p>
         ) : null}
         <div
@@ -454,7 +454,7 @@ export function TeamBoard() {
                       ) : null}
                     </span>
                     <span className={k.muted} style={{ fontSize: 12 }}>
-                      النهارده {time} · {TYPES.find(([key]) => key === ty)?.[1]}
+                      اليوم {time} · {TYPES.find(([key]) => key === ty)?.[1]}
                     </span>
                   </div>
                   {flag ? (
@@ -468,7 +468,7 @@ export function TeamBoard() {
           </ol>
           {feed.length === 0 ? (
             <p className={k.muted} style={{ margin: 0, fontSize: 14 }}>
-              مفيش نشاط بالفلتر ده.
+              لا يوجد نشاط يطابق هذا الفلتر.
             </p>
           ) : null}
         </section>
@@ -483,9 +483,9 @@ export function TeamBoard() {
               تنبيهات
             </h2>
             {[
-              ["طلب جديد من غير رد من 3 ساعات:", "YZ-R5L1VB. الحد المتفق عليه [مدة الرد للتأكيد]."],
-              ["كود تسليم غلط مرتين:", "YZ-M3X9QA — اتأكد من هوية المستلم."],
-              ["دعوة معلّقة:", "[مسؤول التسليم] لسه ما فعّلش حسابه الجديد."],
+              ["طلب جديد دون رد منذ 3 ساعات:", "YZ-R5L1VB. الحد المتفق عليه [مدة الرد للتأكيد]."],
+              ["رمز تسليم خاطئ مرتين:", "YZ-M3X9QA — تحقّق من هوية المستلم."],
+              ["دعوة معلّقة:", "[مسؤول التسليم] لم يفعّل حسابه الجديد بعد."],
             ].map(([title, detail]) => (
               <div
                 key={title}
@@ -518,7 +518,7 @@ export function TeamBoard() {
               الوصول للبيانات الحساسة
             </h2>
             <p className={k.muted} style={{ margin: 0, fontSize: 12, lineHeight: "19px" }}>
-              مين فتح أرقام العملاء أو بيانات الدفع النهارده.
+              من فتح أرقام العملاء أو بيانات الدفع اليوم.
             </p>
             {[
               ["[اسم الموظف]", "فتح أرقام عملاء", "7 مرات"],

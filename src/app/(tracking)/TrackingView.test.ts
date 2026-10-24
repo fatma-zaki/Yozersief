@@ -71,9 +71,9 @@ describe("tracking UI states", () => {
     const html = renderToStaticMarkup(
       createElement(TrackingSessionMessage, {
         title: ar.tracking.loadError,
-        body: "حصلت مشكلة عندنا.",
+        body: "حدثت مشكلة لدينا.",
       }),
     );
-    expect(html).toContain("مش قادرين نجيب حالة الطلب");
+    expect(html).toContain("تعذّر جلب حالة الطلب");
   });
 });

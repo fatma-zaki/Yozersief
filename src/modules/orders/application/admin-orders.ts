@@ -34,7 +34,9 @@ import {
   type OrderFacts,
 } from "../domain/admin-view";
 import { quoteSummary } from "../domain/desk";
+import { planOrderEdit, toEditForm, type OrderEditForm } from "../domain/order-edit";
 import {
+  isTerminal,
   planTransition,
   type Actor,
   type CustomerType,
@@ -43,9 +45,13 @@ import {
 import {
   decideOrderSchema,
   advanceStageSchema,
+  cancelOrderSchema,
+  editOrderSchema,
   internalNoteSchema,
   type AdvanceStageInput,
+  type CancelOrderInput,
   type DecideOrderInput,
+  type EditOrderInput,
   type InternalNoteInput,
 } from "../schemas";
 import {
@@ -59,6 +65,7 @@ import {
   listPlacesFor,
   listSizesFor,
   updateInternalNote,
+  updateOrderDetails,
   type AdminOrderRow,
 } from "../infrastructure/admin-repository";
 import { listPendingQuotesFor, settlePendingQuote } from "../infrastructure/desk-repository";
@@ -125,8 +132,17 @@ export type AdminOrderView = {
   internalNote: string;
   /** The desk's quote draft waiting for the admin, as the quote text to send. */
   quoteDraft: string | null;
-  can: { approve: boolean; info: boolean; reject: boolean; note: boolean };
-  /** «سجّل المرحلة الجاية» on a business order; `blocked` explains why it can't run yet. */
+  /** The order's details as «تعديل الطلب» starts from. */
+  form: OrderEditForm;
+  can: {
+    approve: boolean;
+    info: boolean;
+    reject: boolean;
+    note: boolean;
+    edit: boolean;
+    cancel: boolean;
+  };
+  /** «سجّل المرحلة التالية» after approval; `blocked` explains why it can't run yet. */
   next: { label: string; blocked: string | null } | null;
 };
 
@@ -180,8 +196,7 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
   const storage = files.length ? createFileStorage() : null;
   const [pendingDeposit, guardsBy] = await Promise.all([
     listOrdersWithPendingDeposit(rows.filter((r) => r.bizStage === "deposit").map((r) => r.id)),
-    // Business orders only: they are the ones with a «سجّل المرحلة الجاية» to check.
-    loadGuardFactsFor(rows.filter((r) => r.customerType !== "person").map((r) => r.id)),
+    loadGuardFactsFor(rows.filter((r) => !isTerminal(r.status)).map((r) => r.id)),
   ]);
   const now = new Date();
   const actorD = domainActor(actor);
@@ -199,7 +214,7 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
       let nextView: AdminOrderView["next"] = null;
       if (next) {
         const guards = guardsBy.get(r.id) ?? (await loadGuardFacts(r.id, db));
-        // The admin's «اتسجل استلام العربون» confirms the deposit the delivery person recorded.
+        // The admin's «سُجّل استلام العربون» confirms the deposit the delivery person recorded.
         if (next.transition === "confirm_deposit" && pendingDeposit.has(r.id)) {
           guards.depositConfirmed = can(actor, "payments.confirm");
         }
@@ -247,11 +262,18 @@ export async function getAdminOrders(actor: StaffContext): Promise<AdminOrdersDa
         invoice: r.needsInvoice,
         internalNote: r.internalNote ?? "",
         quoteDraft: draftText(quoteBy.get(r.id)?.[0]),
+        form: toEditForm({
+          ...r,
+          sizes: sizesBy.get(r.id) ?? [],
+          places: (placesBy.get(r.id) ?? []).map((p) => p.place),
+        }),
         can: {
           approve: canDecide(state, "approve", actorD),
           info: canDecide(state, "info", actorD),
           reject: canDecide(state, "reject", actorD),
           note: can(actor, "orders.request_info"),
+          edit: can(actor, "orders.edit") && !isTerminal(r.status),
+          cancel: planTransition(state, "cancel", actorD, { reason: "x" }).ok,
         },
         next: nextView,
       };
@@ -341,7 +363,7 @@ export async function afterMessage(
     {
       orderId: applied.order.id,
       type: "message_prepared",
-      titleAr: "اتجهزت رسالة واتساب للعميل",
+      titleAr: "جُهّزت رسالة واتساب للعميل",
       note: internalNote,
       visibleToCustomer: false,
       actorId: actor.id,
@@ -373,8 +395,8 @@ export async function baseVars(tx: Tx, orderId: string, customerId: string) {
 
 const TEXT_REQUIRED: Record<Decision, string | null> = {
   approve: null,
-  info: "اكتب المطلوب من العميل بوضوح (5 حروف على الأقل).",
-  reject: "اكتب سبب واضح (5 حروف على الأقل).",
+  info: "اكتب المطلوب من العميل بوضوح (5 أحرف على الأقل).",
+  reject: "اكتب سببًا واضحًا (5 أحرف على الأقل).",
 };
 
 /**
@@ -392,7 +414,7 @@ export async function decideOrder(
     if (!order) throw new NotFoundError(`order ${input.orderId}`);
     const business = order.customerType !== "person";
     const needsText =
-      TEXT_REQUIRED[input.decision] ?? (business ? "اكتب عرض السعر (5 حروف على الأقل)." : null);
+      TEXT_REQUIRED[input.decision] ?? (business ? "اكتب عرض السعر (5 أحرف على الأقل)." : null);
     if (needsText && input.text.length < 5)
       throw new ValidationError({ text: [needsText] }, needsText);
 
@@ -437,11 +459,11 @@ export async function decideOrder(
       }
       state = { ...state, ...applied.value.plan.to };
     }
-    throw new ConflictError("decision did not finish", "مينفعش تعمل الإجراء ده دلوقتي.");
+    throw new ConflictError("decision did not finish", "لا يمكن تنفيذ هذا الإجراء الآن.");
   });
 }
 
-/** «سجّل المرحلة الجاية» on a business order, with the customer update (brief B7). */
+/** «سجّل المرحلة التالية» after approval, with the customer update (brief B7). */
 export async function advanceOrderStage(
   actor: StaffContext,
   raw: AdvanceStageInput,
@@ -457,7 +479,7 @@ export async function advanceOrderStage(
       customerType: order.customerType,
     };
     const next = nextStage(state, { sample: order.wantsSample, batches: order.batchedDelivery });
-    if (!next) throw new ConflictError("no next stage", "مفيش مرحلة جاية للطلب ده.");
+    if (!next) throw new ConflictError("no next stage", "لا توجد مرحلة تالية لهذا الطلب.");
     if (next.transition === "confirm_deposit") {
       assertCan(actor, "payments.confirm");
       const confirmed = await confirmPendingDeposits(order.id, actor.id, tx);
@@ -494,6 +516,27 @@ export async function advanceOrderStage(
   });
 }
 
+/**
+ * «إلغاء الطلب»: closes any open order. The reason goes on the customer's timeline; no WhatsApp
+ * message is prepared, since there is no cancellation template yet (brief B8).
+ */
+export async function cancelOrder(
+  actor: StaffContext,
+  raw: CancelOrderInput,
+): Promise<Result<StaffActionResult>> {
+  assertCan(actor, "orders.cancel");
+  const input = cancelOrderSchema.parse(raw);
+  return inTransaction(async (tx) => {
+    const applied = await applyTransitionInTx(
+      tx,
+      { kind: "staff", staff: actor },
+      { orderId: input.orderId, transition: "cancel", reason: input.reason },
+    );
+    if (!applied.ok) throw applied.error;
+    return { ref: applied.value.order.ref, waLink: null };
+  });
+}
+
 /** «ملاحظة داخلية»: staff-only note on the order (never on tracking). */
 export async function saveInternalNote(
   actor: StaffContext,
@@ -513,5 +556,55 @@ export async function saveInternalNote(
       meta: { length: input.note.length },
     });
     return { saved: true as const };
+  });
+}
+
+/**
+ * «تعديل الطلب»: the admin corrects the order's details. Only what changed is written, and the
+ * change goes on the internal timeline and the activity log in the same transaction.
+ */
+export async function editOrder(
+  actor: StaffContext,
+  raw: EditOrderInput,
+): Promise<Result<{ ref: string; changed: string[] }>> {
+  assertCan(actor, "orders.edit");
+  const { orderId, ...form } = editOrderSchema.parse(raw);
+  return inTransaction(async (tx) => {
+    const order = await lockOrder(orderId, tx);
+    if (!order) throw new NotFoundError(`order ${orderId}`);
+    if (isTerminal(order.status))
+      throw new ConflictError("order is closed", "هذا الطلب مغلق، ولا يمكن تعديله.");
+    const [sizes, places] = await Promise.all([
+      listSizesFor([order.id], tx),
+      listPlacesFor([order.id], tx),
+    ]);
+    const plan = planOrderEdit({ ...order, sizes, places: places.map((p) => p.place) }, form);
+    if (!plan.changed.length) return { ref: order.ref, changed: [] };
+
+    await updateOrderDetails(order.id, plan.patch, plan, tx);
+    await insertOrderEvent(
+      {
+        orderId: order.id,
+        type: "details_edited",
+        titleAr: "عُدّلت بيانات الطلب",
+        note: plan.changed.join("، "),
+        visibleToCustomer: false,
+        actorId: actor.id,
+      },
+      tx,
+    );
+    await logActivity(tx, {
+      userId: actor.id,
+      action: "orders.details_edited",
+      entityType: "order",
+      entityId: order.id,
+      orderId: order.id,
+      meta: {
+        fields: Object.keys(plan.patch),
+        sizes: plan.sizes !== null,
+        places: plan.places !== null,
+      },
+    });
+    return { ref: order.ref, changed: plan.changed };
   });
 }

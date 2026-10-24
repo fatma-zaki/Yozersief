@@ -93,10 +93,10 @@ export async function getDesignQueue(actor: StaffContext): Promise<DesignData> {
             name: f.name,
             url: f.url,
             ...(f.kind === "names_sheet"
-              ? { label: "شيت أسماء", ok: true }
+              ? { label: "جدول أسماء", ok: true }
               : f.lowRes
-                ? { label: "دقة قليلة", ok: false }
-                : { label: "جودة كويسة", ok: true }),
+                ? { label: "دقة منخفضة", ok: false }
+                : { label: "جودة جيدة", ok: true }),
           })),
         versions: versions.map((m) => ({
           n: `نسخة ${m.version}`,
@@ -142,19 +142,19 @@ export async function submitMockup(
     },
   );
   const file = checked as Parameters<typeof recordUploadedFile>[0] | null;
-  if (!file) throw new ValidationError({}, "الملف ما اترفعش. ارفع تاني.");
+  if (!file) throw new ValidationError({}, "لم يُرفع الملف. ارفعه مرة أخرى.");
 
   return inTransaction(async (tx) => {
     const order = await lockOrder(input.orderId, tx);
     if (!order) throw new NotFoundError(`order ${input.orderId}`);
     if (!isDesignJob(order)) {
-      throw new ConflictError("not at mockup", "الطلب ده مش في مرحلة الموكاب.");
+      throw new ConflictError("not at mockup", "هذا الطلب ليس في مرحلة الموكاب.");
     }
     const latest = await findLatestMockup(order.id, tx);
     if (!canUploadMockup(designState(latest?.status ?? null))) {
       throw new ConflictError(
         "mockup pending",
-        "في نسخة لسه عند الاستقبال أو العميل. استنى رده الأول.",
+        "توجد نسخة ما زالت لدى الاستقبال أو العميل. انتظر الرد أولًا.",
       );
     }
     const fileRow = await ensureMockupFile(
@@ -176,7 +176,7 @@ export async function submitMockup(
       {
         orderId: order.id,
         type: "mockup_uploaded",
-        titleAr: `اترفعت نسخة موكاب ${mockup.version} — عند الاستقبال`,
+        titleAr: `رُفعت نسخة موكاب ${mockup.version} — عند الاستقبال`,
         note: null,
         visibleToCustomer: false,
         actorId: actor.id,
@@ -195,7 +195,7 @@ export async function submitMockup(
   });
 }
 
-/** «بلّغ الاستقبال بمشكلة في الملف»: an internal note the desk sees on the order. */
+/** «أبلغ الاستقبال بمشكلة في الملف»: an internal note the desk sees on the order. */
 export async function flagCustomerFiles(
   actor: StaffContext,
   raw: FlagFileInput,
@@ -209,7 +209,7 @@ export async function flagCustomerFiles(
       {
         orderId: order.id,
         type: "files_flagged",
-        titleAr: "المصمم بلّغ بمشكلة في ملفات العميل",
+        titleAr: "أبلغ المصمم عن مشكلة في ملفات العميل",
         note: input.note || null,
         visibleToCustomer: false,
         actorId: actor.id,

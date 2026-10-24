@@ -38,8 +38,8 @@ describe("trackingSessionGateMessage", () => {
     expect(refInvalid.body).toBe(ar.tracking.refInvalid);
     expect(refInvalid.clearCookie).toBe(false);
 
-    const failed = trackingSessionGateMessage("load_failed", "حصلت مشكلة عندنا.");
-    expect(failed.body).toBe("حصلت مشكلة عندنا.");
+    const failed = trackingSessionGateMessage("load_failed", "حدثت مشكلة لدينا.");
+    expect(failed.body).toBe("حدثت مشكلة لدينا.");
     expect(failed.clearCookie).toBe(false);
   });
 

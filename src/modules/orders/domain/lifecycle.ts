@@ -151,7 +151,7 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     to: (s) => ({ status: "awaiting_customer", bizStage: keep(s) }),
     permission: "orders.request_info",
     guard: (_s, ctx) => (ctx.reason?.trim() ? null : "اكتب البيانات المطلوبة من العميل."),
-    event: { type: "info_requested", titleAr: "محتاجين بيانات منك" },
+    event: { type: "info_requested", titleAr: "نحتاج إلى بيانات منك" },
     message: "info",
     note: (ctx) => ctx.reason?.trim() ?? null,
   },
@@ -163,9 +163,9 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     customerAllowed: true,
     guard: (_s, ctx) =>
       ctx.pausedFrom && !PRE_PRODUCTION.includes(ctx.pausedFrom)
-        ? "الحالة اللي الطلب اتوقف منها مش صحيحة."
+        ? "الحالة التي توقف عندها الطلب غير صحيحة."
         : null,
-    event: { type: "customer_responded", titleAr: "وصلنا ردك وبنكمّل" },
+    event: { type: "customer_responded", titleAr: "وصلنا ردك ونواصل العمل" },
     message: null,
   },
   approve: {
@@ -182,7 +182,7 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     to: () => ({ status: "approved", bizStage: "customer_approval" }),
     permission: "orders.approve",
     guard: (_s, ctx) => (ctx.quoteText?.trim() ? null : "اكتب نص عرض السعر قبل الإرسال."),
-    event: { type: "quote_sent", titleAr: "اتبعتلك عرض السعر" },
+    event: { type: "quote_sent", titleAr: "أُرسل إليك عرض السعر" },
     message: "quote",
   },
   reject: {
@@ -190,7 +190,7 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     from: (s) => [...PRE_PRODUCTION, "awaiting_customer"].includes(s.status),
     to: (s) => ({ status: "rejected", bizStage: keep(s) }),
     permission: "orders.approve",
-    guard: (_s, ctx) => (ctx.reason?.trim() ? null : "سبب الرفض مطلوب وهيتبعت للعميل."),
+    guard: (_s, ctx) => (ctx.reason?.trim() ? null : "سبب الرفض مطلوب وسيُرسل إلى العميل."),
     event: { type: "rejected", titleAr: "مرفوض" },
     message: "reject",
     note: (ctx) => ctx.reason?.trim() ?? null,
@@ -210,7 +210,7 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     to: () => ({ status: "approved", bizStage: "deposit" }),
     permission: "messages.send",
     customerAllowed: true,
-    guard: (_s, ctx) => (ctx.mockupSent ? null : "مفيش موكاب متبعت للعميل لسه."),
+    guard: (_s, ctx) => (ctx.mockupSent ? null : "لم يُرسل أي موكاب إلى العميل بعد."),
     event: { type: "mockup_approved", titleAr: "اعتمدت الموكاب" },
     message: "update",
   },
@@ -230,8 +230,8 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     from: isBizStage("approved", "deposit"),
     to: () => ({ status: "approved", bizStage: "production" }),
     permission: "payments.confirm",
-    guard: (_s, ctx) => (ctx.depositConfirmed ? null : "العربون لازم يتسجّل ويتأكد الأول."),
-    event: { type: "deposit_confirmed", titleAr: "العربون اتأكد" },
+    guard: (_s, ctx) => (ctx.depositConfirmed ? null : "يجب تسجيل العربون وتأكيده أولًا."),
+    event: { type: "deposit_confirmed", titleAr: "تم تأكيد العربون" },
     message: "update",
   },
   start_production: {
@@ -246,9 +246,9 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     // B3: no production before an approved mockup and a confirmed deposit (business).
     guard: (s, ctx) =>
       pathOf(s) === "business" && !(ctx.mockupApproved && ctx.depositConfirmed)
-        ? "مينفعش نبدأ الإنتاج قبل اعتماد الموكاب وتأكيد العربون."
+        ? "لا يمكن بدء الإنتاج قبل اعتماد الموكاب وتأكيد العربون."
         : null,
-    event: { type: "production_started", titleAr: "جاري التنفيذ" },
+    event: { type: "production_started", titleAr: "جارٍ التنفيذ" },
     message: "update",
   },
   send_to_qc: {
@@ -268,7 +268,7 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
     to: (s) => ({ status: "ready", bizStage: pathOf(s) === "business" ? "delivery" : null }),
     permission: "production.update",
     guard: (s, ctx) =>
-      pathOf(s) === "business" && !ctx.qcPassed ? "لازم كل بنود فحص الجودة تبقى تمام." : null,
+      pathOf(s) === "business" && !ctx.qcPassed ? "يجب أن تكون جميع بنود فحص الجودة سليمة." : null,
     event: { type: "ready", titleAr: "جاهز" },
     message: "ready",
   },
@@ -282,11 +282,12 @@ const DEFINITIONS: Record<TransitionName, Definition> = {
   },
   cancel: {
     paths: ["person", "business"],
-    from: (s) => [...PRE_PRODUCTION, "awaiting_customer"].includes(s.status),
+    // Any open order: the customer may call it off during production too.
+    from: (s) => !isTerminal(s.status),
     to: (s) => ({ status: "cancelled", bizStage: keep(s) }),
-    permission: "orders.approve",
+    permission: "orders.cancel",
     guard: (_s, ctx) => (ctx.reason?.trim() ? null : "اكتب سبب الإلغاء."),
-    event: { type: "cancelled", titleAr: "اتلغى الطلب" },
+    event: { type: "cancelled", titleAr: "أُلغي الطلب" },
     message: null,
     note: (ctx) => ctx.reason?.trim() ?? null,
   },
@@ -311,13 +312,13 @@ export function planTransition(
     err({ code, transition, message, ...(def.permission ? { permission: def.permission } : {}) });
 
   if (!def.paths.includes(pathOf(state))) {
-    return fail("wrong_path", "الإجراء ده مش متاح لنوع الطلب ده.");
+    return fail("wrong_path", "هذا الإجراء غير متاح لهذا النوع من الطلبات.");
   }
   if (!def.from(state)) {
-    return fail("invalid_from_state", "مينفعش تعمل الإجراء ده والطلب في حالته الحالية.");
+    return fail("invalid_from_state", "لا يمكن تنفيذ هذا الإجراء والطلب في حالته الحالية.");
   }
   if (!actorMayRun(def, actor)) {
-    return fail("forbidden", "الإجراء ده مش ضمن صلاحياتك.");
+    return fail("forbidden", "هذا الإجراء ليس ضمن صلاحياتك.");
   }
   const guardMessage = def.guard?.(state, ctx);
   if (guardMessage) return fail("guard_failed", guardMessage);

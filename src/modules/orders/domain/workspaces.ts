@@ -10,7 +10,7 @@ type Lifecycle = { status: OrderStatus; bizStage: BizStage | null; customerType:
 
 export type MockupStatus = "with_desk" | "sent" | "approved" | "changes_requested";
 
-/** «محتاج موكاب», «طلب تعديل», «مستني العميل», «عند الاستقبال». */
+/** «يحتاج إلى موكاب», «طلب تعديل», «بانتظار العميل», «عند الاستقبال». */
 export type DesignState = "need" | "change" | "waiting" | "sent";
 
 /** Business orders at the mockup stage (B3 step 5) are the designer's. */
@@ -36,10 +36,10 @@ export const canUploadMockup = (s: DesignState) => s === "need" || s === "change
 
 export function mockupVersionNote(status: MockupStatus): string {
   return {
-    with_desk: "اترفعت — عند الاستقبال للمراجعة والإرسال",
-    sent: "اتبعتت للعميل",
-    changes_requested: "اتبعتت للعميل — طلب تعديل",
-    approved: "اتعمدت من العميل",
+    with_desk: "رُفعت — لدى الاستقبال للمراجعة والإرسال",
+    sent: "أُرسلت إلى العميل",
+    changes_requested: "أُرسلت إلى العميل — طلب تعديل",
+    approved: "اعتمدها العميل",
   }[status];
 }
 
@@ -63,7 +63,7 @@ export function productionColumn(o: Lifecycle, stage: JobStage | null): Producti
 
 export const QC_CHECKS = [
   ["qcSizesOk", "المقاسات مطابقة"],
-  ["qcNamesOk", "الأسماء مظبوطة"],
+  ["qcNamesOk", "الأسماء صحيحة"],
   ["qcPrintOk", "الطباعة واضحة"],
   ["qcCountOk", "العدد كامل"],
 ] as const;
@@ -99,7 +99,7 @@ export const PAYMENT_KIND_LABEL: Record<PaymentKind, string> = {
 export const PAYMENT_METHODS = ["cash", "transfer"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
-  cash: "كاش",
+  cash: "نقدًا",
   transfer: "تحويل",
 };
 

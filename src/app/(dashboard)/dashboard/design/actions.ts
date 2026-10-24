@@ -20,7 +20,7 @@ export async function submitMockupAction(
   }
 }
 
-/** Design → «بلّغ الاستقبال بمشكلة في الملف». */
+/** Design → «أبلغ الاستقبال بمشكلة في الملف». */
 export async function flagFilesAction(
   input: FlagFileInput,
 ): Promise<ActionResult<{ ref: string }>> {

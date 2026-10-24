@@ -91,7 +91,7 @@ function buildOrderValues(
 export async function submitOrder(input: SubmitOrderInput): Promise<Result<SubmitOrderResult>> {
   const phone = normalizeEgyptianMobile(input.phone);
   if (!phone) {
-    return err(new ValidationError({ phone: ["رقم الموبايل مش صحيح."] }));
+    return err(new ValidationError({ phone: ["رقم الهاتف غير صحيح."] }));
   }
 
   const idempotencyKeyHash = await hashToken(input.submissionKey, env.TOKEN_HASH_SECRET);
@@ -101,23 +101,23 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
 
   const categoryId = await findCategoryIdByKey(input.cat);
   if (categoryId === null) {
-    return err(new ValidationError({ cat: ["التصنيف مش موجود."] }, "التصنيف مش موجود."));
+    return err(new ValidationError({ cat: ["التصنيف غير موجود."] }, "التصنيف غير موجود."));
   }
 
   let productId: number | null = null;
   if (input.prod) {
     const product = await findProductByKey(input.prod);
     if (!product) {
-      return err(new ValidationError({ prod: ["المنتج مش موجود."] }, "المنتج مش موجود."));
+      return err(new ValidationError({ prod: ["المنتج غير موجود."] }, "المنتج غير موجود."));
     }
     // Hidden from the dashboard while the customer was filling the form.
     if (!product.isVisible) {
-      const msg = "المنتج ده مش متاح دلوقتي، اختار نوع تاني.";
+      const msg = "هذا المنتج غير متاح حاليًا، اختر نوعًا آخر.";
       return err(new ValidationError({ prod: [msg] }, msg));
     }
     // Product types come from the catalog now, so make sure this one is of the chosen category.
     if (product.categoryId !== categoryId) {
-      return err(new ValidationError({ prod: ["المنتج مش موجود."] }, "المنتج مش موجود."));
+      return err(new ValidationError({ prod: ["المنتج غير موجود."] }, "المنتج غير موجود."));
     }
     productId = product.id;
   }
@@ -130,15 +130,15 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
     return err(
       new ValidationError(
         { help: ["ارفع ملف تصميم أو فعّل مساعدة التصميم."] },
-        "ارفع ملف تصميم أو فعّل «محتاج مساعدة في التصميم».",
+        "ارفع ملف تصميم أو فعّل «أحتاج إلى مساعدة في التصميم».",
       ),
     );
   }
   if (isOrg(input) && input.perPiece && !hasSheet) {
     return err(
       new ValidationError(
-        { hasNamesSheet: ["شيت الأسماء مطلوب."] },
-        "ارفع شيت الأسماء (Excel أو CSV أو PDF).",
+        { hasNamesSheet: ["جدول الأسماء مطلوب."] },
+        "ارفع جدول الأسماء (Excel أو CSV أو PDF).",
       ),
     );
   }
@@ -147,16 +147,16 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
   if (input.hasDesignFiles && !hasDesign) {
     return err(
       new ValidationError(
-        { hasDesignFiles: ["الملفات لسه مش متأكدين منها."] },
-        "الملفات لسه بترفع أو خلصتش. استنى شوية وجرّب تاني.",
+        { hasDesignFiles: ["لم يُتحقق من الملفات بعد."] },
+        "ما زالت الملفات قيد الرفع أو لم يكتمل رفعها. انتظر قليلًا وحاول مرة أخرى.",
       ),
     );
   }
   if (input.hasNamesSheet && !hasSheet) {
     return err(
       new ValidationError(
-        { hasNamesSheet: ["شيت الأسماء لسه مش متأكد منه."] },
-        "شيت الأسماء لسه بيرفع. استنى شوية وجرّب تاني.",
+        { hasNamesSheet: ["لم يُتحقق من جدول الأسماء بعد."] },
+        "ما زال جدول الأسماء قيد الرفع. انتظر قليلًا وحاول مرة أخرى.",
       ),
     );
   }
@@ -222,7 +222,7 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
         // else: ref collision — retry with a new ref
       }
       if (!order) {
-        throw new ConflictError("order ref collision", "ما قدرناش نعمل رقم الطلب. جرّب تاني.");
+        throw new ConflictError("order ref collision", "تعذّر إنشاء رقم الطلب. حاول مرة أخرى.");
       }
 
       if (hasSizeSplit({ cat: input.cat, prod: input.prod })) {

@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { ThemeProvider, useTheme } from "next-themes";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Toaster as SonnerToaster } from "sonner";
 import { cn } from "@/lib/cn";
 
@@ -44,6 +44,27 @@ export function Toaster() {
           toast: "glass !rounded-card-sm !font-sans !text-ink",
           description: "!text-ink-muted",
         },
+      }}
+    />
+  );
+}
+
+/**
+ * The dashboard opens in light until the member picks a theme with the toggle. The script runs
+ * before paint (no dark flash on a dark system); the effect covers a provider that hydrated first.
+ * The choice is stored like any other toggle, so it then applies site-wide on this browser.
+ */
+export function DefaultLightTheme() {
+  const { theme, setTheme } = useTheme();
+  useEffect(() => {
+    if (theme === "system") setTheme("light");
+  }, [theme, setTheme]);
+  return (
+    <script
+      {...themeScriptProps}
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{
+        __html: `try{if(!localStorage.getItem("theme")){localStorage.setItem("theme","light");var d=document.documentElement;d.classList.remove("dark");d.classList.add("light");d.style.colorScheme="light"}}catch(e){}`,
       }}
     />
   );

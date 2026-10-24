@@ -49,7 +49,7 @@ export function deltaText(t: string) {
 /** Label and icon per source, in the design's wording. */
 export const SOURCE_META: Record<Source, [string, string]> = {
   instagram: [
-    "انستجرام",
+    "إنستغرام",
     "M17 2H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5zM16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01",
   ],
   facebook: ["فيسبوك", "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
@@ -61,22 +61,22 @@ export const SOURCE_META: Record<Source, [string, string]> = {
     "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
   ],
   other: [
-    "مواقع تانية",
+    "مواقع أخرى",
     "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
   ],
 };
 
 export const DEVICE_META: Record<Device, [string, string]> = {
   mobile: [
-    "موبايل",
+    "هاتف",
     "M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01",
   ],
   desktop: [
-    "ديسكتوب",
+    "حاسوب مكتبي",
     "M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 21h8M12 17v4",
   ],
   tablet: [
-    "تابلت",
+    "جهاز لوحي",
     "M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01",
   ],
 };

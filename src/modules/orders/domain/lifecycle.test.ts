@@ -48,6 +48,15 @@ const biz = (status: OrderStatus, bizStage: BizStage | null): OrderState => ({
  * Key: `${transition}|${path}|${status}|${bizStage ?? "-"}`
  */
 const PRE = ["submitted", "in_review", "approved"] as const;
+/** Every status but delivered, rejected and cancelled: an open order can be cancelled. */
+const OPEN = [
+  "submitted",
+  "in_review",
+  "awaiting_customer",
+  "approved",
+  "in_production",
+  "ready",
+] as const;
 const ALLOWED = new Set<string>();
 const allow = (
   t: TransitionName,
@@ -62,10 +71,8 @@ allow("start_review", "person", "submitted", null);
 for (const s of PRE) allow("request_info", "person", s, null);
 allow("customer_responded", "person", "awaiting_customer", null);
 allow("approve", "person", "in_review", null);
-for (const s of [...PRE, "awaiting_customer"] as const) {
-  allow("reject", "person", s, null);
-  allow("cancel", "person", s, null);
-}
+for (const s of [...PRE, "awaiting_customer"] as const) allow("reject", "person", s, null);
+for (const s of OPEN) allow("cancel", "person", s, null);
 allow("start_production", "person", "approved", null);
 allow("mark_ready", "person", "in_production", null);
 allow("deliver", "person", "ready", null);
@@ -75,10 +82,8 @@ for (const stage of BIZ_STAGE_OPTIONS) {
   allow("start_review", "business", "submitted", stage);
   for (const s of PRE) allow("request_info", "business", s, stage);
   allow("customer_responded", "business", "awaiting_customer", stage);
-  for (const s of [...PRE, "awaiting_customer"] as const) {
-    allow("reject", "business", s, stage);
-    allow("cancel", "business", s, stage);
-  }
+  for (const s of [...PRE, "awaiting_customer"] as const) allow("reject", "business", s, stage);
+  for (const s of OPEN) allow("cancel", "business", s, stage);
   allow("deliver", "business", "ready", stage);
 }
 allow("approve_and_send_quote", "business", "in_review", "quote");
@@ -254,12 +259,12 @@ describe("lifecycle: permissions (B9)", () => {
 
 describe("lifecycle: plan contents", () => {
   it("produces a customer-visible event, an activity key and the right template", () => {
-    const r = planTransition(person("in_review"), "reject", admin, { reason: "التصميم مش واضح" });
+    const r = planTransition(person("in_review"), "reject", admin, { reason: "التصميم غير واضح" });
     expect(r.ok && r.value).toMatchObject({
       event: {
         type: "rejected",
         titleAr: "مرفوض",
-        note: "التصميم مش واضح",
+        note: "التصميم غير واضح",
         visibleToCustomer: true,
       },
       message: "reject",
@@ -269,8 +274,11 @@ describe("lifecycle: plan contents", () => {
 
   it("lists available actions for a role", () => {
     expect(availableTransitions(person("in_review"), staff("desk"), allGuardsPass).sort()).toEqual(
-      ["request_info"].sort(),
+      ["cancel", "request_info"].sort(),
     );
+    expect(availableTransitions(person("in_production"), staff("prod"), allGuardsPass)).toEqual([
+      "mark_ready",
+    ]);
     expect(availableTransitions(person("in_review"), admin, allGuardsPass).sort()).toEqual(
       ["approve", "cancel", "reject", "request_info"].sort(),
     );

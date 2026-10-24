@@ -14,9 +14,9 @@ const staff = (roleKey: StaffContext["roleKey"], permissions: Permission[]): Sta
 });
 
 describe("B9 default matrix", () => {
-  it("has 17 permissions and gives admin all of them", () => {
-    expect(PERMISSIONS).toHaveLength(17);
-    expect(defaultPermissionsFor("admin")).toHaveLength(17);
+  it("has 19 permissions and gives admin all of them", () => {
+    expect(PERMISSIONS).toHaveLength(19);
+    expect(defaultPermissionsFor("admin")).toHaveLength(19);
   });
 
   it.each([
@@ -27,6 +27,7 @@ describe("B9 default matrix", () => {
         "customers.view_phone",
         "orders.request_info",
         "quotes.draft",
+        "orders.cancel",
         "messages.send",
       ],
     ],

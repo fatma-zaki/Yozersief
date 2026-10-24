@@ -15,7 +15,7 @@ export const STAGES = [
 
 export const CUSTOMER_TYPE: Record<CustomerType, string> = {
   person: "فرد",
-  biz: "شركة أو محل",
+  biz: "شركة أو متجر",
   group: "فريق أو جهة",
 };
 
@@ -105,10 +105,12 @@ export const isOrg = (r: Order) => r.ctype !== "person";
 export const isDecidable = (r: Order) =>
   ["new", "review", "awaiting"].includes(r.status) && (r.can.approve || r.can.info || r.can.reject);
 export const isClosed = (r: Order) => ["approved", "rejected"].includes(r.status);
+/** Status actions after the decision: the next step (individuals) and «إلغاء الطلب». */
+export const hasStatusActions = (r: Order) => (!isOrg(r) && Boolean(r.next)) || r.can.cancel;
 
 /** The list label: an approved organisation order shows its current stage instead. */
 export function statusLabel(r: Order): string {
-  if (isOrg(r) && r.status === "approved") return r.stage >= 7 ? "اتسلم" : (STAGES[r.stage] ?? "");
+  if (isOrg(r) && r.status === "approved") return r.stage >= 7 ? "سُلّم" : (STAGES[r.stage] ?? "");
   return r.statusLabel;
 }
 
@@ -122,7 +124,7 @@ export function bulkChips(r: Order): string[] {
   ].filter(Boolean);
 }
 
-export type DialogKind = "approve" | "info" | "reject";
+export type DialogKind = "approve" | "info" | "reject" | "cancel";
 
 export type DialogSpec = {
   title: string;
@@ -139,43 +141,54 @@ export function dialogSpec(kind: DialogKind, r: Order, mobile: boolean): DialogS
   if (kind === "approve" && isOrg(r)) {
     return {
       title: "قبول الطلب وإرسال عرض السعر",
-      body: `ده طلب ${CUSTOMER_TYPE[r.ctype]} (${r.org}). العميل هيوصله عرض سعر رسمي، والإنتاج مش هيبدأ غير بعد موافقته واعتماد الموكاب والعربون.`,
+      body: `هذا طلب ${CUSTOMER_TYPE[r.ctype]} (${r.org}). سيصل العميل عرض سعر رسمي، ولن يبدأ الإنتاج إلا بعد موافقته واعتماد الموكاب والعربون.`,
       label: "عرض السعر: سعر القطعة، الإجمالي، ومدة التنفيذ (إجباري)",
       required: true,
       button: "إرسال عرض السعر",
       line: false,
-      toast: "اتبعت عرض السعر لطلب ",
+      toast: "أُرسل عرض السعر للطلب ",
     };
   }
   const specs: Record<DialogKind, DialogSpec> = {
     approve: {
       title: mobile ? "تأكيد الموافقة" : "تأكيد الموافقة على الطلب",
-      body: "العميل هيعرف إن طلبه اتقبل. ده مش معناه إن التنفيذ بدأ.",
+      body: "سيعرف العميل أن طلبه قُبل. هذا لا يعني أن التنفيذ قد بدأ.",
       label: mobile ? "السعر والموعد (اختياري)" : "رسالة للعميل (السعر والموعد) — اختياري",
       required: false,
       button: "تأكيد الموافقة",
       line: false,
-      toast: "اتسجلت الموافقة على ",
+      toast: "سُجّلت الموافقة على ",
     },
     info: {
       title: "طلب بيانات من العميل",
-      body: "الطلب هيتحول لـ «بانتظار العميل» لحد ما يرد.",
-      label: "إيه المطلوب بالظبط؟",
+      body: "سيتحول الطلب إلى «بانتظار العميل» حتى يرد.",
+      label: "ما المطلوب تحديدًا؟",
       required: true,
-      button: "ابعت الطلب للعميل",
+      button: "أرسل الطلب إلى العميل",
       line: false,
-      toast: mobile ? "اتبعت طلب البيانات لـ " : "اتبعت طلب البيانات لعميل ",
+      toast: mobile ? "أُرسل طلب البيانات إلى " : "أُرسل طلب البيانات إلى عميل ",
     },
     reject: {
       title: "رفض الطلب",
       body: mobile
-        ? "القرار هيوصل للعميل ومعاه السبب."
-        : "القرار ده هيوصل للعميل ومعاه السبب. اكتب السبب بوضوح واقترح بديل لو فيه.",
+        ? "سيصل القرار إلى العميل مع السبب."
+        : "سيصل هذا القرار إلى العميل مع السبب. اكتب السبب بوضوح واقترح بديلًا إن وُجد.",
       label: "سبب الرفض (إجباري)",
       required: true,
       button: "تأكيد الرفض",
       line: true,
-      toast: "اتسجل رفض ",
+      toast: "سُجّل رفض ",
+    },
+    cancel: {
+      title: "إلغاء الطلب",
+      body: mobile
+        ? "سيُغلق الطلب ولن يكتمل. سيظهر السبب للعميل في صفحة التتبع."
+        : "سيُغلق الطلب ولن يكتمل في أي مرحلة. سيظهر السبب للعميل في صفحة التتبع، ولن تُرسل رسالة واتساب.",
+      label: "سبب الإلغاء (إجباري)",
+      required: true,
+      button: "تأكيد الإلغاء",
+      line: true,
+      toast: "أُلغي الطلب ",
     },
   };
   return specs[kind];

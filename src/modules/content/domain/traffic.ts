@@ -22,7 +22,7 @@ export type Device = (typeof DEVICES)[number];
 
 /** A view more than this long after the visitor's previous one starts a new visit. */
 export const VISIT_GAP_MS = 30 * 60_000;
-/** «زائر على الموقع دلوقتي»: distinct visitors seen in this window. */
+/** «زائر على الموقع الآن»: distinct visitors seen in this window. */
 export const LIVE_WINDOW_MS = 5 * 60_000;
 
 const HOUR = 3_600_000;
@@ -139,7 +139,7 @@ export function cairoDayStart(at: Date): Date {
 export type Window = {
   from: Date;
   to: Date;
-  /** The same span right before it, for «عن الفترة اللي قبلها». */
+  /** The same span right before it, for «عن الفترة السابقة». */
   prevFrom: Date;
   prevTo: Date;
   bucketMs: number;
@@ -232,7 +232,7 @@ const PAGE_NAMES: Record<string, string> = {
   "/order/confirmation": "تأكيد الطلب",
   "/track": "تتبّع الطلب",
   "/track/[ref]": "صفحة متابعة الطلب",
-  "/t/[token]": "لينك التتبّع",
+  "/t/[token]": "رابط التتبّع",
   "/gallery": "معرض الأعمال",
 };
 

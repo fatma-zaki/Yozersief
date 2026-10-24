@@ -15,7 +15,7 @@ import {
 } from "@/modules/orders";
 import type { DeskOrderInput, DeskQuoteInput, MockupDecisionInput } from "@/modules/orders/schemas";
 
-/** Desk → «ابعت للمدير للاعتماد» (quote draft). */
+/** Desk → «أرسل إلى المدير للاعتماد» (quote draft). */
 export async function draftQuoteAction(
   input: DeskQuoteInput,
 ): Promise<ActionResult<DeskActionResult>> {
@@ -29,7 +29,7 @@ export async function draftQuoteAction(
   }
 }
 
-/** Desk → «حوّل للمدير للموافقة». */
+/** Desk → «حوّل إلى المدير للموافقة». */
 export async function forwardToAdminAction(
   input: DeskOrderInput,
 ): Promise<ActionResult<DeskActionResult>> {
@@ -70,7 +70,7 @@ export async function customerWhatsappAction(
   }
 }
 
-/** Desk → «ابعت الموكاب للعميل». */
+/** Desk → «أرسل الموكاب إلى العميل». */
 export async function sendMockupAction(
   input: DeskOrderInput,
 ): Promise<ActionResult<{ ref: string; waLink: string | null }>> {

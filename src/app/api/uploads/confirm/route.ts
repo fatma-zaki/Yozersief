@@ -21,7 +21,7 @@ const bodySchema = z.object({
 
 export async function POST(request: Request) {
   if (!blobUploadMode()) {
-    return NextResponse.json({ error: "رفع الملفات مش متاح دلوقتي." }, { status: 503 });
+    return NextResponse.json({ error: "رفع الملفات غير متاح حاليًا." }, { status: 503 });
   }
 
   try {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const payload = uploadPayloadSchema.parse(JSON.parse(body.clientPayload));
 
     if (!payload.submissionKey) {
-      throw new ValidationError({}, "تأكيد الرفع ده لملفات الطلب من صفحة الطلب بس.");
+      throw new ValidationError({}, "هذا التأكيد مخصص لملفات الطلب المرفوعة من صفحة الطلب فقط.");
     }
 
     await completeUploadedFile(

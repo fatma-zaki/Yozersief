@@ -33,7 +33,7 @@ import {
 export async function POST(request: Request) {
   const mode = blobUploadMode();
   if (!mode) {
-    return NextResponse.json({ error: "رفع الملفات مش متاح دلوقتي." }, { status: 503 });
+    return NextResponse.json({ error: "رفع الملفات غير متاح حاليًا." }, { status: 503 });
   }
 
   const authorize = async (pathname: string, clientPayload: string | null) => {

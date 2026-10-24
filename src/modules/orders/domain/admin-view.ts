@@ -47,11 +47,11 @@ export function personStatusLabel(status: OrderStatus): string {
       in_review: "قيد المراجعة",
       awaiting_customer: "بانتظار العميل",
       approved: "تمت الموافقة",
-      in_production: "جاري التنفيذ",
+      in_production: "جارٍ التنفيذ",
       ready: "جاهز",
       delivered: "تم التسليم",
       rejected: "مرفوض",
-      cancelled: "اتلغى",
+      cancelled: "أُلغي",
     } as const
   )[status];
 }
@@ -89,7 +89,7 @@ const L = ar.order.builder;
 const label = <K extends string>(map: Partial<Record<K, string>>, key: string | null) =>
   key ? ((map as Record<string, string | undefined>)[key] ?? key) : null;
 
-/** "تيشيرت أبيض × 12", "كفر iPhone 13 × 1", "استيكر دائري × 200". */
+/** "تيشيرت أبيض × 12", "غطاء iPhone 13 × 1", "ملصق دائري × 200". */
 export function productLabel(o: OrderFacts): string {
   const qty = o.quantity ? ` × ${o.quantity}` : "";
   switch (o.categoryKey) {
@@ -98,11 +98,11 @@ export function productLabel(o: OrderFacts): string {
       return `${o.productName ?? o.categoryName}${color}${qty}`;
     }
     case "mug":
-      return `${o.productName ?? "مج"}${qty}`;
+      return `${o.productName ?? "كوب"}${qty}`;
     case "phone":
-      return `كفر${o.phoneModel ? ` ${o.phoneModel}` : ""}${qty}`;
+      return `غطاء${o.phoneModel ? ` ${o.phoneModel}` : ""}${qty}`;
     case "sticker":
-      return `استيكر${o.shape ? ` ${label(L.shapes, o.shape)}` : ""}${qty}`;
+      return `ملصق${o.shape ? ` ${label(L.shapes, o.shape)}` : ""}${qty}`;
     default:
       return o.categoryName;
   }
@@ -144,7 +144,7 @@ export function specList(o: OrderFacts): { k: string; v: string }[] {
   } else {
     add("النوع", o.categoryName);
   }
-  if (o.needsDesignHelp) add("التصميم", "محتاج مساعدة في التصميم");
+  if (o.needsDesignHelp) add("التصميم", "يحتاج إلى مساعدة في التصميم");
   if (o.receiptMethod === "delivery") add("عنوان التوصيل", o.deliveryAddress);
   return specs;
 }
@@ -157,12 +157,12 @@ export function customerNotes(o: OrderFacts): string {
 }
 
 export function receiptLabel(method: "pickup" | "delivery"): string {
-  return method === "pickup" ? "استلام من المحل" : "توصيل";
+  return method === "pickup" ? "الاستلام من المتجر" : "توصيل";
 }
 
-/** "مرغوب: 2 نوفمبر" or "مش محدد". `date` is a calendar date (YYYY-MM-DD). */
+/** "مرغوب: 2 نوفمبر" or "غير محدد". `date` is a calendar date (YYYY-MM-DD). */
 export function desiredLabel(date: string | null): string {
-  if (!date) return "مش محدد";
+  if (!date) return "غير محدد";
   const d = new Date(`${date}T12:00:00Z`);
   const month = new Intl.DateTimeFormat("ar-EG-u-nu-latn", {
     month: "long",
@@ -171,14 +171,14 @@ export function desiredLabel(date: string | null): string {
   return `مرغوب: ${d.getUTCDate()} ${month}`;
 }
 
-/** List time like the design: "النهارده 10:12 ص", "أمس 4:30 م", or "20 أكتوبر". */
+/** List time like the design: "اليوم 10:12 ص", "أمس 4:30 م", or "20 أكتوبر". */
 export function whenLabel(at: Date, now: Date): string {
   const full = formatShortDateTime(at);
   const [day = "", month = "", ...time] = full.split(" ");
   const today = cairoDateString(now);
   const yesterday = cairoDateString(new Date(now.getTime() - 86_400_000));
   const date = cairoDateString(at);
-  if (date === today) return `النهارده ${time.join(" ")}`;
+  if (date === today) return `اليوم ${time.join(" ")}`;
   if (date === yesterday) return `أمس ${time.join(" ")}`;
   return `${day} ${month}`;
 }
@@ -223,12 +223,22 @@ export function canDecide(state: OrderState, decision: Decision, actor: Actor): 
 
 export type NextStage = { transition: TransitionName; label: string };
 
-/** «سجّل المرحلة الجاية» on the business pipeline box (brief B7). */
+/**
+ * «سجّل المرحلة التالية»: the next step after approval — the business pipeline box (brief B7),
+ * or the individual path approved → in production → ready → delivered.
+ */
 export function nextStage(
   state: OrderState,
   bulk: { sample: boolean; batches: boolean },
 ): NextStage | null {
-  if (state.customerType === "person") return null;
+  if (state.customerType === "person") {
+    const person: Partial<Record<OrderState["status"], NextStage>> = {
+      approved: { transition: "start_production", label: "ابدأ التنفيذ" },
+      in_production: { transition: "mark_ready", label: "الطلب جاهز" },
+      ready: { transition: "deliver", label: "تم تسليم الطلب" },
+    };
+    return person[state.status] ?? null;
+  }
   const at = `${state.status}:${state.bizStage}`;
   const map: Record<string, NextStage> = {
     "approved:customer_approval": { transition: "accept_quote", label: "العميل وافق على العرض" },
@@ -236,13 +246,13 @@ export function nextStage(
       transition: "approve_mockup",
       label: bulk.sample ? "العميل اعتمد الموكاب والعينة" : "العميل اعتمد الموكاب",
     },
-    "approved:deposit": { transition: "confirm_deposit", label: "اتسجل استلام العربون" },
+    "approved:deposit": { transition: "confirm_deposit", label: "سُجّل استلام العربون" },
     "approved:production": { transition: "start_production", label: "ابدأ الإنتاج" },
-    "in_production:production": { transition: "send_to_qc", label: "الإنتاج خلص" },
-    "in_production:qc": { transition: "mark_ready", label: "الفحص تمام — جاهز للتسليم" },
+    "in_production:production": { transition: "send_to_qc", label: "انتهى الإنتاج" },
+    "in_production:qc": { transition: "mark_ready", label: "الفحص سليم — جاهز للتسليم" },
     "ready:delivery": {
       transition: "deliver",
-      label: bulk.batches ? "اتسلمت الدفعة الأخيرة" : "اتسلم الطلب",
+      label: bulk.batches ? "سُلّمت الدفعة الأخيرة" : "تم تسليم الطلب",
     },
   };
   return map[at] ?? null;
@@ -255,15 +265,15 @@ export function stageUpdateText(
 ): string {
   switch (transition) {
     case "accept_quote":
-      return `اتسجلت موافقتك على عرض السعر، وهنبعتلك الموكاب${facts.sample ? " والعينة" : ""} للاعتماد.`;
+      return `سُجّلت موافقتك على عرض السعر، وسنرسل إليك الموكاب${facts.sample ? " والعينة" : ""} للاعتماد.`;
     case "approve_mockup":
-      return "اتسجل اعتمادك للموكاب. فاضل العربون عشان نبدأ الإنتاج. [طرق الدفع بانتظار التأكيد]";
+      return "سُجّل اعتمادك للموكاب. يتبقى العربون لنبدأ الإنتاج. [طرق الدفع بانتظار التأكيد]";
     case "confirm_deposit":
-      return "استلمنا العربون وهنبدأ الإنتاج.";
+      return "استلمنا العربون وسنبدأ الإنتاج.";
     case "start_production":
-      return "الإنتاج بدأ.";
+      return "بدأ الإنتاج.";
     case "mark_ready":
-      return facts.receiptMethod === "delivery" ? "هنتواصل معاك نحدد ميعاد التوصيل." : "";
+      return facts.receiptMethod === "delivery" ? "سنتواصل معك لتحديد موعد التوصيل." : "";
     default:
       return "";
   }

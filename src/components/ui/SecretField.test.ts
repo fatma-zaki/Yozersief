@@ -23,7 +23,7 @@ describe("SecretField", () => {
     const html = renderToStaticMarkup(
       createElement(SecretField, {
         id: "track-phone",
-        label: "موبايل",
+        label: "هاتف",
         visible: true,
         onToggleVisible: () => undefined,
         name: "phone",

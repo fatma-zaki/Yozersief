@@ -21,7 +21,7 @@ import type {
 type Step = "start" | "finish" | "pass";
 const STEPS = { start: startPrinting, finish: finishPrinting, pass: passQc } as const;
 
-/** Production → «ابدأ الطباعة» / «خلص — للفحص» / «الفحص تمام». */
+/** Production → «ابدأ الطباعة» / «انتهى — إلى الفحص» / «الفحص سليم». */
 export async function productionStepAction(
   step: Step,
   input: DeskOrderInput,
@@ -60,7 +60,7 @@ export async function qcCheckAction(input: QcCheckInput): Promise<ActionResult<{
   }
 }
 
-/** Production → «شيت الأسماء» tick. */
+/** Production → «جدول الأسماء» tick. */
 export async function piecePrintedAction(
   input: PiecePrintedInput,
 ): Promise<ActionResult<{ printed: boolean }>> {

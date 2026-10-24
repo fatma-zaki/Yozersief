@@ -19,7 +19,7 @@ export const OPTION_CHOICES = {
   colors: [
     { value: "white", label: "أبيض" },
     { value: "black", label: "أسود" },
-    { value: "other", label: "ألوان تانية" },
+    { value: "other", label: "ألوان أخرى" },
   ],
   sizes: SIZE_VALUES.map((v) => ({ value: v, label: v })),
   places: [

@@ -5,7 +5,7 @@ const base = {
   submissionKey: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
   ctype: "person" as const,
   cat: "custom" as const,
-  desc: "عايز أطباعة فكرة خاصة للمدرسة",
+  desc: "أريد طباعة فكرة خاصة للمدرسة",
   help: true,
   hasDesignFiles: false,
   hasNamesSheet: false,

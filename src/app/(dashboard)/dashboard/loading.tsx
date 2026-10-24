@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
  */
 export default function DashboardLoading() {
   return (
-    <div className={shell.skel} role="status" aria-label="جاري التحميل">
+    <div className={shell.skel} role="status" aria-label="جارٍ التحميل">
       <div className={cn(s.glass, shell.bone)} style={{ height: 88 }} />
       <div
         style={{

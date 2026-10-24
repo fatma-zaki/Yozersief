@@ -139,6 +139,29 @@ export async function updateInternalNote(orderId: string, note: string | null, t
   return rows.length > 0;
 }
 
+/** «تعديل الطلب»: the changed detail columns, and a new size split / print places when given. */
+export async function updateOrderDetails(
+  orderId: string,
+  patch: Partial<typeof orders.$inferInsert>,
+  lists: { sizes: { size: string; qty: number }[] | null; places: string[] | null },
+  tx: DbOrTx,
+) {
+  await tx
+    .update(orders)
+    .set({ ...patch, updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+  if (lists.sizes) {
+    await tx.delete(orderSizes).where(eq(orderSizes.orderId, orderId));
+    if (lists.sizes.length)
+      await tx.insert(orderSizes).values(lists.sizes.map((s) => ({ orderId, ...s })));
+  }
+  if (lists.places) {
+    await tx.delete(orderPrintPlaces).where(eq(orderPrintPlaces.orderId, orderId));
+    if (lists.places.length)
+      await tx.insert(orderPrintPlaces).values(lists.places.map((place) => ({ orderId, place })));
+  }
+}
+
 export async function findCustomerContact(customerId: string, tx: DbOrTx) {
   const [row] = await tx
     .select({ name: customers.name, phone: customers.phone })

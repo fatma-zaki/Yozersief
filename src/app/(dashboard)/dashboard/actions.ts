@@ -27,7 +27,7 @@ export async function requestAccessAction(
 ): Promise<ActionResult<{ status: string }>> {
   try {
     const staff = await requireStaff();
-    if (!isPermission(permission)) throw new ValidationError({}, "الصلاحية دي مش موجودة.");
+    if (!isPermission(permission)) throw new ValidationError({}, "هذه الصلاحية غير موجودة.");
     await enforceRateLimit("access.request", staff.id);
     return fromResult(await requestAccess(staff, permission));
   } catch (error) {
@@ -74,7 +74,7 @@ export async function enableTwoFactorAction(
     if (result.method !== "totp") throw new Error("expected TOTP two-factor setup");
     return actionOk({ totpURI: result.totpURI, backupCodes: result.backupCodes });
   } catch (error) {
-    if (error instanceof APIError) return { ok: false, error: "كلمة السر مش صحيحة." };
+    if (error instanceof APIError) return { ok: false, error: "كلمة المرور غير صحيحة." };
     return actionError(error);
   }
 }
@@ -88,7 +88,7 @@ export async function confirmTwoFactorAction(code: string): Promise<ActionResult
     revalidatePath("/dashboard/security");
     return actionOk(undefined);
   } catch (error) {
-    if (error instanceof APIError) return { ok: false, error: "الكود مش صحيح. جرّب تاني." };
+    if (error instanceof APIError) return { ok: false, error: "الرمز غير صحيح. حاول مرة أخرى." };
     return actionError(error);
   }
 }

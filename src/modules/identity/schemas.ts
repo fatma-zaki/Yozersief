@@ -17,8 +17,8 @@ export const egyptianMobile = z
   });
 
 export const loginSchema = z.object({
-  identifier: z.string().trim().min(1, "اكتب الإيميل أو رقم الموبايل"),
-  password: z.string().min(1, "اكتب كلمة السر"),
+  identifier: z.string().trim().min(1, "اكتب البريد الإلكتروني أو رقم الهاتف"),
+  password: z.string().min(1, "اكتب كلمة المرور"),
 });
 export type LoginInput = z.input<typeof loginSchema>;
 
@@ -26,7 +26,7 @@ export const twoFactorSchema = z.object({
   code: z
     .string()
     .trim()
-    .regex(/^\d{6}$/, "الكود 6 أرقام"),
+    .regex(/^\d{6}$/, "الرمز مكوّن من 6 أرقام"),
   trustDevice: z.boolean().default(false),
 });
 
@@ -34,12 +34,12 @@ export const inviteSchema = z.object({
   contact: z
     .string()
     .trim()
-    .min(1, "اكتب موبايل أو إيميل العضو")
+    .min(1, "اكتب رقم هاتف العضو أو بريده الإلكتروني")
     .transform((v, ctx) => {
       if (v.includes("@")) {
         const email = z.email().safeParse(v.toLowerCase());
         if (email.success) return { email: email.data };
-        ctx.addIssue({ code: "custom", message: "الإيميل مش مظبوط" });
+        ctx.addIssue({ code: "custom", message: "البريد الإلكتروني غير صحيح" });
         return z.NEVER;
       }
       const phone = normalizeEgyptianMobile(v);
@@ -47,14 +47,14 @@ export const inviteSchema = z.object({
       ctx.addIssue({ code: "custom", message: ar.errors.invalidPhone });
       return z.NEVER;
     }),
-  roleKey: z.enum(ROLE_KEYS).refine((r) => r !== "admin", "مينفعش تدعو مدير تاني من هنا"),
+  roleKey: z.enum(ROLE_KEYS).refine((r) => r !== "admin", "لا يمكن دعوة مدير آخر من هنا"),
 });
 export type InviteInput = z.input<typeof inviteSchema>;
 
 const password = z
   .string()
-  .min(10, "كلمة السر لازم تكون 10 حروف على الأقل")
-  .max(128, "كلمة السر طويلة زيادة");
+  .min(10, "يجب أن تتكون كلمة المرور من 10 أحرف على الأقل")
+  .max(128, "كلمة المرور طويلة جدًا");
 
 export const acceptInvitationSchema = z
   .object({
@@ -66,12 +66,12 @@ export const acceptInvitationSchema = z
       .trim()
       .optional()
       .transform((v) => (v ? v.toLowerCase() : undefined))
-      .pipe(z.email("الإيميل مش مظبوط").optional()),
+      .pipe(z.email("البريد الإلكتروني غير صحيح").optional()),
     password,
     confirmPassword: z.string(),
   })
   .refine((v) => v.password === v.confirmPassword, {
     path: ["confirmPassword"],
-    message: "كلمتين السر مش زي بعض",
+    message: "كلمتا المرور غير متطابقتين",
   });
 export type AcceptInvitationInput = z.input<typeof acceptInvitationSchema>;

@@ -49,15 +49,16 @@ const ROLE_OPTIONS: RoleKey[] = ["desk", "design", "prod", "delivery", "admin"];
 type TeamRole = Exclude<RoleKey, "admin">;
 
 /**
- * The design's matrix rows: [permission, label, group heading]. «تأكيد الدفعات» and «نشاط
- * الفريق» are not in the design but are real permissions (B9), so they get rows too.
+ * The design's matrix rows: [permission, label, group heading]. «تأكيد الدفعات», «تعديل بيانات
+ * الطلب» and «نشاط الفريق» are not in the design but are real permissions, so they get rows too.
  */
 const PERMS: [Permission, string, string?][] = [
   ["orders.view", "مشاهدة الطلبات", "الطلبات"],
-  ["customers.view_phone", "رؤية رقم موبايل العميل"],
+  ["customers.view_phone", "رؤية رقم هاتف العميل"],
   ["orders.request_info", "طلب بيانات من العميل"],
   ["quotes.draft", "تجهيز مسودة عرض السعر"],
   ["orders.approve", "الموافقة النهائية والأسعار"],
+  ["orders.edit", "تعديل بيانات الطلب"],
   ["messages.send", "إرسال رسائل واتساب للعملاء"],
   ["mockups.manage", "رفع الموكاب وتعديله", "التنفيذ"],
   ["production.update", "تحديث الإنتاج وفحص الجودة"],
@@ -67,7 +68,7 @@ const PERMS: [Permission, string, string?][] = [
   ["catalog.manage", "تعديل المنتجات والخدمات", "الموقع والإدارة"],
   ["gallery.manage", "نشر صور الأعمال"],
   ["content.manage", "تعديل نصوص الموقع"],
-  ["traffic.view", "مشاهدة الزيارات والترافيك"],
+  ["traffic.view", "مشاهدة الزيارات وحركة الزوار"],
   ["team.activity.view", "مشاهدة نشاط الفريق"],
   ["accounts.manage", "إدارة الحسابات والصلاحيات"],
 ];
@@ -90,8 +91,13 @@ const ROLE_VIEWS: [TeamRole, `/dashboard/${string}`, string][] = [
 ];
 
 const SECURITY: ["twofa" | "alert" | "timeout", string, string, string][] = [
-  ["twofa", "التحقق بخطوتين", "كود على الموبايل مع كل دخول جديد", P.shieldCheck],
-  ["alert", "تنبيه دخول من جهاز جديد", "رسالة لصاحب المحل لو حد دخل من جهاز مش معروف", P.bell],
+  ["twofa", "التحقق بخطوتين", "رمز على الهاتف مع كل تسجيل دخول جديد", P.shieldCheck],
+  [
+    "alert",
+    "تنبيه دخول من جهاز جديد",
+    "رسالة لصاحب المتجر إذا سجّل أحد الدخول من جهاز غير معروف",
+    P.bell,
+  ],
   ["timeout", "خروج تلقائي بعد عدم استخدام", "بعد 30 دقيقة [المدة للتأكيد]", P.clock],
 ];
 
@@ -101,10 +107,10 @@ const ADD_USER =
   "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 7a4 4 0 1 1-8 0 4 4 0 1 1 8 0M19 8v6M22 11h-6";
 
 const DEMO_LOG = [
-  { t: "22 أكتوبر 10:20 ص", m: "صاحب المحل وافق على طلب YZ-H3J8LC واتبعتت رسالة واتساب." },
-  { t: "21 أكتوبر 6:40 م", m: "[اسم الموظف] طلب بيانات من عميل على طلب YZ-B6R2NX." },
-  { t: "20 أكتوبر 1:05 م", m: "صاحب المحل بعت دعوة لـ [اسم المصمم]." },
-  { t: "19 أكتوبر 11:00 ص", m: "صاحب المحل خفى منتج «هدايا ولافتات مخصصة»." },
+  { t: "22 أكتوبر 10:20 ص", m: "وافق صاحب المتجر على الطلب YZ-H3J8LC وأُرسلت رسالة واتساب." },
+  { t: "21 أكتوبر 6:40 م", m: "طلب [اسم الموظف] بيانات من عميل على الطلب YZ-B6R2NX." },
+  { t: "20 أكتوبر 1:05 م", m: "أرسل صاحب المتجر دعوة إلى [اسم المصمم]." },
+  { t: "19 أكتوبر 11:00 ص", m: "أخفى صاحب المتجر منتج «هدايا ولافتات مخصصة»." },
 ];
 
 export function AccountsBoard({
@@ -146,7 +152,7 @@ export function AccountsBoard({
       setRoleOverride([m.id, role]);
       const result = await setMemberRoleAction({ userId: m.id, roleKey: role });
       if (!result.ok) return flash(result.error);
-      flash(`اتغيّر دور ${m.name} لـ ${ROLE[role]}`);
+      flash(`تغيّر دور ${m.name} إلى ${ROLE[role]}`);
       router.refresh();
     });
 
@@ -155,7 +161,7 @@ export function AccountsBoard({
       setPerm([role, key, on]);
       const result = await setRolePermissionAction({ roleKey: role, permission: key, granted: on });
       if (!result.ok) return flash(result.error);
-      flash(`${on ? "اتضافت" : "اتشالت"} صلاحية «${label}» لـ ${ROLE[role]}`);
+      flash(`${on ? "أُضيفت" : "أُزيلت"} صلاحية «${label}» لدور ${ROLE[role]}`);
       router.refresh();
     });
 
@@ -164,7 +170,7 @@ export function AccountsBoard({
     startTransition(async () => {
       const result = await setMemberStatusAction({ userId: m.id, status });
       if (!result.ok) return flash(result.error);
-      flash(status === "paused" ? `اتوقف حساب ${m.name}` : `اتفعّل حساب ${m.name}`);
+      flash(status === "paused" ? `أُوقف حساب ${m.name}` : `فُعّل حساب ${m.name}`);
       router.refresh();
     });
   };
@@ -173,7 +179,7 @@ export function AccountsBoard({
     <div className={cn(k.root, shell.gutter)}>
       <KitHeader
         title="الحسابات والصلاحيات"
-        subtitle="مين يقدر يدخل لوحة الإدارة، وكل واحد يقدر يعمل إيه"
+        subtitle="من يستطيع دخول لوحة الإدارة، وما الذي يستطيع كل عضو فعله"
       >
         <button
           className={cn(k.btn, k.cta)}
@@ -269,7 +275,7 @@ export function AccountsBoard({
                   <span style={{ display: "flex", flexDirection: "column" }}>
                     <strong className={k.strong}>
                       {m.name}
-                      {m.you ? " (إنت)" : ""}
+                      {m.you ? " (أنت)" : ""}
                     </strong>
                     <span
                       dir="ltr"
@@ -354,10 +360,10 @@ export function AccountsBoard({
           }}
         >
           <h2 id="va-h" className={k.h2}>
-            شوف اللوحة بعين كل دور
+            شاهد اللوحة كما يراها كل دور
           </h2>
           <span className={k.muted} style={{ fontSize: 12 }}>
-            كل عضو بيشوف بس الأقسام والأزرار اللي دوره يسمح بيها
+            يرى كل عضو الأقسام والأزرار التي يسمح بها دوره فقط
           </span>
         </div>
         <div
@@ -423,7 +429,7 @@ export function AccountsBoard({
               الأدوار والصلاحيات
             </h2>
             <span className={k.muted} style={{ fontSize: 12 }}>
-              المدير عنده كل الصلاحيات دايمًا
+              يملك المدير جميع الصلاحيات دائمًا
             </span>
           </div>
           <div className={k.scrollM}>
@@ -523,7 +529,7 @@ export function AccountsBoard({
                   onToggle={() => {
                     const next = !sec[key];
                     setSec((o) => ({ ...o, [key]: next }));
-                    flash(`${next ? "اتفعّل: " : "اتقفل: "}${label}`);
+                    flash(`${next ? "فُعّل: " : "أُوقف: "}${label}`);
                   }}
                 />
               </div>
@@ -535,12 +541,12 @@ export function AccountsBoard({
             style={{ padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}
           >
             <h2 id="ses-h" className={k.h2}>
-              الأجهزة المسجّل منها دخول
+              الأجهزة التي سُجّل الدخول منها
             </h2>
             {sessions.map((d) => (
               <div key={d.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <span className={k.tile} aria-hidden="true" style={{ width: 38, height: 38 }}>
-                  <Ic d={/موبايل|iPhone|Android/i.test(d.name) ? MOBILE : LAPTOP} size={18} />
+                  <Ic d={/هاتف|موبايل|iPhone|Android/i.test(d.name) ? MOBILE : LAPTOP} size={18} />
                 </span>
                 <span style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
                   <strong className={k.strong} style={{ fontSize: 14 }}>
@@ -550,7 +556,7 @@ export function AccountsBoard({
                     {d.when}
                   </span>
                 </span>
-                {d.current ? <span className={cn(k.badge, k.bOk)}>الجهاز ده</span> : null}
+                {d.current ? <span className={cn(k.badge, k.bOk)}>هذا الجهاز</span> : null}
               </div>
             ))}
             <button
@@ -561,7 +567,7 @@ export function AccountsBoard({
                 startTransition(async () => {
                   const result = await signOutOtherDevicesAction();
                   if (!result.ok) return flash(result.error);
-                  flash("اتسجل الخروج من كل الأجهزة التانية");
+                  flash("سُجّل الخروج من جميع الأجهزة الأخرى");
                   router.refresh();
                 })
               }
@@ -573,7 +579,7 @@ export function AccountsBoard({
                 fontSize: 13,
               }}
             >
-              تسجيل خروج من الأجهزة التانية
+              تسجيل الخروج من الأجهزة الأخرى
             </button>
           </section>
         </div>
@@ -633,8 +639,11 @@ export function AccountsBoard({
         <InviteDialog
           onClose={() => setInvite(false)}
           onSent={(name, role) => {
-            setLog((all) => [{ t: "دلوقتي", m: `بعت دعوة لـ ${name} كـ ${ROLE[role]}.` }, ...all]);
-            flash(`اتبعتت الدعوة لـ ${name}`);
+            setLog((all) => [
+              { t: "الآن", m: `أرسل دعوة إلى ${name} بدور ${ROLE[role]}.` },
+              ...all,
+            ]);
+            flash(`أُرسلت الدعوة إلى ${name}`);
             router.refresh();
           }}
         />
@@ -721,7 +730,7 @@ function InviteDialog({
         onSubmit={(e) => {
           e.preventDefault();
           if (!name.trim() || !contact.trim()) {
-            setErr("اكتب الاسم ورقم الموبايل أو الإيميل.");
+            setErr("اكتب الاسم ورقم الهاتف أو البريد الإلكتروني.");
             return;
           }
           startTransition(async () => {
@@ -762,10 +771,10 @@ function InviteDialog({
               className={k.tint}
               style={{ margin: 0, padding: "10px 14px", fontSize: 13, lineHeight: "22px" }}
             >
-              اللينك جاهز. ابعته للعضو — بيشتغل مرة واحدة لحد{" "}
+              الرابط جاهز. أرسله إلى العضو — يعمل مرة واحدة حتى{" "}
               {formatDateTime(new Date(link.expiresAt))} [المدة للتأكيد].
             </p>
-            <input className={k.fld} readOnly dir="ltr" value={link.url} aria-label="لينك الدعوة" />
+            <input className={k.fld} readOnly dir="ltr" value={link.url} aria-label="رابط الدعوة" />
             <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
               <button
                 className={cn(k.btn, k.soft)}
@@ -777,20 +786,20 @@ function InviteDialog({
                 style={{ minHeight: 44, padding: "0 18px", borderRadius: 999 }}
               >
                 <Ic d={P.link} size={16} />
-                {copied ? "اتنسخ ✓" : "انسخ اللينك"}
+                {copied ? "نُسخ ✓" : "انسخ الرابط"}
               </button>
               {link.phone ? (
                 <a
                   className={cn(k.btn, k.cta)}
                   href={`https://wa.me/${toInternational(link.phone)}?text=${encodeURIComponent(
-                    `أهلًا! دي دعوتك لفريق يوزرسيف. افتح اللينك واختار كلمة سر: ${link.url}`,
+                    `مرحبًا! هذه دعوتك للانضمام إلى فريق يوزرسيف. افتح الرابط واختر كلمة مرور: ${link.url}`,
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ minHeight: 44, padding: "0 18px", borderRadius: 999 }}
                 >
                   <Ic d={P.chat} size={16} />
-                  ابعت على واتساب
+                  أرسل عبر واتساب
                 </a>
               ) : null}
               <button
@@ -799,7 +808,7 @@ function InviteDialog({
                 onClick={onClose}
                 style={{ minHeight: 44, padding: "0 18px", borderRadius: 999 }}
               >
-                تمام
+                حسنًا
               </button>
             </div>
           </>
@@ -821,7 +830,7 @@ function InviteDialog({
             )}
             {field(
               "iv-ph",
-              "رقم الموبايل أو الإيميل",
+              "رقم الهاتف أو البريد الإلكتروني",
               <input
                 className={k.fld}
                 id="iv-ph"
@@ -859,7 +868,7 @@ function InviteDialog({
               className={k.tint}
               style={{ margin: 0, padding: "10px 14px", fontSize: 13, lineHeight: "22px" }}
             >
-              هيوصله لينك دعوة يفعّل بيه حسابه [مدة صلاحية اللينك بانتظار التأكيد].
+              سيصله رابط دعوة يفعّل به حسابه [مدة صلاحية الرابط بانتظار التأكيد].
             </p>
             {err ? (
               <p
@@ -884,7 +893,7 @@ function InviteDialog({
                 disabled={pending}
                 style={{ flex: "1 1 auto", minHeight: 48, borderRadius: 999 }}
               >
-                ابعت الدعوة
+                أرسل الدعوة
               </button>
               <button
                 className={cn(k.btn, k.soft)}

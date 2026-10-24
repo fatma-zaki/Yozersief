@@ -115,7 +115,7 @@ export async function getProductionBoard(actor: StaffContext): Promise<Productio
     });
   }
 
-  // «شيت الأسماء»: the first order on the press that prints a name per piece.
+  // «جدول الأسماء»: the first order on the press that prints a name per piece.
   const named = placed.find((p) => p.o.bulk.perPiece && p.card.column === "print");
   let sheet: NamesSheet | null = null;
   if (named) {
@@ -165,7 +165,7 @@ export async function startPrinting(actor: StaffContext, raw: DeskOrderInput): P
         notifyCustomer: true,
         messageVars: {
           ...(await baseVars(tx, order.id, order.customerId)),
-          update: "الإنتاج بدأ.",
+          update: "بدأ الإنتاج.",
         },
       },
     );
@@ -174,7 +174,7 @@ export async function startPrinting(actor: StaffContext, raw: DeskOrderInput): P
   });
 }
 
-/** The press counter («اتطبع X من Y»), clamped to the order's pieces. */
+/** The press counter («طُبع X من Y»), clamped to the order's pieces. */
 export async function setPrintedCount(
   actor: StaffContext,
   raw: PrintedCountInput,
@@ -184,7 +184,7 @@ export async function setPrintedCount(
   return inTransaction(async (tx) => {
     const order = await lockForProduction(tx, input.orderId);
     if (order.status !== "in_production") {
-      throw new ConflictError("not printing", "الطلب ده مش في الطباعة دلوقتي.");
+      throw new ConflictError("not printing", "هذا الطلب ليس في مرحلة الطباعة حاليًا.");
     }
     const printed = clampCount(input.count, await pieceCount(tx, order));
     await upsertJob(order.id, { printedCount: printed }, tx);
@@ -201,7 +201,7 @@ export async function setPrintedCount(
 }
 
 /**
- * «خلص — للفحص». Business orders run send_to_qc; an individual's order has no QC stage in the
+ * «انتهى — إلى الفحص». Business orders run send_to_qc; an individual's order has no QC stage in the
  * lifecycle, so only its job moves (the board and the checklist still apply).
  */
 export async function finishPrinting(
@@ -214,11 +214,11 @@ export async function finishPrinting(
     const order = await lockForProduction(tx, input.orderId);
     const job = await findJob(order.id, tx);
     if ((job?.printedCount ?? 0) < (await pieceCount(tx, order))) {
-      throw new ValidationError({}, "لسه في قطع ما اتطبعتش. كمّل العداد الأول.");
+      throw new ValidationError({}, "ما زالت هناك قطع لم تُطبع. أكمل العداد أولًا.");
     }
     if (order.customerType === "person") {
       if (order.status !== "in_production") {
-        throw new ConflictError("not printing", "الطلب ده مش في الطباعة دلوقتي.");
+        throw new ConflictError("not printing", "هذا الطلب ليس في مرحلة الطباعة حاليًا.");
       }
       await upsertJob(order.id, { stage: "qc" }, tx);
       await insertOrderEvent(
@@ -261,7 +261,7 @@ export async function setQcCheck(
   return inTransaction(async (tx) => {
     const order = await lockForProduction(tx, input.orderId);
     if (order.status !== "in_production") {
-      throw new ConflictError("not in qc", "الطلب ده مش في فحص الجودة.");
+      throw new ConflictError("not in qc", "هذا الطلب ليس في مرحلة فحص الجودة.");
     }
     await upsertJob(order.id, { [input.key]: input.on }, tx);
     await logActivity(tx, {
@@ -276,7 +276,7 @@ export async function setQcCheck(
   });
 }
 
-/** «الفحص تمام»: mark_ready — the delivery person and the customer are told. */
+/** «الفحص سليم»: mark_ready — the delivery person and the customer are told. */
 export async function passQc(actor: StaffContext, raw: DeskOrderInput): Promise<StepResult> {
   assertCan(actor, "production.update");
   const input = deskOrderSchema.parse(raw);
@@ -284,7 +284,7 @@ export async function passQc(actor: StaffContext, raw: DeskOrderInput): Promise<
     const order = await lockForProduction(tx, input.orderId);
     const job = await findJob(order.id, tx);
     if (!job || !QC_CHECKS.every(([key]) => job[key])) {
-      throw new ValidationError({}, "لازم كل بنود فحص الجودة تبقى تمام.");
+      throw new ValidationError({}, "يجب أن تكون جميع بنود فحص الجودة سليمة.");
     }
     const applied = await applyTransitionInTx(
       tx,
@@ -301,7 +301,7 @@ export async function passQc(actor: StaffContext, raw: DeskOrderInput): Promise<
   });
 }
 
-/** «شيت الأسماء»: tick a piece once it's printed. */
+/** «جدول الأسماء»: tick a piece once it's printed. */
 export async function setPieceDone(
   actor: StaffContext,
   raw: PiecePrintedInput,

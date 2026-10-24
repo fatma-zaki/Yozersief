@@ -34,7 +34,7 @@ export async function inviteStaff(
   const { contact, roleKey } = parsed.data;
 
   if (await findStaffByContact(contact)) {
-    return err(new ConflictError("staff exists", "في عضو متسجّل بالبيانات دي بالفعل."));
+    return err(new ConflictError("staff exists", "يوجد عضو مسجّل بهذه البيانات بالفعل."));
   }
   const role = await findRoleByKey(roleKey);
   if (!role) throw new NotFoundError(`role ${roleKey}`);
@@ -92,19 +92,24 @@ export async function acceptInvitation(
     const invitation = await findInvitationByTokenHash(tokenHash, tx);
     if (!invitation || invitation.acceptedAt || invitation.expiresAt < new Date()) {
       return err(
-        new NotFoundError("invitation", "اللينك ده مش شغال أو انتهى. اطلب دعوة جديدة من المدير."),
+        new NotFoundError(
+          "invitation",
+          "هذا الرابط لا يعمل أو انتهت صلاحيته. اطلب دعوة جديدة من المدير.",
+        ),
       );
     }
 
     const byEmail = invitation.contact.includes("@");
     const phone = byEmail ? normalizeEgyptianMobile(data.phone ?? "") : invitation.contact;
     if (!phone) {
-      return err(new ValidationError({ phone: ["اكتب رقم موبايل مصري صحيح"] }));
+      return err(new ValidationError({ phone: ["اكتب رقم هاتف مصريًا صحيحًا"] }));
     }
     const email = byEmail ? invitation.contact : (data.email ?? placeholderEmailFor(phone));
 
     if (await findStaffByContact({ phone, email }, tx)) {
-      return err(new ConflictError("staff exists", "الرقم أو الإيميل ده متسجّل لعضو تاني."));
+      return err(
+        new ConflictError("staff exists", "هذا الرقم أو البريد الإلكتروني مسجّل لعضو آخر."),
+      );
     }
 
     const user = await insertStaffWithPassword(

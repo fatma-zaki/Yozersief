@@ -88,7 +88,7 @@ async function confirmDraftUpload(input: {
   });
   if (!res.ok) {
     const data = (await res.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(data?.error ?? "تأكيد رفع الملف فشل.");
+    throw new Error(data?.error ?? "فشل تأكيد رفع الملف.");
   }
 }
 
@@ -149,10 +149,10 @@ export async function submitRequest(
     if (!file) {
       return {
         ok: false,
-        error: "في ملف اتشال من المتصفح. ارفعه تاني من خطوة التصميم.",
+        error: "أُزيل ملف من المتصفح. ارفعه مرة أخرى من خطوة التصميم.",
       };
     }
-    if (!uploadMode) return { ok: false, error: "رفع الملفات مش متاح دلوقتي." };
+    if (!uploadMode) return { ok: false, error: "رفع الملفات غير متاح حاليًا." };
     const kind = isNamesSheet(meta) ? "names_sheet" : "design";
     const check = checkUpload({ kind, fileName: file.name, sizeBytes: file.size });
     if (!check.ok) return { ok: false, error: `«${file.name}»: ${check.message}` };
@@ -164,7 +164,7 @@ export async function submitRequest(
       const message =
         error instanceof Error && !error.message.startsWith("Vercel Blob")
           ? error.message
-          : `رفع الملف «${file.name}» فشل. جرّب تاني، ولو المشكلة فضلت ابعته على واتساب.`;
+          : `رفع الملف «${file.name}» فشل. حاول مرة أخرى، وإذا استمرت المشكلة فأرسله عبر واتساب.`;
       return { ok: false, error: message };
     }
   }

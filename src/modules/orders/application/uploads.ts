@@ -44,14 +44,14 @@ export const uploadPayloadSchema = z
     if (hasOrder === hasDraft) {
       ctx.addIssue({
         code: "custom",
-        message: "لازم تحدد طلب موجود أو مفتاح رفع مؤقت، مش الاتنين مع بعض.",
+        message: "يجب تحديد طلب موجود أو مفتاح رفع مؤقت، وليس الاثنين معًا.",
         path: hasOrder ? ["submissionKey"] : ["orderId"],
       });
     }
     if (hasDraft && value.kind === "mockup") {
       ctx.addIssue({
         code: "custom",
-        message: "رفع الموكاب للفريق بس.",
+        message: "رفع الموكاب متاح للفريق فقط.",
         path: ["kind"],
       });
     }
@@ -84,7 +84,7 @@ export async function authorizeUpload(
   if (payload.submissionKey && payload.orderId) {
     throw new ValidationError(
       { orderId: ["متعارض"] },
-      "لازم تحدد طلب موجود أو مفتاح رفع مؤقت، مش الاتنين مع بعض.",
+      "يجب تحديد طلب موجود أو مفتاح رفع مؤقت، وليس الاثنين معًا.",
     );
   }
 
@@ -93,11 +93,11 @@ export async function authorizeUpload(
     if (!pathname.startsWith(prefix)) {
       throw new ValidationError(
         { file: ["مسار غير مسموح"] },
-        "مسار الملف مش مطابق لمفتاح الرفع. ارفع تاني من صفحة الطلب.",
+        "مسار الملف لا يطابق مفتاح الرفع. ارفعه مرة أخرى من صفحة الطلب.",
       );
     }
     if (payload.kind === "mockup") {
-      throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+      throw new ForbiddenError(undefined, "رفع الموكاب متاح للفريق فقط.");
     }
 
     const secret = deps.hashSecret ?? env.TOKEN_HASH_SECRET;
@@ -105,8 +105,8 @@ export async function authorizeUpload(
     const count = await (deps.countDrafts ?? countDraftsForSubmission)(submissionKeyHash);
     if (count >= MAX_DRAFTS_PER_SUBMISSION) {
       throw new ValidationError(
-        { file: ["وصلنا للحد الأقصى"] },
-        "وصلت للحد الأقصى لعدد الملفات في الطلب ده.",
+        { file: ["بلغنا الحد الأقصى"] },
+        "بلغت الحد الأقصى لعدد الملفات في هذا الطلب.",
       );
     }
 
@@ -126,7 +126,7 @@ export async function authorizeUpload(
   if (!payload.orderId) {
     throw new ValidationError(
       { orderId: ["مطلوب"] },
-      "رفع الملفات من غير طلب مش متاح دلوقتي. اربط الملف بطلب موجود.",
+      "رفع الملفات دون طلب غير متاح حاليًا. اربط الملف بطلب موجود.",
     );
   }
 
@@ -182,7 +182,7 @@ export async function completeUploadedFile(
 
   const storage = deps.storage === undefined ? createFileStorage() : deps.storage;
   if (!storage) {
-    throw new ValidationError({}, "رفع الملفات مش متاح دلوقتي.");
+    throw new ValidationError({}, "رفع الملفات غير متاح حاليًا.");
   }
 
   let meta;
@@ -190,8 +190,8 @@ export async function completeUploadedFile(
     meta = await storage.head(blob.url);
   } catch {
     throw new ValidationError(
-      { file: ["مش لاقيين الملف"] },
-      "الملف مش موجود على التخزين. ارفع تاني.",
+      { file: ["لم نعثر على الملف"] },
+      "الملف غير موجود في التخزين. ارفعه مرة أخرى.",
     );
   }
 
@@ -199,7 +199,7 @@ export async function completeUploadedFile(
   if (meta.pathname !== blob.pathname) {
     throw new ValidationError(
       { file: ["مسار غير متطابق"] },
-      "مسار الملف مش متطابق مع اللي اترفعت. ارفع تاني.",
+      "مسار الملف لا يتطابق مع ما رُفع. ارفعه مرة أخرى.",
     );
   }
 
@@ -235,8 +235,8 @@ export async function completeUploadedFile(
       // best-effort
     }
     throw new ValidationError(
-      { file: ["نوع المحتوى مش مدعوم"] },
-      "نوع الملف اللي اترفعت مش ضمن الأنواع المسموحة.",
+      { file: ["نوع المحتوى غير مدعوم"] },
+      "نوع الملف المرفوع ليس ضمن الأنواع المسموح بها.",
     );
   }
 
@@ -248,10 +248,10 @@ export async function completeUploadedFile(
       } catch {
         // best-effort
       }
-      throw new ValidationError({ file: ["مسار غير مسموح"] }, "مسار الملف مش مطابق لمفتاح الرفع.");
+      throw new ValidationError({ file: ["مسار غير مسموح"] }, "مسار الملف لا يطابق مفتاح الرفع.");
     }
     if (tokenPayload.kind === "mockup") {
-      throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+      throw new ForbiddenError(undefined, "رفع الموكاب متاح للفريق فقط.");
     }
     const recordDraft = deps.recordDraft ?? recordUploadDraft;
     await recordDraft({
@@ -322,14 +322,14 @@ export async function recordUploadDraft(input: {
   sizeBytes: number;
 }) {
   if (input.kind === "mockup") {
-    throw new ForbiddenError(undefined, "رفع الموكاب للفريق بس.");
+    throw new ForbiddenError(undefined, "رفع الموكاب متاح للفريق فقط.");
   }
   const submissionKeyHash = await hashToken(input.submissionKey, env.TOKEN_HASH_SECRET);
   const count = await countDraftsForSubmission(submissionKeyHash);
   if (count >= MAX_DRAFTS_PER_SUBMISSION) {
     throw new ValidationError(
-      { file: ["وصلنا للحد الأقصى"] },
-      "وصلت للحد الأقصى لعدد الملفات في الطلب ده.",
+      { file: ["بلغنا الحد الأقصى"] },
+      "بلغت الحد الأقصى لعدد الملفات في هذا الطلب.",
     );
   }
   await insertUploadDraft({

@@ -20,7 +20,7 @@ describe("optionRows", () => {
 
   it("stores the customer-facing labels from the catalog seed", () => {
     const rows = optionRows({ colors: ["other"], sizes: [], places: ["back"] });
-    expect(rows.map((r) => r.labelAr)).toEqual(["لون تاني", "ورا"]);
+    expect(rows.map((r) => r.labelAr)).toEqual(["لون آخر", "الخلف"]);
   });
 
   it("is empty for an empty selection", () => {

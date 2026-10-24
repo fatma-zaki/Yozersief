@@ -71,7 +71,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
         return;
       }
       if (result.data.unpublishedByConsent)
-        flash(`اتشالت صورة «${x.cat}» من الموقع لأن الموافقة اتلغت`);
+        flash(`أُزيلت صورة «${x.cat}» من الموقع لأن الموافقة أُلغيت`);
       else if (okMessage) flash(okMessage);
       router.refresh();
     });
@@ -81,7 +81,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
     const images = files.filter((f) => /^image\//.test(f.type));
     if (!images.length) return;
     if (!data.uploadMode) {
-      flash("رفع الملفات مش متاح دلوقتي.");
+      flash("رفع الملفات غير متاح حاليًا.");
       return;
     }
     const put = data.uploadMode === "presigned" ? uploadPresigned : upload;
@@ -102,12 +102,12 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
         error =
           e instanceof Error && /[\u0600-\u06FF]/.test(e.message)
             ? e.message
-            : "رفع الصورة فشل. جرّب تاني.";
+            : "فشل رفع الصورة. حاول مرة أخرى.";
       } finally {
         setUploading((n) => n - 1);
       }
     }
-    flash(added ? `اتضافت ${added} صورة كمخفية` : error);
+    flash(added ? `أُضيفت ${added} صورة مخفية` : error);
     if (added) router.refresh();
   };
 
@@ -128,7 +128,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
 
   return (
     <div className={cn(k.root, shell.gutter)}>
-      <KitHeader title="أعمالنا" subtitle="الصور اللي بتظهر في معرض الأعمال على الموقع">
+      <KitHeader title="أعمالنا" subtitle="الصور التي تظهر في معرض الأعمال على الموقع">
         <div role="group" aria-label="فلتر" style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           {filters.map(([key, label]) => (
             <button
@@ -163,8 +163,8 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
       >
         <Ic d={P.shieldCheck} size={20} style={{ color: "var(--warn-ink)" }} />
         <span>
-          <strong>قاعدة النشر:</strong> مفيش صورة لشغل عميل تتنشر غير بموافقته. زرار النشر بيتقفل
-          لحد ما تتعلّم «موافقة العميل».
+          <strong>قاعدة النشر:</strong> لا تُنشر أي صورة لعمل عميل إلا بموافقته. يبقى زر النشر
+          مقفلًا حتى تُحدَّد «موافقة العميل».
           {items.some((x) => x.isSample) ? " الصور الحالية نماذج عرض." : ""}
         </span>
       </p>
@@ -254,10 +254,10 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
               <Ic d={P.upload} />
             </span>
             <strong className={k.strong} style={{ fontSize: 15 }}>
-              {uploading ? `جاري رفع ${uploading} صورة…` : "ارفع صور جديدة"}
+              {uploading ? `جارٍ رفع ${uploading} صورة…` : "ارفع صور جديدة"}
             </strong>
             <span className={k.muted} style={{ fontSize: 12 }}>
-              JPG أو PNG — هتتضاف مخفية لحد ما تنشرها
+              JPG أو PNG — ستُضاف مخفية حتى تنشرها
             </span>
           </label>
           <button
@@ -267,7 +267,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
             onClick={() =>
               startTransition(async () => {
                 const result = await addGallerySampleAction();
-                flash(result.ok ? "اتضافت صورة جديدة كمخفية لحد الموافقة" : result.error);
+                flash(result.ok ? "أُضيفت صورة جديدة مخفية حتى الموافقة" : result.error);
                 if (result.ok) router.refresh();
               })
             }
@@ -363,7 +363,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
                   >
                     <Ic d={P.ok} size={13} stroke={3} />
                   </span>
-                  <span>معايا موافقة العميل على النشر</span>
+                  <span>لديّ موافقة العميل على النشر</span>
                 </label>
                 <div
                   style={{
@@ -384,18 +384,18 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
                       save(
                         x,
                         { published: !x.pub },
-                        x.pub ? "اتخفت الصورة من المعرض" : "اتنشرت الصورة في معرض الأعمال",
+                        x.pub ? "أُخفيت الصورة من المعرض" : "نُشرت الصورة في معرض الأعمال",
                       );
                     }}
                   />
                   <span style={{ flexGrow: 1, fontSize: 13, fontWeight: 700 }}>
-                    {x.pub ? "منشورة في الموقع" : x.consent ? "مخفية" : "محتاجة موافقة الأول"}
+                    {x.pub ? "منشورة في الموقع" : x.consent ? "مخفية" : "تحتاج إلى موافقة أولًا"}
                   </span>
                   <button
                     className={cn(k.btn, k.line)}
                     type="button"
                     onClick={() => setDel(x.id)}
-                    aria-label={`مسح صورة ${x.cat}`}
+                    aria-label={`حذف صورة ${x.cat}`}
                     style={{ width: 36, height: 36, borderRadius: 999 }}
                   >
                     <Ic d={P.trash} size={16} />
@@ -408,7 +408,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
       </section>
       {list.length === 0 ? (
         <div className={k.card} style={{ padding: "32px 16px", textAlign: "center" }}>
-          <strong>مفيش صور في القسم ده</strong>
+          <strong>لا توجد صور في هذا القسم</strong>
         </div>
       ) : null}
 
@@ -420,7 +420,7 @@ export function GalleryBoard({ data }: { data: GalleryData }) {
             setDel(null);
             startTransition(async () => {
               const result = await deleteGalleryAction({ id });
-              flash(result.ok ? "اتمسحت الصورة" : result.error);
+              flash(result.ok ? "حُذفت الصورة" : result.error);
               if (result.ok) {
                 setItems((all) => all.filter((x) => x.id !== id));
                 router.refresh();
@@ -492,10 +492,10 @@ function ConfirmDelete({ onCancel, onDelete }: { onCancel: () => void; onDelete:
         }}
       >
         <h2 id="del-h" className={k.h2} style={{ fontSize: 20 }}>
-          تمسح الصورة دي؟
+          هل تريد حذف هذه الصورة؟
         </h2>
         <p className={k.muted} style={{ margin: 0, fontSize: 14, lineHeight: "24px" }}>
-          هتختفي من المعرض ومن لوحة الإدارة. مش هتقدر ترجعها.
+          ستختفي من المعرض ومن لوحة الإدارة، ولن تتمكن من استعادتها.
         </p>
         <div style={{ display: "flex", gap: 10 }}>
           <button
@@ -504,7 +504,7 @@ function ConfirmDelete({ onCancel, onDelete }: { onCancel: () => void; onDelete:
             onClick={onDelete}
             style={{ minHeight: 46, padding: "0 22px", borderRadius: 999 }}
           >
-            امسح
+            احذف
           </button>
           <button
             ref={cancelRef}

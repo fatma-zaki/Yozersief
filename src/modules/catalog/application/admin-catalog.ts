@@ -94,7 +94,7 @@ async function inTransaction<T>(fn: (tx: Tx) => Promise<T>): Promise<Result<T>> 
 }
 
 const productNotFound = () =>
-  new NotFoundError("product", "المنتج ده مش موجود، يمكن اتمسح. حدّث الصفحة وجرّب تاني.");
+  new NotFoundError("product", "هذا المنتج غير موجود، ربما حُذف. حدّث الصفحة وحاول مرة أخرى.");
 
 /** «إضافة المنتج» / «حفظ التعديلات» in the products drawer (brief B4: show/hide, describe, options). */
 export async function saveProduct(
@@ -113,7 +113,7 @@ export async function saveProduct(
   return inTransaction(async (tx) => {
     const category = await findCategoryByKey(input.categoryKey, tx);
     if (!category) {
-      throw new ValidationError({ categoryKey: ["التصنيف مش موجود."] }, "التصنيف مش موجود.");
+      throw new ValidationError({ categoryKey: ["التصنيف غير موجود."] }, "التصنيف غير موجود.");
     }
     const fields = {
       categoryId: category.id,

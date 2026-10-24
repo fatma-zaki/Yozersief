@@ -12,7 +12,12 @@ export type AdminNavItem = {
 /** Sidebar items in the admin designs (Admin*.html), in their order. */
 export const ADMIN_NAV: readonly AdminNavItem[] = [
   { href: "/dashboard/orders", label: "الطلبات", short: "الطلبات", icon: P.orders },
-  { href: "/dashboard/traffic", label: "الزيارات والترافيك", short: "الزيارات", icon: P.traffic },
+  {
+    href: "/dashboard/traffic",
+    label: "الزيارات وحركة الزوار",
+    short: "الزيارات",
+    icon: P.traffic,
+  },
   { href: "/dashboard/products", label: "الخدمات والمنتجات", short: "المنتجات", icon: P.grid },
   { href: "/dashboard/gallery", label: "أعمالنا", short: "أعمالنا", icon: P.photo },
   { href: "/dashboard/content", label: "التواصل والمحتوى", short: "المحتوى", icon: P.chat },

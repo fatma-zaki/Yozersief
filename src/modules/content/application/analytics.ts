@@ -57,7 +57,7 @@ export type TrafficPeriod = {
   };
   sources: { key: Source; visits: number }[];
   pages: { path: string; name: string; views: number }[];
-  /** زاروا → فتحوا منشئ الطلب → بعتوا طلب → اتوافق على طلبهم */
+  /** زاروا → فتحوا منشئ الطلب → أرسلوا طلبًا → قُبل طلبهم */
   funnel: { visitors: number; builder: number; submitted: number; approved: number };
   devices: { key: Device; pct: number }[];
 };
@@ -153,7 +153,7 @@ export function createAnalyticsReader(): AnalyticsReader {
   return new FirstPartyAnalyticsReader();
 }
 
-/** «الزيارات والترافيك»: all three periods at once, so switching is instant. */
+/** «الزيارات وحركة الزوار»: all three periods at once, so switching is instant. */
 export async function getTrafficReport(actor: StaffContext): Promise<TrafficReport> {
   assertCan(actor, "traffic.view");
   return createAnalyticsReader().report(new Date());

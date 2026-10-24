@@ -34,12 +34,12 @@ export async function setMemberStatus(
   input: { userId: string; status: "active" | "paused" },
 ) {
   assertCan(actor, "accounts.manage");
-  if (input.userId === actor.id) throw new ValidationError({}, "مينفعش توقف حسابك انت.");
+  if (input.userId === actor.id) throw new ValidationError({}, "لا يمكنك إيقاف حسابك.");
   await withTransaction(async (tx) => {
     const target = await findStaffRole(input.userId, tx);
     if (!target) throw new NotFoundError(`staff ${input.userId}`);
     if (target.roleKey === "admin" && actor.roleKey !== "admin")
-      throw new ForbiddenError(undefined, "المدير بس هو اللي يقدر يوقف حساب مدير.");
+      throw new ForbiddenError(undefined, "المدير وحده يستطيع إيقاف حساب مدير.");
     await updateStaffStatus(input.userId, input.status, tx);
     if (input.status === "paused") await deleteAllSessions(input.userId, tx);
     await logActivity(tx, {
@@ -60,13 +60,13 @@ export async function setMemberRole(
   input: { userId: string; roleKey: RoleKey },
 ) {
   assertCan(actor, "accounts.manage");
-  if (input.userId === actor.id) throw new ValidationError({}, "مينفعش تغيّر دورك انت.");
+  if (input.userId === actor.id) throw new ValidationError({}, "لا يمكنك تغيير دورك.");
   await withTransaction(async (tx) => {
     const target = await findStaffRole(input.userId, tx);
     if (!target) throw new NotFoundError(`staff ${input.userId}`);
     if (target.roleKey === input.roleKey) return;
     if ((target.roleKey === "admin" || input.roleKey === "admin") && actor.roleKey !== "admin")
-      throw new ForbiddenError(undefined, "المدير بس هو اللي يقدر يدّي أو يشيل دور المدير.");
+      throw new ForbiddenError(undefined, "المدير وحده يستطيع منح دور المدير أو سحبه.");
     const role = await findRoleByKey(input.roleKey, tx);
     if (!role) throw new NotFoundError(`role ${input.roleKey}`);
     await updateStaffRole(input.userId, role.id, tx);

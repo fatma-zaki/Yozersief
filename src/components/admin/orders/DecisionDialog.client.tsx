@@ -72,7 +72,7 @@ export function DecisionDialog({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (spec.required && text.trim().length < 5) {
-      setErr("اكتب سبب واضح (5 حروف على الأقل).");
+      setErr("اكتب سببًا واضحًا (5 أحرف على الأقل).");
       return;
     }
     if (saving) return;
@@ -80,7 +80,7 @@ export function DecisionDialog({
   };
 
   const confirmLabel = saving
-    ? "جاري الحفظ…"
+    ? "جارٍ الحفظ…"
     : isApprove && waOn
       ? "موافقة وإرسال على واتساب"
       : spec.button;
@@ -192,14 +192,14 @@ export function DecisionDialog({
           <Ic d={P.ok} size={14} stroke={3} />
         </span>
         <span style={{ display: "flex", flexDirection: "column" }}>
-          <span>ابعت رسالة واتساب للعميل</span>
+          <span>أرسل رسالة واتساب إلى العميل</span>
           <span
             {...small(
               { fontSize: 12, fontWeight: 500, color: "rgba(3,9,9,0.6)" },
               "rgba(242,251,248,0.6)",
             )}
           >
-            {mobile ? "برقم الطلب ولينك صفحة التتبع" : "فيها رقم الطلب ولينك صفحة التتبع"}
+            {mobile ? "برقم الطلب ورابط صفحة التتبع" : "تتضمن رقم الطلب ورابط صفحة التتبع"}
           </span>
         </span>
       </label>
@@ -328,7 +328,7 @@ export function DecisionDialog({
                   fontWeight: 700,
                 }}
               >
-                {copied ? "اتنسخ ✓" : "انسخ اللينك"}
+                {copied ? "نُسخ ✓" : "انسخ الرابط"}
               </button>
             </div>
           )}
@@ -339,8 +339,8 @@ export function DecisionDialog({
             )}
           >
             {mobile
-              ? "في النسخة الحقيقية الرسالة بتتبعت تلقائي على رقم العميل [بانتظار ربط واتساب للأعمال]."
-              : "في النسخة الحقيقية الرسالة بتتبعت تلقائي على رقم العميل [بانتظار ربط واتساب للأعمال]. رابط الموقع النهائي بانتظار التأكيد."}
+              ? "في النسخة الفعلية تُرسل الرسالة تلقائيًا إلى رقم العميل [بانتظار ربط واتساب للأعمال]."
+              : "في النسخة الفعلية تُرسل الرسالة تلقائيًا إلى رقم العميل [بانتظار ربط واتساب للأعمال]. رابط الموقع النهائي بانتظار التأكيد."}
           </p>
         </div>
       ) : null}
@@ -554,7 +554,7 @@ export function DecisionDialog({
               },
             )}
           >
-            العميل هيوصله إشعار بالقرار على واتساب [قناة الإشعار بانتظار الربط].
+            سيصل العميل إشعار بالقرار عبر واتساب [قناة الإشعار بانتظار الربط].
           </p>
         )}
         {saveError}
@@ -662,7 +662,7 @@ export function Toast({ toast, onClose }: { toast: ToastState; onClose: () => vo
       }}
     >
       <Ic d={P.chat} size={16} />
-      {toast.mobile ? "افتح واتساب وابعت الرسالة" : "افتح واتساب"}
+      {toast.mobile ? "افتح واتساب وأرسل الرسالة" : "افتح واتساب"}
     </a>
   ) : null;
   const frame = sx(

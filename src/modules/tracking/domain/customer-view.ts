@@ -66,7 +66,7 @@ export const CUSTOMER_DTO_PROHIBITED_KEYS = [
   "final_price",
 ] as const;
 
-const PERSON_RAIL_LABELS = ["اتبعت", "مراجعة", "موافقة", "تنفيذ", "جاهز"] as const;
+const PERSON_RAIL_LABELS = ["أُرسل", "مراجعة", "موافقة", "تنفيذ", "جاهز"] as const;
 
 const BIZ_RAIL_LABELS = [
   "العرض",
@@ -92,73 +92,73 @@ const BIZ_RAIL: readonly BizStage[] = [
 const STATUS_COPY: Record<OrderStatus, { label: string; description: string }> = {
   submitted: {
     label: "تم الإرسال",
-    description: "طلبك وصلنا وهيتراجع قريب. مفيش حاجة مطلوبة منك دلوقتي.",
+    description: "وصلنا طلبك وستتم مراجعته قريبًا. لا شيء مطلوب منك الآن.",
   },
   in_review: {
     label: "قيد المراجعة",
-    description: "يوزرسيف بيراجع التفاصيل والملفات.",
+    description: "تراجع يوزرسيف التفاصيل والملفات.",
   },
   awaiting_customer: {
-    label: "محتاجين بيانات منك",
-    description: "المراجعة وقفت لحد ما تبعت المطلوب. لو عندك سؤال، كلّمنا على واتساب.",
+    label: "نحتاج إلى بيانات منك",
+    description: "توقفت المراجعة إلى أن ترسل المطلوب. إذا كان لديك سؤال، فتواصل معنا عبر واتساب.",
   },
   approved: {
     label: "تمت الموافقة",
-    description: "طلبك اتقبل. هنبلغك أول ما التنفيذ يبدأ.",
+    description: "قُبل طلبك. سنبلغك فور بدء التنفيذ.",
   },
   rejected: {
-    label: "الطلب اترفض",
-    description: "للأسف مش هنقدر ننفذ الطلب ده بشكله الحالي.",
+    label: "رُفض الطلب",
+    description: "نعتذر، لن نتمكن من تنفيذ هذا الطلب بشكله الحالي.",
   },
   in_production: {
-    label: "جاري التنفيذ",
+    label: "جارٍ التنفيذ",
     description: "طلبك في مرحلة الطباعة.",
   },
   ready: {
     label: "جاهز للاستلام",
-    description: "طلبك جاهز. تقدر تستلمه أو تستنى التوصيل حسب اختيارك.",
+    description: "طلبك جاهز. يمكنك استلامه أو انتظار التوصيل حسب اختيارك.",
   },
   delivered: {
     label: "تم التسليم",
-    description: "طلبك خلص. شكرًا إنك اخترت يوزرسيف.",
+    description: "اكتمل طلبك. شكرًا لاختيارك يوزرسيف.",
   },
   cancelled: {
-    label: "الطلب اتلغى",
-    description: "الطلب ده اتلغى. لو محتاج مساعدة، كلّمنا على واتساب.",
+    label: "أُلغي الطلب",
+    description: "أُلغي هذا الطلب. إذا كنت بحاجة إلى مساعدة، فتواصل معنا عبر واتساب.",
   },
 };
 
 const BIZ_STAGE_COPY: Record<BizStage, { label: string; description: string }> = {
   quote: {
-    label: "بنجهّز عرض السعر",
-    description: "بنراجع طلبك عشان نبعتلك عرض سعر رسمي.",
+    label: "نُعدّ عرض السعر",
+    description: "نراجع طلبك لنرسل إليك عرض سعر رسميًا.",
   },
   customer_approval: {
-    label: "عرض السعر وصلك",
-    description: "راجع العرض على واتساب، ولو تمام وافق عليه عشان نكمّل.",
+    label: "وصلك عرض السعر",
+    description: "راجع العرض عبر واتساب، وإذا كان مناسبًا فوافق عليه لنواصل.",
   },
   mockup: {
     label: "اعتماد الموكاب",
-    description: "جهزنا شكل التصميم. اعتمده أو اطلب تعديل من واتساب.",
+    description: "جهّزنا شكل التصميم. اعتمده أو اطلب تعديلًا عبر واتساب.",
   },
   deposit: {
-    label: "مستنيين العربون",
-    description: "الإنتاج هيبدأ أول ما العربون يتأكد.",
+    label: "بانتظار العربون",
+    description: "سيبدأ الإنتاج فور تأكيد العربون.",
   },
   production: {
-    label: "جاري الإنتاج",
-    description: "بنطبع طلبك دلوقتي.",
+    label: "جارٍ الإنتاج",
+    description: "نطبع طلبك الآن.",
   },
   qc: {
     label: "فحص الجودة",
-    description: "بنراجع القطع قبل التسليم.",
+    description: "نراجع القطع قبل التسليم.",
   },
   delivery: {
     label: "جاهز للتسليم",
     description: "طلبك جاهز للاستلام أو التوصيل.",
   },
   done: {
-    label: "اتسلم الطلب",
+    label: "تم تسليم الطلب",
     description: "شكرًا لثقتكم في يوزرسيف!",
   },
 };

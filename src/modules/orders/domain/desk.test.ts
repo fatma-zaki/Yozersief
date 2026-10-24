@@ -36,7 +36,7 @@ describe("quoteSummary", () => {
   });
 
   it("names the days in Egyptian Arabic", () => {
-    expect([1, 2, 7, 14].map(daysLabel)).toEqual(["يوم واحد", "يومين", "7 أيام", "14 يوم"]);
+    expect([1, 2, 7, 14].map(daysLabel)).toEqual(["يوم واحد", "يومان", "7 أيام", "14 يومًا"]);
   });
 });
 

@@ -16,9 +16,9 @@ import d from "../team-kit.module.css";
 type State = DesignJobView["state"];
 
 const STATE: Record<State, [string, string | undefined]> = {
-  need: ["محتاج موكاب", k.bOk],
+  need: ["يحتاج إلى موكاب", k.bOk],
   change: ["طلب تعديل", k.bWarn],
-  waiting: ["مستني العميل", k.bRole],
+  waiting: ["بانتظار العميل", k.bRole],
   sent: ["عند الاستقبال", k.bRole],
 };
 
@@ -51,7 +51,7 @@ export function DesignBoard({ data }: { data: DesignData }) {
   const onFile = async (file: File | undefined) => {
     if (!file || !sel) return;
     if (!data.uploadMode) {
-      flash("رفع الملفات مش متاح دلوقتي.");
+      flash("رفع الملفات غير متاح حاليًا.");
       return;
     }
     setUploading(true);
@@ -74,12 +74,12 @@ export function DesignBoard({ data }: { data: DesignData }) {
         flash(result.error);
         return;
       }
-      flash(`اترفعت نسخة ${result.data.version} واتبعتت للاستقبال`);
+      flash(`رُفعت نسخة ${result.data.version} وأُرسلت إلى الاستقبال`);
       router.refresh();
     } catch (e) {
       // Blob's own errors are English; show ours unless the server sent an Arabic one.
       flash(
-        e instanceof Error && /[؀-ۿ]/.test(e.message) ? e.message : "رفع الملف فشل. جرّب تاني.",
+        e instanceof Error && /[؀-ۿ]/.test(e.message) ? e.message : "فشل رفع الملف. حاول مرة أخرى.",
       );
     } finally {
       setUploading(false);
@@ -91,14 +91,14 @@ export function DesignBoard({ data }: { data: DesignData }) {
     if (!sel) return;
     startTransition(async () => {
       const result = await flagFilesAction({ orderId: sel.id });
-      flash(result.ok ? `اتبعت تنبيه للاستقبال بخصوص ملفات ${sel.ref}` : result.error);
+      flash(result.ok ? `أُرسل تنبيه إلى الاستقبال بخصوص ملفات ${sel.ref}` : result.error);
     });
   };
 
   const stats = [
-    { label: "محتاج موكاب", n: data.stats.need },
+    { label: "يحتاج إلى موكاب", n: data.stats.need },
     { label: "طلبات تعديل", n: data.stats.change },
-    { label: "مستني اعتماد العميل", n: data.stats.waiting },
+    { label: "بانتظار اعتماد العميل", n: data.stats.waiting },
   ];
 
   return (
@@ -140,7 +140,7 @@ export function DesignBoard({ data }: { data: DesignData }) {
           style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10 }}
         >
           <h2 id="j-h" className={k.h2} style={{ padding: "4px 6px" }}>
-            شغلك
+            مهامك
           </h2>
           {data.jobs.length ? (
             <ul
@@ -190,13 +190,13 @@ export function DesignBoard({ data }: { data: DesignData }) {
             </ul>
           ) : (
             <p className={k.muted} style={{ margin: 0, padding: "18px 6px", fontSize: 14 }}>
-              مفيش موكابات مطلوبة دلوقتي. الطلبات هتوصلك هنا بعد ما العميل يوافق على عرض السعر.
+              لا توجد موكابات مطلوبة حاليًا. ستصلك الطلبات هنا بعد موافقة العميل على عرض السعر.
             </p>
           )}
           <div className={d.lockrow}>
             <Ic d={P.eyeOff} size={18} />
             <span>
-              أرقام العملاء والأسعار مخفية عن دور المصمم. أي تواصل مع العميل بيعدّي على الاستقبال.
+              أرقام العملاء والأسعار مخفية عن دور المصمم. أي تواصل مع العميل يمر عبر الاستقبال.
             </span>
           </div>
         </section>
@@ -294,14 +294,14 @@ export function DesignBoard({ data }: { data: DesignData }) {
                   ))
                 ) : (
                   <span className={k.muted} style={{ fontSize: 13 }}>
-                    العميل ما رفعش ملفات.
+                    لم يرفع العميل ملفات.
                   </span>
                 )}
                 <h3 className={k.h2} style={{ fontSize: 14, marginTop: 4 }}>
-                  البريف
+                  الموجز
                 </h3>
                 <p style={{ margin: 0, fontSize: 14, lineHeight: "23px", whiteSpace: "pre-line" }}>
-                  {sel.brief || "مفيش تفاصيل إضافية."}
+                  {sel.brief || "لا توجد تفاصيل إضافية."}
                 </p>
               </div>
             </div>
@@ -322,7 +322,7 @@ export function DesignBoard({ data }: { data: DesignData }) {
               >
                 {(sel.versions.length
                   ? sel.versions
-                  : [{ n: "—", note: "لسه مفيش نسخ", t: "" }]
+                  : [{ n: "—", note: "لا توجد نسخ بعد", t: "" }]
                 ).map((v) => (
                   <li
                     key={v.n}
@@ -356,11 +356,11 @@ export function DesignBoard({ data }: { data: DesignData }) {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={!canUpload || uploading}
-                title={canUpload ? undefined : "في نسخة لسه عند الاستقبال أو العميل"}
+                title={canUpload ? undefined : "توجد نسخة ما زالت لدى الاستقبال أو العميل"}
                 style={{ minHeight: 46, padding: "8px 22px", borderRadius: 999, fontSize: 14 }}
               >
                 <Ic d={P.upload} size={18} />
-                {uploading ? "بيترفع…" : "ارفع نسخة موكاب جديدة"}
+                {uploading ? "جارٍ الرفع…" : "ارفع نسخة موكاب جديدة"}
               </button>
               <button
                 className={cn(k.btn, k.soft)}
@@ -369,11 +369,12 @@ export function DesignBoard({ data }: { data: DesignData }) {
                 disabled={busy}
                 style={{ minHeight: 46, padding: "8px 20px", borderRadius: 999, fontSize: 14 }}
               >
-                بلّغ الاستقبال بمشكلة في الملف
+                أبلغ الاستقبال بمشكلة في الملف
               </button>
             </div>
             <p className={d.waNote} style={{ margin: 0 }}>
-              الموكاب بيروح للاستقبال يراجعه ويبعته للعميل. اعتماد العميل بيظهر هنا تلقائي.
+              يذهب الموكاب إلى الاستقبال لمراجعته وإرساله إلى العميل. يظهر اعتماد العميل هنا
+              تلقائيًا.
             </p>
           </section>
         ) : null}

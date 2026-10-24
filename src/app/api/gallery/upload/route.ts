@@ -23,7 +23,7 @@ import { blobUploadMode } from "@/modules/orders";
 export async function POST(request: Request) {
   const mode = blobUploadMode();
   if (!mode) {
-    return NextResponse.json({ error: "رفع الملفات مش متاح دلوقتي." }, { status: 503 });
+    return NextResponse.json({ error: "رفع الملفات غير متاح حاليًا." }, { status: 503 });
   }
 
   const authorize = async (pathname: string) => {
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     if (!staff) throw new UnauthorizedError();
     assertCan(staff, "gallery.manage");
     if (!pathname.startsWith(GALLERY_PATH_PREFIX) || pathname.includes("..")) {
-      throw new ValidationError({}, "مسار الصورة مش صحيح.");
+      throw new ValidationError({}, "مسار الصورة غير صحيح.");
     }
     return {
       allowedContentTypes: [...GALLERY_IMAGE_TYPES],

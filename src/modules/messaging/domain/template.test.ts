@@ -18,13 +18,13 @@ describe("renderTemplate", () => {
       price_date: "السعر 450 ج.م والاستلام يوم 30 أكتوبر.",
       link: "https://youzersef.example/t/abc",
     });
-    expect(text).toContain("أهلًا منى، طلبك رقم YZ-AB23CD");
+    expect(text).toContain("مرحبًا منى، تم قبول طلبك رقم YZ-AB23CD");
     expect(text).toContain("https://youzersef.example/t/abc");
     expect(text).not.toMatch(/\{\w+\}/);
   });
 
   it("leaves missing variables visible and reports them", () => {
-    expect(renderTemplate("أهلًا {name} {ref}", { name: "منى" })).toBe("أهلًا منى {ref}");
+    expect(renderTemplate("مرحبًا {name} {ref}", { name: "منى" })).toBe("مرحبًا منى {ref}");
     expect(missingVariables(approve, { name: "x" }).sort()).toEqual(["link", "price_date", "ref"]);
   });
 
@@ -38,8 +38,8 @@ describe("renderTemplate", () => {
 
 describe("whatsappLink", () => {
   it("encodes the message", () => {
-    expect(whatsappLink("201116891025", "أهلًا & شكرًا")).toBe(
-      `https://wa.me/201116891025?text=${encodeURIComponent("أهلًا & شكرًا")}`,
+    expect(whatsappLink("201116891025", "مرحبًا & شكرًا")).toBe(
+      `https://wa.me/201116891025?text=${encodeURIComponent("مرحبًا & شكرًا")}`,
     );
   });
 });

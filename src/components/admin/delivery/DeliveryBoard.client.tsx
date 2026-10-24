@@ -17,8 +17,8 @@ import d from "../team-kit.module.css";
 
 const STATE: Record<HandoverView["state"], [string, string | undefined]> = {
   ready: ["جاهز", k.bOk],
-  qc: ["لسه في الفحص", k.bOff],
-  done: ["اتسلم", k.bRole],
+  qc: ["ما زال في الفحص", k.bOff],
+  done: ["سُلّم", k.bRole],
 };
 const FILE = "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6";
 
@@ -46,7 +46,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
     e.preventDefault();
     const code = codes[h.id] ?? "";
     if (code.length !== 3) {
-      setErrs((m) => ({ ...m, [h.id]: "اكتب آخر 3 أرقام من موبايل العميل." }));
+      setErrs((m) => ({ ...m, [h.id]: "اكتب آخر 3 أرقام من هاتف العميل." }));
       return;
     }
     startTransition(async () => {
@@ -61,14 +61,14 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
         setErrs((m) => ({
           ...m,
           [h.id]: left
-            ? `الأرقام مش مطابقة لموبايل صاحب الطلب. اتأكد من العميل. (فاضل ${left} محاولات)`
-            : "الأرقام غلط تاني. التسليم اتقفل — كلّم المدير يراجع الطلب.",
+            ? `الأرقام لا تطابق هاتف صاحب الطلب. تحقّق من العميل. (المحاولات المتبقية: ${left})`
+            : "الأرقام خاطئة مرة أخرى. أُغلق التسليم — تواصل مع المدير ليراجع الطلب.",
         }));
         router.refresh();
         return;
       }
       setWa(result.waLink ?? "");
-      flash(`اتسلم ${result.ref} — رسالة الشكر للعميل جاهزة`);
+      flash(`سُلّم ${result.ref} — رسالة الشكر للعميل جاهزة`);
       router.refresh();
     });
   };
@@ -77,8 +77,8 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
     e.preventDefault();
     if (!pay.order) return;
     if (!pay.amount.trim()) {
-      setPayErr("اكتب المبلغ الأول.");
-      flash("اكتب المبلغ الأول");
+      setPayErr("اكتب المبلغ أولًا.");
+      flash("اكتب المبلغ أولًا");
       return;
     }
     startTransition(async () => {
@@ -93,7 +93,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
       }
       setPay((p) => ({ ...p, amount: "" }));
       setWa("");
-      flash("اتسجلت الدفعة — مستنية تأكيد المدير");
+      flash("سُجّلت الدفعة — بانتظار تأكيد المدير");
       router.refresh();
     });
   };
@@ -102,7 +102,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
     <div className={k.root}>
       <KitHeader
         title="التسليم والتحصيل"
-        subtitle="سلّم الطلبات الجاهزة بعد التحقق، وسجّل العربون والمبالغ المتحصّلة"
+        subtitle="سلّم الطلبات الجاهزة بعد التحقق، وسجّل العربون والمبالغ المحصّلة"
       />
 
       <div
@@ -121,7 +121,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
         >
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
             <h2 id="h-h" className={k.h2}>
-              جاهز للتسليم النهارده
+              جاهز للتسليم اليوم
             </h2>
             <span className={k.muted} style={{ fontSize: 12 }}>
               {ready} {ready === 1 ? "طلب" : "طلبات"}
@@ -159,7 +159,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
                       role="alert"
                       style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "var(--warn-ink)" }}
                     >
-                      التسليم اتقفل بعد محاولات غلط كتير. كلّم المدير يراجع الطلب.
+                      أُغلق التسليم بعد محاولات خاطئة كثيرة. تواصل مع المدير ليراجع الطلب.
                     </p>
                   ) : (
                     <>
@@ -182,7 +182,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
                           }}
                         >
                           <label className={k.lbl} htmlFor={`c-${h.id}`}>
-                            آخر 3 أرقام من موبايل العميل
+                            آخر 3 أرقام من هاتف العميل
                           </label>
                           <input
                             className={k.fld}
@@ -243,11 +243,11 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
             ))
           ) : (
             <p className={k.muted} style={{ margin: 0, fontSize: 14 }}>
-              مفيش طلبات جاهزة للتسليم دلوقتي.
+              لا توجد طلبات جاهزة للتسليم حاليًا.
             </p>
           )}
           <p className={d.waNote} style={{ margin: 0 }}>
-            بعد التأكيد بتتجهز رسالة شكر للعميل على واتساب، والطلب بيتقفل في صفحة التتبع.
+            بعد التأكيد تُجهَّز رسالة شكر للعميل عبر واتساب، ويُغلق الطلب في صفحة التتبع.
           </p>
         </section>
 
@@ -320,7 +320,7 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
                         setPay((p) => ({ ...p, method: e.target.value as "cash" | "transfer" }))
                       }
                     >
-                      <option value="cash">كاش في المحل</option>
+                      <option value="cash">نقدًا في المتجر</option>
                       <option value="transfer">تحويل [الطرق للتأكيد]</option>
                     </select>
                   </div>
@@ -351,8 +351,8 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
             ) : (
               <p className={k.muted} style={{ margin: 0, fontSize: 14 }}>
                 {canRecord
-                  ? "مفيش طلبات مستنية دفعات دلوقتي."
-                  : "تسجيل الدفعات مش ضمن صلاحيات دورك."}
+                  ? "لا توجد طلبات بانتظار دفعات حاليًا."
+                  : "تسجيل الدفعات ليس ضمن صلاحيات دورك."}
               </p>
             )}
             {data.payments.length ? (
@@ -383,14 +383,14 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
                     </span>
                     <span style={{ flexGrow: 1 }}>{x.what}</span>
                     <span className={cn(k.badge, x.pending ? k.bWarn : k.bOk)}>
-                      {x.pending ? "مستنية المدير" : "اتأكدت"}
+                      {x.pending ? "بانتظار المدير" : "تم التأكيد"}
                     </span>
                   </li>
                 ))}
               </ol>
             ) : null}
             <p className={d.waNote} style={{ margin: 0 }}>
-              أي دفعة بتتسجل بتفضل «مستنية تأكيد المدير» لحد ما يراجعها.
+              تبقى أي دفعة مسجّلة «بانتظار تأكيد المدير» حتى يراجعها.
             </p>
           </section>
 
@@ -422,12 +422,12 @@ export function DeliveryBoard({ data, canRecord }: { data: DeliveryData; canReco
               ))
             ) : (
               <p className={k.muted} style={{ margin: 0, fontSize: 13 }}>
-                مفيش فواتير مطلوبة دلوقتي.
+                لا توجد فواتير مطلوبة حاليًا.
               </p>
             )}
             <div className={d.lockrow}>
               <Ic d={P.lock} size={18} />
-              <span>تعديل الأسعار، الخصومات، وإلغاء الطلبات صلاحية المدير بس.</span>
+              <span>تعديل الأسعار والخصومات وإلغاء الطلبات من صلاحيات المدير فقط.</span>
             </div>
           </section>
         </div>

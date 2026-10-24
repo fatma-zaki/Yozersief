@@ -56,7 +56,7 @@ function Lead({ size, line, maxWidth }: { size: number; line: number; maxWidth?:
         } as Vars
       }
     >
-      تيشرتات، هوديز، كابات، مجات، استيكرات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.
+      تيشيرتات، هوديز، قبعات، أكواب، ملصقات، هدايا والمزيد بتصميماتك الخاصة وبأعلى جودة.
     </p>
   );
 }
@@ -130,7 +130,7 @@ function HeroDesktop() {
                 fontWeight: 700,
               }}
             >
-              شوف أعمالنا
+              شاهد أعمالنا
             </a>
           </div>
         </div>
@@ -145,7 +145,7 @@ function HeroDesktop() {
         >
           <Image
             src="/images/home/hero-scene.jpg"
-            alt="تيشيرت وهودي وكاب ومج وكفر موبايل مطبوع عليهم شعار يوزرسيف"
+            alt="تيشيرت وهودي وقبعة وكوب وغطاء هاتف مطبوع عليها شعار يوزرسيف"
             fill
             priority
             sizes="(min-width: 1100px) 700px, 1px"
@@ -259,7 +259,7 @@ function HeroTablet() {
         >
           <Image
             src="/images/home/hero-scene.jpg"
-            alt="تيشيرت وهودي وكاب ومج وكفر موبايل مطبوع عليهم شعار يوزرسيف"
+            alt="تيشيرت وهودي وقبعة وكوب وغطاء هاتف مطبوع عليها شعار يوزرسيف"
             fill
             sizes="(min-width: 700px) and (max-width: 1099px) 550px, 1px"
             className={s.sceneTablet}
@@ -348,7 +348,7 @@ function HeroMobile() {
       </div>
       <Image
         src="/images/home/idea-scene.jpg"
-        alt="تيشيرت وهودي وكاب ومج وكفر موبايل مطبوع عليهم شعار يوزرسيف"
+        alt="تيشيرت وهودي وقبعة وكوب وغطاء هاتف مطبوع عليها شعار يوزرسيف"
         width={900}
         height={669}
         priority

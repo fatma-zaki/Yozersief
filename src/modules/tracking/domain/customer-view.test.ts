@@ -16,7 +16,7 @@ const baseOrder = (overrides: Partial<OrderRowForCustomerView> = {}): OrderRowFo
   createdAt: new Date("2026-10-20T10:00:00.000Z"),
   desiredDate: "2026-11-01",
   receiptMethod: "pickup",
-  rejectionReason: "سبب داخلي مش للعميل إلا عند الرفض",
+  rejectionReason: "سبب داخلي لا يظهر للعميل إلا عند الرفض",
   ...overrides,
 });
 

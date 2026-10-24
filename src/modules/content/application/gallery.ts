@@ -110,21 +110,21 @@ export async function addUploadedPhoto(
   assertCan(actor, "gallery.manage");
   const input = galleryUploadSchema.parse(raw);
   if (!input.pathname.startsWith(GALLERY_PATH_PREFIX)) {
-    return err(new ValidationError({}, "الصورة دي مش من رفع المعرض."));
+    return err(new ValidationError({}, "هذه الصورة ليست من رفع المعرض."));
   }
   const storage = createFileStorage();
-  if (!storage) return err(new ValidationError({}, "رفع الملفات مش متاح دلوقتي."));
+  if (!storage) return err(new ValidationError({}, "رفع الملفات غير متاح حاليًا."));
   const meta = await storage.head(input.url);
   if (meta.pathname !== input.pathname) {
-    return err(new ValidationError({}, "الصورة دي مش من رفع المعرض."));
+    return err(new ValidationError({}, "هذه الصورة ليست من رفع المعرض."));
   }
   if (!(GALLERY_IMAGE_TYPES as readonly string[]).includes(meta.contentType)) {
     await storage.delete(meta.url).catch(() => undefined);
-    return err(new ValidationError({}, "الصورة لازم تكون JPG أو PNG."));
+    return err(new ValidationError({}, "يجب أن تكون الصورة بصيغة JPG أو PNG."));
   }
   if (meta.size > GALLERY_MAX_BYTES) {
     await storage.delete(meta.url).catch(() => undefined);
-    return err(new ValidationError({}, "الصورة أكبر من 20 ميجا [الحد بانتظار التأكيد]."));
+    return err(new ValidationError({}, "الصورة أكبر من 20 ميجابايت [الحد بانتظار التأكيد]."));
   }
   return inTransaction(async (tx) => {
     const existing = await findGalleryItemByStorageKey(meta.url, tx);

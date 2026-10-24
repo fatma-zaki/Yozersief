@@ -32,7 +32,7 @@ function customDraft(overrides: Partial<RequestDraft> = {}): RequestDraft {
     ...emptyDraft(),
     ctype: "person",
     cat: "custom",
-    desc: "عايز أطباعة فكرة خاصة للمدرسة",
+    desc: "أريد طباعة فكرة خاصة للمدرسة",
     help: true,
     name: "منى",
     phone: "01012345678",
@@ -66,7 +66,7 @@ describe("submitRequest", () => {
 
   it("surfaces actionable server errors and allows retry with the same key", async () => {
     submitOrderAction
-      .mockResolvedValueOnce({ ok: false, error: "محاولات كتير ورا بعض." })
+      .mockResolvedValueOnce({ ok: false, error: "محاولات كثيرة متتالية." })
       .mockResolvedValueOnce({ ok: true, data: { ref: "YZ-RETRY1" } });
 
     const key = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
@@ -77,7 +77,7 @@ describe("submitRequest", () => {
     };
 
     const first = await submitRequest(customDraft(), opts);
-    expect(first).toEqual({ ok: false, error: "محاولات كتير ورا بعض." });
+    expect(first).toEqual({ ok: false, error: "محاولات كثيرة متتالية." });
 
     const second = await submitRequest(customDraft(), opts);
     expect(second).toEqual({ ok: true, ref: "YZ-RETRY1" });
@@ -97,7 +97,7 @@ describe("submitRequest", () => {
       uploadMode: "token",
     });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toMatch(/ارفعه تاني/);
+    if (!result.ok) expect(result.error).toMatch(/ارفعه مرة أخرى/);
     expect(submitOrderAction).not.toHaveBeenCalled();
   });
 });
@@ -148,7 +148,7 @@ describe("submitRequest uploads", () => {
       uploadMode: "presigned",
     });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toMatch(/نوع الملف مش مدعوم/);
+    if (!result.ok) expect(result.error).toMatch(/نوع الملف غير مدعوم/);
     expect(uploadPresigned).not.toHaveBeenCalled();
   });
 
@@ -163,7 +163,7 @@ describe("submitRequest uploads", () => {
     });
     expect(result).toEqual({
       ok: false,
-      error: "رفع الملف «a.png» فشل. جرّب تاني، ولو المشكلة فضلت ابعته على واتساب.",
+      error: "رفع الملف «a.png» فشل. حاول مرة أخرى، وإذا استمرت المشكلة فأرسله عبر واتساب.",
     });
   });
 
@@ -173,7 +173,7 @@ describe("submitRequest uploads", () => {
       fileBlobs: fileBlobs(),
       uploadMode: null,
     });
-    expect(result).toEqual({ ok: false, error: "رفع الملفات مش متاح دلوقتي." });
+    expect(result).toEqual({ ok: false, error: "رفع الملفات غير متاح حاليًا." });
     expect(submitOrderAction).not.toHaveBeenCalled();
   });
 });

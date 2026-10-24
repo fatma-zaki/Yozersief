@@ -31,7 +31,7 @@ describe("result", () => {
 
 describe("t", () => {
   it("fills placeholders and keeps unknown ones visible", () => {
-    expect(t("أهلًا {name}، طلبك {ref}", { name: "منى" })).toBe("أهلًا منى، طلبك {ref}");
+    expect(t("مرحبًا {name}، طلبك {ref}", { name: "منى" })).toBe("مرحبًا منى، طلبك {ref}");
   });
 });
 

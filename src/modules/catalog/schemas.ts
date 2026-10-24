@@ -19,9 +19,9 @@ export const saveProductSchema = z.object({
     .string()
     .trim()
     .min(2, "اكتب اسم المنتج.")
-    .max(80, "اسم المنتج طويل، خليه أقل من 80 حرف."),
-  categoryKey: z.enum(CATEGORY_KEYS, { error: "اختار التصنيف." }),
-  description: z.string().trim().max(300, "الوصف طويل، خليه أقل من 300 حرف.").default(""),
+    .max(80, "اسم المنتج طويل، اجعله أقل من 80 حرفًا."),
+  categoryKey: z.enum(CATEGORY_KEYS, { error: "اختر التصنيف." }),
+  description: z.string().trim().max(300, "الوصف طويل، اجعله أقل من 300 حرف.").default(""),
   colors: z.array(z.enum(COLOR_VALUES)).max(COLOR_VALUES.length).default([]),
   sizes: z.array(z.enum(SIZE_VALUES)).max(SIZE_VALUES.length).default([]),
   places: z.array(z.enum(PLACE_VALUES)).max(PLACE_VALUES.length).default([]),

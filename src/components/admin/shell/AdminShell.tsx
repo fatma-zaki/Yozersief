@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { cache, type ReactNode } from "react";
 import { signOutAction } from "@/app/(auth)/login/actions";
+import { ThemeToggle } from "@/components/ui/Providers.client";
 import { getStaffContext } from "@/lib/auth/session";
 import { cn } from "@/lib/cn";
 import { can, DASHBOARD_SECTIONS, ROLES } from "@/lib/rbac";
@@ -186,6 +187,7 @@ function SidebarTitle({ team }: { team: boolean }) {
           بيئة تجريبية
         </span>
       </span>
+      <ThemeToggle className="ms-auto shrink-0" />
     </div>
   );
 }
@@ -252,7 +254,7 @@ export async function SidebarContent({ counts }: { counts: NavCounts }) {
             color: "rgba(255,255,255,0.72)",
           }}
         >
-          الأقسام التانية مخفية لأنها مش ضمن صلاحيات دورك. المدير بيتحكم فيها من «الحسابات
+          الأقسام الأخرى مخفية لأنها ليست ضمن صلاحيات دورك. يتحكم فيها المدير من «الحسابات
           والصلاحيات».
         </p>
       ) : null}
@@ -349,7 +351,7 @@ export function SidebarSkeleton() {
   );
 }
 
-/** Phone bottom bar (Admin-Mobile): the first three allowed sections + sign out. */
+/** Phone bottom bar (Admin-Mobile): the first three allowed sections, sign out, theme toggle. */
 export async function BottomNav() {
   const nav = await navFor();
   if (!nav) return null;
@@ -362,7 +364,7 @@ export async function BottomNav() {
           borderRadius: 24,
           padding: 6,
           display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+          gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           alignItems: "center",
           color: "rgba(255,255,255,0.75)",
         }}
@@ -389,6 +391,7 @@ export async function BottomNav() {
             خروج
           </button>
         </form>
+        <ThemeToggle className="mx-auto" />
       </div>
     </nav>
   );

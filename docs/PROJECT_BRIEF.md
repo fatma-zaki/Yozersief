@@ -144,11 +144,11 @@ Rules:
 - **Naming**: files `kebab-case.ts`, React components `PascalCase.tsx`, DB `snake_case`, TS `camelCase`. Permission keys `module.action` (e.g. `orders.approve`).
 - **Server first**: pages are Server Components. Client components only for interactivity, named `*.client.tsx`.
 - **Data access** only through module repositories. No Drizzle calls inside `app/`.
-- **Errors**: use cases return `Result`, or throw `AppError`. Never leak stack traces or DB errors to the UI. Every user-facing error message is Egyptian Arabic, says what went wrong and how to fix it.
+- **Errors**: use cases return `Result`, or throw `AppError`. Never leak stack traces or DB errors to the UI. Every user-facing error message is Modern Standard Arabic, says what went wrong and how to fix it.
 - **Money**: Postgres `numeric(12,2)`, handled as strings in TS; arithmetic through a small decimal helper. Currency EGP.
 - **Time**: store `timestamptz` (UTC). Display in `Africa/Cairo`.
 - **Digits**: always Western digits (0-9) in the UI, including Arabic text. Accept Arabic-Indic digits in inputs and normalise them.
-- **Copy**: Arabic, Egyptian colloquial, matching the design (e.g. «ابدأ طلبك», «تتبّع طلبك»). Keep all UI strings in `src/i18n/ar.ts` so English can be added later.
+- **Copy**: Arabic, Modern Standard Arabic (فصحى), clear and friendly (e.g. «ابدأ طلبك», «تتبّع طلبك»). Changed from Egyptian colloquial on 2026-10-24; where the design export still shows colloquial wording, the MSA copy wins. Keep all UI strings in `src/i18n/ar.ts` so English can be added later.
 - **Accessibility**: real buttons/links/labels, visible focus, 44px touch targets, `prefers-reduced-motion` respected.
 - **Commits**: Conventional Commits. Small PRs per module.
 - **Never** commit secrets. `.env.example` lists every variable with a comment.
@@ -442,6 +442,6 @@ The admin can toggle any non-admin cell. Changes are audited.
 - Mobile-first for customers; most traffic comes from WhatsApp links on phones.
 - LCP < 2.5 s on 4G for public pages; images via `next/image`.
 - Accessibility WCAG 2.1 AA.
-- All customer-facing copy in Egyptian Arabic; Western digits.
+- All customer-facing copy in Modern Standard Arabic; Western digits.
 - Every money/state change is auditable and reversible only through a new event (no silent edits).
 - Personal data minimisation; phone numbers masked by default in the dashboard.

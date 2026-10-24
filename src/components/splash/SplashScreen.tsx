@@ -56,7 +56,7 @@ export interface SplashScreenProps {
  */
 export function SplashScreen({
   always = false,
-  tagline = "طباعة على التيشيرتات والهوديز والمجات والكفرات والاستيكرات — أسوان",
+  tagline = "طباعة على التيشيرتات والهوديز والأكواب وأغطية الهواتف والملصقات — أسوان",
 }: SplashScreenProps) {
   const uid = useId().replace(/:/g, "");
   const [state, setState] = useState<"showing" | "leaving" | "gone">("showing");
@@ -131,7 +131,7 @@ export function SplashScreen({
         style={vars}
         role="dialog"
         aria-modal="true"
-        aria-label="شاشة البداية: شعار يوزرسيف — خليك مختلف، خليك يوزرسيف"
+        aria-label="شاشة البداية: شعار يوزرسيف — كن مختلفًا، كن يوزرسيف"
         data-splash=""
       >
         <div className={styles.glow} aria-hidden="true" />
@@ -209,7 +209,7 @@ export function SplashScreen({
             ))}
           </div>
 
-          <p className={styles.slogan}>خليك مختلف .. خليك يوزرسيف</p>
+          <p className={styles.slogan}>كن مختلفًا .. كن يوزرسيف</p>
           {tagline ? <p className={styles.tagline}>{tagline}</p> : null}
         </div>
 

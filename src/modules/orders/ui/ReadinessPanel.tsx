@@ -38,7 +38,7 @@ export function ReadinessPanel({ items }: { items: readonly ReadinessItem[] }) {
               <span className="flex-1">{item.label}</span>
               {item.state === "attention" && item.fieldId ? (
                 <a href={`#${item.fieldId}`} className="text-accent font-bold underline">
-                  ظبّطها
+                  أصلحها
                 </a>
               ) : null}
             </li>

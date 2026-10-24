@@ -33,7 +33,7 @@ export function applyGalleryChange(
   const customerConsent = change.consent ?? current.customerConsent;
   let isPublished = change.published ?? current.isPublished;
   if (change.published && !customerConsent) {
-    return { ok: false, message: "مينفعش تنشر الصورة من غير موافقة العميل." };
+    return { ok: false, message: "لا يمكن نشر الصورة دون موافقة العميل." };
   }
   if (!customerConsent) isPublished = false;
   return { ok: true, flags: { customerConsent, isPublished } };

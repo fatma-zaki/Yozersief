@@ -22,20 +22,20 @@ type QcKey = keyof ProductionCard["qc"];
 
 const COLS: [Column, string][] = [
   ["queue", "جاهز للطباعة"],
-  ["print", "بيتطبع"],
+  ["print", "قيد الطباعة"],
   ["qc", "فحص الجودة"],
   ["ready", "جاهز للتسليم"],
 ];
 const QC: [QcKey, string][] = [
   ["qcSizesOk", "المقاسات مطابقة"],
-  ["qcNamesOk", "الأسماء مظبوطة"],
+  ["qcNamesOk", "الأسماء صحيحة"],
   ["qcPrintOk", "الطباعة واضحة"],
   ["qcCountOk", "العدد كامل"],
 ];
 const STEP = {
   queue: ["start", "ابدأ الطباعة"],
-  print: ["finish", "خلص — للفحص"],
-  qc: ["pass", "الفحص تمام"],
+  print: ["finish", "انتهى — إلى الفحص"],
+  qc: ["pass", "الفحص سليم"],
 } as const;
 
 function Check({
@@ -115,8 +115,8 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
         flash(r.error);
         return;
       }
-      const to = { queue: "بيتطبع", print: "فحص الجودة", qc: "" }[column];
-      flash(to ? `${c.ref} اتنقل لـ «${to}»` : `${c.ref} جاهز — اتبلغ مسؤول التسليم والعميل`);
+      const to = { queue: "قيد الطباعة", print: "فحص الجودة", qc: "" }[column];
+      flash(to ? `${c.ref} انتقل إلى «${to}»` : `${c.ref} جاهز — أُبلغ مسؤول التسليم والعميل`);
       router.refresh();
     });
   };
@@ -138,14 +138,14 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
     <div className={k.root}>
       <KitHeader
         title="لوحة الإنتاج"
-        subtitle="الطلبات اللي اتعمدت ودفعت العربون، من الطباعة لحد ما تبقى جاهزة للتسليم"
+        subtitle="الطلبات المعتمدة المدفوع عربونها، من الطباعة حتى تصبح جاهزة للتسليم"
       />
 
       <div className={cn(d.lockrow, s.up, s.d1)}>
         <Ic d={P.eyeOff} size={18} />
         <span>
-          الأسعار وبيانات تواصل العملاء مخفية عن دور الإنتاج. اللي ظاهر: المواصفات، الكميات،
-          والملفات النهائية المعتمدة.
+          الأسعار وبيانات تواصل العملاء مخفية عن دور الإنتاج. الظاهر: المواصفات، الكميات، والملفات
+          النهائية المعتمدة.
         </span>
       </div>
 
@@ -240,7 +240,7 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
                           }}
                         >
                           <span>
-                            اتطبع {done} من {c.quantity}
+                            طُبع {done} من {c.quantity}
                           </span>
                           <span>{pct}%</span>
                         </div>
@@ -262,7 +262,7 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
                           className={cn(k.btn, k.soft)}
                           type="button"
                           onClick={() => count(c, done - 1)}
-                          aria-label={`قلّل قطعة من ${c.ref}`}
+                          aria-label={`إنقاص قطعة من ${c.ref}`}
                           style={{ width: 40, height: 40, borderRadius: 12, fontSize: 18 }}
                         >
                           −
@@ -271,7 +271,7 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
                           className={cn(k.btn, k.soft)}
                           type="button"
                           onClick={() => count(c, done + 1)}
-                          aria-label={`زوّد قطعة على ${c.ref}`}
+                          aria-label={`زيادة قطعة على ${c.ref}`}
                           style={{ width: 40, height: 40, borderRadius: 12, fontSize: 18 }}
                         >
                           +
@@ -329,7 +329,7 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
                       </button>
                     ) : (
                       <span className={cn(k.badge, k.bOk)} style={{ alignSelf: "flex-start" }}>
-                        اتنقل لمسؤول التسليم
+                        نُقل إلى مسؤول التسليم
                       </span>
                     )}
                   </article>
@@ -356,14 +356,14 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
             }}
           >
             <h2 id="sh-h" className={k.h2}>
-              شيت الأسماء — {sheet.title}{" "}
+              جدول الأسماء — {sheet.title}{" "}
               <span dir="ltr" className={k.muted} style={{ fontSize: 12 }}>
                 {sheet.ref}
               </span>
             </h2>
             {sheet.pieces.length ? (
               <span className={k.muted} style={{ fontSize: 12 }}>
-                علّم كل قطعة لما تتطبع · {sheetDone} من {sheet.pieces.length}
+                حدّد كل قطعة عند طباعتها · {sheetDone} من {sheet.pieces.length}
               </span>
             ) : null}
           </div>
@@ -388,7 +388,7 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
                   >
                     <Check
                       on={on}
-                      label={`اتطبعت قطعة ${p.name}`}
+                      label={`طُبعت قطعة ${p.name}`}
                       onToggle={() => togglePiece(p.id, on)}
                     />
                     <span style={{ flexGrow: 1 }}>{p.name}</span>
@@ -399,13 +399,13 @@ export function ProductionBoard({ data }: { data: ProductionData }) {
             </div>
           ) : (
             <p className={d.waNote} style={{ margin: 0 }}>
-              الأسماء لسه ما اتسجلتش قطعة قطعة.{" "}
+              لم تُسجَّل الأسماء قطعةً قطعة بعد.{" "}
               {sheet.sheetUrl ? (
                 <a href={sheet.sheetUrl} target="_blank" rel="noopener noreferrer">
-                  افتح الشيت اللي العميل رفعه
+                  افتح الجدول الذي رفعه العميل
                 </a>
               ) : (
-                "العميل ما رفعش شيت أسماء."
+                "لم يرفع العميل جدول أسماء."
               )}
             </p>
           )}

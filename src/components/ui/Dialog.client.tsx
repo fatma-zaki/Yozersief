@@ -76,7 +76,7 @@ function DialogHeader({ title, description }: { title: ReactNode; description?: 
         )}
       </div>
       <DialogPrimitive.Close
-        aria-label="قفل"
+        aria-label="إغلاق"
         className="rounded-pill text-ink-muted hover:bg-off-bg flex size-11 shrink-0 items-center justify-center"
       >
         <X className="size-5" />

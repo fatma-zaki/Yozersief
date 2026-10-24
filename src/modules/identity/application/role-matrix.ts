@@ -40,9 +40,9 @@ export async function setRolePermission(
 ) {
   assertCan(actor, "accounts.manage");
   if (actor.roleKey !== "admin")
-    throw new ForbiddenError(undefined, "المدير بس هو اللي يقدر يغيّر صلاحيات الأدوار.");
+    throw new ForbiddenError(undefined, "المدير وحده يستطيع تغيير صلاحيات الأدوار.");
   if (input.roleKey === "admin")
-    throw new ValidationError({}, "المدير عنده كل الصلاحيات دايمًا ومينفعش تتعدّل.");
+    throw new ValidationError({}, "يملك المدير جميع الصلاحيات دائمًا ولا يمكن تعديلها.");
 
   const role = await findRoleByKey(input.roleKey);
   if (!role) throw new NotFoundError(`role ${input.roleKey}`);

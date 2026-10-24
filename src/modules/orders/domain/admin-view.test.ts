@@ -22,7 +22,7 @@ const staff = (role: "admin" | "desk" | "prod"): Actor => {
 
 const facts = (patch: Partial<OrderFacts>): OrderFacts => ({
   categoryKey: "wear",
-  categoryName: "تيشيرتات وهوديز وكابات",
+  categoryName: "تيشيرتات وهوديز وقبعات",
   productKey: "tshirt",
   productName: "تيشيرت",
   quantity: 12,
@@ -63,9 +63,9 @@ describe("admin view labels", () => {
     expect(productLabel(facts({}))).toBe("تيشيرت أبيض × 12");
     expect(
       productLabel(facts({ categoryKey: "phone", phoneModel: "iPhone 13", quantity: 1 })),
-    ).toBe("كفر iPhone 13 × 1");
+    ).toBe("غطاء iPhone 13 × 1");
     expect(productLabel(facts({ categoryKey: "sticker", shape: "circle", quantity: 200 }))).toBe(
-      "استيكر دائري × 200",
+      "ملصق دائري × 200",
     );
   });
 
@@ -89,10 +89,10 @@ describe("admin view labels", () => {
   });
 
   it("formats the desired date and list times in Cairo time", () => {
-    expect(desiredLabel(null)).toBe("مش محدد");
+    expect(desiredLabel(null)).toBe("غير محدد");
     expect(desiredLabel("2026-11-02")).toBe("مرغوب: 2 نوفمبر");
     const now = new Date("2026-10-22T12:00:00Z");
-    expect(whenLabel(new Date("2026-10-22T07:12:00Z"), now)).toBe("النهارده 10:12 ص");
+    expect(whenLabel(new Date("2026-10-22T07:12:00Z"), now)).toBe("اليوم 10:12 ص");
     expect(whenLabel(new Date("2026-10-21T13:30:00Z"), now)).toBe("أمس 4:30 م");
     expect(whenLabel(new Date("2026-10-18T10:00:00Z"), now)).toBe("18 أكتوبر");
   });
@@ -152,7 +152,11 @@ describe("next business stage", () => {
     expect(at("in_review", "quote")).toBeNull();
   });
 
-  it("has no pipeline for individuals", () => {
-    expect(nextStage(person("approved"), bulk)).toBeNull();
+  it("walks an individual's order from approval to delivery", () => {
+    expect(nextStage(person("approved"), bulk)?.transition).toBe("start_production");
+    expect(nextStage(person("in_production"), bulk)?.transition).toBe("mark_ready");
+    expect(nextStage(person("ready"), bulk)?.transition).toBe("deliver");
+    expect(nextStage(person("in_review"), bulk)).toBeNull();
+    expect(nextStage(person("delivered"), bulk)).toBeNull();
   });
 });

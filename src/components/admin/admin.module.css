@@ -103,8 +103,9 @@
   background: #001412;
   color: #f2fbf8;
 }
-/* Undo Tailwind preflight where the designs rely on browser defaults. */
-.page :where(img, svg) {
+/* Undo Tailwind preflight where the designs rely on browser defaults. Icons that pick their own
+   display with utilities (ThemeToggle's `hidden dark:block`) are left to Tailwind. */
+.page :where(img, svg:not(:global(.hidden), :global(.block))) {
   display: inline;
   vertical-align: baseline;
   max-width: none;

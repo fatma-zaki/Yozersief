@@ -48,7 +48,7 @@ export async function addGallerySampleAction(): Promise<ActionResult<{ id: strin
   }
 }
 
-/** Caption, «معايا موافقة العميل» and «منشورة في الموقع». */
+/** Caption, «لديّ موافقة العميل» and «منشورة في الموقع». */
 export async function updateGalleryAction(
   input: GalleryUpdateInput,
 ): Promise<ActionResult<{ state: GalleryState; unpublishedByConsent: boolean }>> {
@@ -60,7 +60,7 @@ export async function updateGalleryAction(
   }
 }
 
-/** «امسح». */
+/** «احذف». */
 export async function deleteGalleryAction(
   input: GalleryDeleteInput,
 ): Promise<ActionResult<{ deleted: true }>> {

@@ -54,8 +54,8 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
   const visible = items.filter((x) => x.visible).length;
   const stats = [
     { n: items.length, label: "منتج وخدمة", icon: P.grid },
-    { n: visible, label: "ظاهرين في الموقع", icon: P.eye },
-    { n: items.length - visible, label: "مخفيين مؤقتًا", icon: P.eyeOff },
+    { n: visible, label: "ظاهرة في الموقع", icon: P.eye },
+    { n: items.length - visible, label: "مخفية مؤقتًا", icon: P.eyeOff },
   ];
   const cats: [CategoryKey | "all", string][] = [
     ["all", `الكل · ${items.length}`],
@@ -68,7 +68,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
     startTransition(async () => {
       const result = await setProductVisibilityAction({ id: x.id, visible: next });
       if (result.ok) {
-        flash(next ? `بقى «${x.name}» ظاهر في الموقع` : `اتخفى «${x.name}» من الموقع`);
+        flash(next ? `أصبح «${x.name}» ظاهر في الموقع` : `أُخفي «${x.name}» من الموقع`);
         router.refresh();
       } else {
         flash(result.error);
@@ -96,7 +96,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
     if (!result.ok) return { error: result.error, nameError: Boolean(result.fieldErrors?.name) };
     setDrawer(null);
     flash(
-      result.data.created ? `اتضاف «${result.data.name}»` : `اتحفظت تعديلات «${result.data.name}»`,
+      result.data.created ? `أُضيف «${result.data.name}»` : `حُفظت تعديلات «${result.data.name}»`,
     );
     router.refresh();
     return null;
@@ -104,7 +104,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
 
   return (
     <div className={cn(k.root, shell.gutter)}>
-      <KitHeader title="الخدمات والمنتجات" subtitle="اللي بيظهر للعملاء في الموقع وفي منشئ الطلب">
+      <KitHeader title="الخدمات والمنتجات" subtitle="ما يظهر للعملاء في الموقع وفي منشئ الطلب">
         <label
           style={{ position: "relative", display: "flex", alignItems: "center", flex: "0 1 280px" }}
         >
@@ -302,7 +302,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
             gap: 10,
           }}
         >
-          <strong>{items.length ? "مفيش منتجات بالبحث ده" : "لسه مفيش منتجات"}</strong>
+          <strong>{items.length ? "لا توجد منتجات تطابق هذا البحث" : "لا توجد منتجات بعد"}</strong>
           {items.length ? (
             <button
               className={cn(k.btn, k.soft)}
@@ -313,7 +313,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
               }}
               style={{ minHeight: 42, padding: "4px 18px", borderRadius: 999 }}
             >
-              امسح البحث
+              مسح البحث
             </button>
           ) : null}
         </div>
@@ -323,7 +323,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
         className={k.tint}
         style={{ margin: 0, padding: "10px 16px", fontSize: 13, lineHeight: "22px" }}
       >
-        الأسعار مش بتظهر للعملاء. كل طلب بيتسعّر بعد المراجعة حسب الكمية والتصميم.
+        لا تظهر الأسعار للعملاء. يُسعَّر كل طلب بعد المراجعة حسب الكمية والتصميم.
       </p>
 
       {drawer ? (
@@ -522,7 +522,7 @@ function ProductDrawer({
           <span style={{ display: "flex", flexDirection: "column" }}>
             <strong style={{ fontSize: 14 }}>صورة المنتج</strong>
             <span className={k.muted} style={{ fontSize: 12 }}>
-              اختار صورة جديدة (JPG أو PNG)
+              اختر صورة جديدة (JPG أو PNG)
             </span>
           </span>
         </label>
@@ -592,7 +592,7 @@ function ProductDrawer({
           <span id="d-vis" style={{ display: "flex", flexDirection: "column" }}>
             <strong style={{ fontSize: 14 }}>يظهر في الموقع ومنشئ الطلب</strong>
             <span className={k.muted} style={{ fontSize: 12 }}>
-              تقدر تخفيه مؤقتًا من غير ما تمسحه
+              يمكنك إخفاؤه مؤقتًا دون حذفه
             </span>
           </span>
         </div>

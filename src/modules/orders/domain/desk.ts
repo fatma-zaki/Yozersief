@@ -13,8 +13,8 @@ export const DESK_EVENTS = {
 } as const;
 
 /**
- * The design's badges: «جديد», «بانتظار العميل», «مستني المدير»; plus the mockup hand-off
- * between the designer and the customer (B3 step 5): «موكاب جاهز», «الموكاب عند العميل».
+ * The design's badges: «جديد», «بانتظار العميل», «بانتظار المدير»; plus the mockup hand-off
+ * between the designer and the customer (B3 step 5): «موكاب جاهز», «الموكاب لدى العميل».
  */
 export type DeskState = "new" | "awaiting" | "pending" | "mockup" | "mockup_sent";
 
@@ -51,11 +51,11 @@ export function quoteSummary(q: QuoteDraft): string {
   ].join(" · ");
 }
 
-/** "يوم واحد", "يومين", "5 أيام", "14 يوم". */
+/** "يوم واحد", "يومان", "5 أيام", "14 يومًا". */
 export function daysLabel(n: number): string {
   if (n === 1) return "يوم واحد";
-  if (n === 2) return "يومين";
-  return `${n} ${n <= 10 ? "أيام" : "يوم"}`;
+  if (n === 2) return "يومان";
+  return `${n} ${n <= 10 ? "أيام" : "يومًا"}`;
 }
 
 /** «متوسط أول رد»: mean minutes from submission to the first staff action, or null. */

@@ -227,7 +227,7 @@ export function HomeHeader() {
             id="site-q"
             type="search"
             className={s.searchInput}
-            placeholder="ابحث عن منتج: تيشيرت، مج، استيكر…"
+            placeholder="ابحث عن منتج: تيشيرت، كوب، ملصق…"
           />
           <button type="submit" className={cn(s.btn, s.cta, s.searchSubmit)}>
             بحث

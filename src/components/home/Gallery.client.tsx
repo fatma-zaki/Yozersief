@@ -141,7 +141,7 @@ function Slider({ bp, headId, items }: { bp: Bp; headId?: string; items: PublicG
       }
       lead={
         !hasSamples
-          ? "صور من شغلنا، منشورة بموافقة أصحابها"
+          ? "صور من أعمالنا، منشورة بموافقة أصحابها"
           : bp === "m"
             ? "الصور الحالية نماذج عرض لحين إضافة أعمال العملاء بموافقتهم"
             : "الصور الحالية نماذج عرض لحين إضافة صور أعمال العملاء بموافقتهم"
@@ -288,7 +288,7 @@ function Slider({ bp, headId, items }: { bp: Bp; headId?: string; items: PublicG
       </div>
       {n === 0 ? (
         <p className={s.muted} style={{ margin: 0, textAlign: "center", fontSize: 15 }}>
-          لسه مفيش أعمال منشورة في القسم ده.
+          لا توجد أعمال منشورة في هذا القسم بعد.
         </p>
       ) : null}
       <div

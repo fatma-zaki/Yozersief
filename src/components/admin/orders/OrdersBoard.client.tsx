@@ -4,12 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   advanceStageAction,
+  cancelOrderAction,
   decideOrderAction,
+  editOrderAction,
   saveInternalNoteAction,
 } from "@/app/(dashboard)/dashboard/orders/actions";
+import type { FieldErrors } from "@/lib/errors";
 import type { AdminOrdersData } from "@/modules/orders";
 import type { Order, OrderStatus } from "./data";
 import { DecisionDialog, Toast } from "./DecisionDialog.client";
+import { EditOrderDialog } from "./EditOrderDialog.client";
 import { dialogSpec, isOrg, type DialogKind } from "./logic";
 import { OrdersDesktop, OrdersMobile } from "./OrderViews.client";
 
@@ -57,6 +61,11 @@ export function OrdersBoard({ data }: { data: AdminOrdersData }) {
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const [dialogError, setDialogError] = useState("");
   const [toast, setToast] = useState<ToastState | null>(null);
+  const [editing, setEditing] = useState<{ id: string; mobile: boolean } | null>(null);
+  const [editError, setEditError] = useState<{ text: string; fields: FieldErrors }>({
+    text: "",
+    fields: {},
+  });
   const state: BoardState = { ...ui, orders: data.orders, stats: data.stats };
   const patch = (p: Partial<BoardState>) => setUi((s) => ({ ...s, ...p }));
 
@@ -80,7 +89,7 @@ export function OrdersBoard({ data }: { data: AdminOrdersData }) {
           return;
         }
         setToast({
-          text: `اتسجل «${result.data.label}»${result.data.waLink ? " — التحديث جاهز للإرسال" : ""}`,
+          text: `سُجّل «${result.data.label}»${result.data.waLink ? " — التحديث جاهز للإرسال" : ""}`,
           wa: result.data.waLink ?? "",
           mobile: false,
         });
@@ -100,25 +109,53 @@ export function OrdersBoard({ data }: { data: AdminOrdersData }) {
     const spec = dialogSpec(d.kind, r, d.mobile);
     setDialogError("");
     startTransition(async () => {
-      const result = await decideOrderAction({
-        orderId: r.id,
-        decision: d.kind,
-        text,
-        notify: d.kind === "approve" ? sendWa : true,
-      });
+      const result =
+        d.kind === "cancel"
+          ? await cancelOrderAction({ orderId: r.id, reason: text })
+          : await decideOrderAction({
+              orderId: r.id,
+              decision: d.kind,
+              text,
+              notify: d.kind === "approve" ? sendWa : true,
+            });
       if (!result.ok) {
         setDialogError(result.error);
         return;
       }
       setDialog(null);
       setToast({
-        text: spec.toast + r.ref + (result.data.waLink ? " — رسالة الواتساب جاهزة" : ""),
+        text: spec.toast + r.ref + (result.data.waLink ? " — رسالة واتساب جاهزة" : ""),
         wa: result.data.waLink ?? "",
         mobile: d.mobile,
       });
       router.refresh();
     });
   };
+
+  const saveEdit = (id: string, mobile: boolean, form: Order["form"]) => {
+    setEditError({ text: "", fields: {} });
+    startTransition(async () => {
+      const result = await editOrderAction({ orderId: id, ...form });
+      if (!result.ok) {
+        setEditError({ text: result.error, fields: result.fieldErrors ?? {} });
+        return;
+      }
+      setEditing(null);
+      setToast({
+        text: result.data.changed.length
+          ? `عُدّل الطلب ${result.data.ref}: ${result.data.changed.join("، ")}`
+          : "لا توجد تغييرات للحفظ.",
+        wa: "",
+        mobile,
+      });
+      router.refresh();
+    });
+  };
+  const edit = (mobile: boolean) => (id: string) => {
+    setEditError({ text: "", fields: {} });
+    setEditing({ id, mobile });
+  };
+  const editOrder = editing ? data.orders.find((o) => o.id === editing.id) : undefined;
 
   const dialogOrder = dialog ? data.orders.find((o) => o.id === dialog.id) : undefined;
   const open = (mobile: boolean) => (kind: DialogKind, id: string) => {
@@ -128,8 +165,34 @@ export function OrdersBoard({ data }: { data: AdminOrdersData }) {
 
   return (
     <>
-      <OrdersDesktop state={state} list={list} patch={patch} open={open(false)} actions={actions} />
-      <OrdersMobile state={state} list={list} patch={patch} open={open(true)} />
+      <OrdersDesktop
+        state={state}
+        list={list}
+        patch={patch}
+        open={open(false)}
+        edit={edit(false)}
+        actions={actions}
+      />
+      <OrdersMobile
+        state={state}
+        list={list}
+        patch={patch}
+        open={open(true)}
+        edit={edit(true)}
+        actions={actions}
+      />
+      {editing && editOrder ? (
+        <EditOrderDialog
+          key={editOrder.id}
+          order={editOrder}
+          mobile={editing.mobile}
+          saving={busy}
+          error={editError.text}
+          fieldErrors={editError.fields}
+          onClose={() => setEditing(null)}
+          onSave={(form) => saveEdit(editOrder.id, editing.mobile, form)}
+        />
+      ) : null}
       {dialog && dialogOrder ? (
         <DecisionDialog
           key={`${dialog.kind}-${dialog.id}`}

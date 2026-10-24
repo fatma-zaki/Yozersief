@@ -24,12 +24,12 @@ export function SignOutOthersButton() {
         startTransition(async () => {
           const result = await signOutOtherDevicesAction();
           if (!result.ok) return void toast.error(result.error);
-          toast.success(`اتقفل ${result.data.removed} جهاز`);
+          toast.success(`سُجّل الخروج من ${result.data.removed} جهاز`);
           router.refresh();
         })
       }
     >
-      اقفل الأجهزة التانية
+      سجّل الخروج من الأجهزة الأخرى
     </Button>
   );
 }
@@ -59,7 +59,7 @@ export function TwoFactorSetup() {
       >
         <Field
           id="tf-password"
-          label="كلمة السر للتأكيد"
+          label="كلمة المرور للتأكيد"
           error={error ?? undefined}
           className="flex-1"
         >
@@ -82,7 +82,7 @@ export function TwoFactorSetup() {
   const secret = new URL(setup.totpURI).searchParams.get("secret") ?? "";
   return (
     <div className="flex flex-col gap-4 text-sm">
-      <p>ضيف الحساب ده في تطبيق المصادقة بالمفتاح ده، أو افتح اللينك من موبايلك:</p>
+      <p>أضف هذا الحساب إلى تطبيق المصادقة بهذا المفتاح، أو افتح الرابط من هاتفك:</p>
       <code
         dir="ltr"
         className="rounded-input bg-surface block px-3 py-2 text-base tracking-widest"
@@ -93,7 +93,7 @@ export function TwoFactorSetup() {
         {setup.totpURI.slice(0, 48)}…
       </a>
       <div>
-        <p className="font-bold">أكواد احتياطية (احفظها في مكان آمن، كل كود يشتغل مرة):</p>
+        <p className="font-bold">رموز احتياطية (احفظها في مكان آمن، يعمل كل رمز مرة واحدة):</p>
         <ul dir="ltr" className="mt-2 grid grid-cols-2 gap-1 font-mono sm:grid-cols-5">
           {setup.backupCodes.map((c) => (
             <li key={c}>{c}</li>
@@ -107,12 +107,12 @@ export function TwoFactorSetup() {
           startTransition(async () => {
             const result = await confirmTwoFactorAction(code);
             if (!result.ok) return setError(result.error);
-            toast.success("التحقق بخطوتين اتفعّل");
+            toast.success("فُعّل التحقق بخطوتين");
             router.refresh();
           });
         }}
       >
-        <Field id="tf-code" label="الكود من التطبيق" error={error ?? undefined} className="flex-1">
+        <Field id="tf-code" label="الرمز من التطبيق" error={error ?? undefined} className="flex-1">
           <Input
             id="tf-code"
             dir="ltr"

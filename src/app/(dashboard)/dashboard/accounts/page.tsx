@@ -34,7 +34,7 @@ export default async function AccountsPage() {
         status: m.status,
         last:
           m.status === "pending"
-            ? "لسه ما فعّلش الحساب"
+            ? "لم يفعّل الحساب بعد"
             : m.lastActiveAt
               ? formatDateTime(m.lastActiveAt)
               : "—",
@@ -44,7 +44,7 @@ export default async function AccountsPage() {
         id: s.id,
         name: s.deviceLabel ?? "جهاز",
         when: s.isCurrent
-          ? `نشط دلوقتي${s.city ? ` · ${s.city}` : ""}`
+          ? `نشط الآن${s.city ? ` · ${s.city}` : ""}`
           : `آخر دخول ${formatDateTime(s.lastSeenAt)}`,
         current: s.isCurrent,
       }))}

@@ -49,6 +49,8 @@ export const PERMISSIONS = [
     groupKey: "orders",
     roles: [],
   },
+  { key: "orders.edit", labelAr: "تعديل بيانات الطلب", groupKey: "orders", roles: [] },
+  { key: "orders.cancel", labelAr: "إلغاء الطلب", groupKey: "orders", roles: ["desk"] },
   {
     key: "messages.send",
     labelAr: "إرسال رسائل للعميل",

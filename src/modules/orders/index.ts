@@ -5,8 +5,10 @@ export {
 } from "./application/apply-transition";
 export {
   advanceOrderStage,
+  cancelOrder,
   countNewOrders,
   decideOrder,
+  editOrder,
   getAdminOrders,
   saveInternalNote,
   type AdminOrderFile,

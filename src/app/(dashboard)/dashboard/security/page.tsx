@@ -27,11 +27,11 @@ async function TwoFactorCard() {
         <div>
           <CardTitle>التحقق بخطوتين</CardTitle>
           <CardDescription>
-            كود من تطبيق مصادقة زي Google Authenticator مع كلمة السر.
+            رمز من تطبيق مصادقة مثل Google Authenticator مع كلمة المرور.
           </CardDescription>
         </div>
         <Badge tone={staff.twoFactorEnabled ? "ok" : "off"}>
-          {staff.twoFactorEnabled ? "مفعّل" : "مش مفعّل"}
+          {staff.twoFactorEnabled ? "مفعّل" : "غير مفعّل"}
         </Badge>
       </div>
       {staff.twoFactorEnabled ? null : <TwoFactorSetup />}
@@ -45,7 +45,7 @@ async function Sessions() {
   return (
     <Card className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <CardTitle>الأجهزة اللي داخل منها</CardTitle>
+        <CardTitle>الأجهزة التي سجّلت الدخول منها</CardTitle>
         {sessions.length > 1 ? <SignOutOthersButton /> : null}
       </div>
       <ul className="divide-line flex flex-col divide-y">
@@ -58,7 +58,7 @@ async function Sessions() {
               </p>
               <p className="text-ink-muted text-xs">آخر ظهور: {formatDateTime(s.lastSeenAt)}</p>
             </div>
-            {s.isCurrent ? <Badge tone="ok">الجهاز ده</Badge> : null}
+            {s.isCurrent ? <Badge tone="ok">هذا الجهاز</Badge> : null}
           </li>
         ))}
       </ul>

@@ -7,6 +7,7 @@ import {
   SidebarFrame,
   SidebarSkeleton,
 } from "@/components/admin/shell/AdminShell";
+import { DefaultLightTheme } from "@/components/ui/Providers.client";
 
 export const metadata = { robots: { index: false } };
 
@@ -15,30 +16,34 @@ export const metadata = { robots: { index: false } };
  * main column where each screen renders its own glass header. The frame is a static shell;
  * everything that reads the session streams in behind Suspense (Cache Components).
  * The proxy gate is optimistic; each page re-checks session and permission on the server.
+ * Opens in light until the member picks a theme (toggle in the sidebar / phone bottom bar).
  */
 export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
   return (
-    <ShellFrame
-      sidebar={
-        <SidebarFrame>
-          <Suspense fallback={<SidebarSkeleton />}>
-            <SidebarContent
-              counts={{
-                "/dashboard/team": PENDING_DECISIONS,
-              }}
-            />
+    <>
+      <DefaultLightTheme />
+      <ShellFrame
+        sidebar={
+          <SidebarFrame>
+            <Suspense fallback={<SidebarSkeleton />}>
+              <SidebarContent
+                counts={{
+                  "/dashboard/team": PENDING_DECISIONS,
+                }}
+              />
+            </Suspense>
+          </SidebarFrame>
+        }
+        bottomNav={
+          <Suspense>
+            <BottomNav />
           </Suspense>
-        </SidebarFrame>
-      }
-      bottomNav={
-        <Suspense>
-          <BottomNav />
-        </Suspense>
-      }
-    >
-      <main id="main" style={{ display: "contents" }}>
-        <Suspense>{children}</Suspense>
-      </main>
-    </ShellFrame>
+        }
+      >
+        <main id="main" style={{ display: "contents" }}>
+          <Suspense>{children}</Suspense>
+        </main>
+      </ShellFrame>
+    </>
   );
 }
