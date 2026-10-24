@@ -45,7 +45,8 @@ export type DraftFile = {
 export type RequestDraft = {
   ctype: CustomerType | "";
   cat: CategoryKey | "";
-  prod: ProductKey | "";
+  /** Catalog product key (wear and mug have product types; see the public catalog). */
+  prod: string;
   color: ColorKey | "";
   qty: string;
   sizes: Record<WearSize, string>;
@@ -183,7 +184,17 @@ export const isNamesSheet = (f: DraftFile) =>
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function buildChecks(d: RequestDraft, today: string): Check[] {
+/** A product's display name: the catalog's name when given, else the built-in B4 label. */
+export function productLabel(key: string, names: Readonly<Record<string, string>> = {}): string {
+  return names[key] ?? (ar.order.builder.products as Readonly<Record<string, string>>)[key] ?? key;
+}
+
+/** `names`: catalog product names by key, so the checklist shows what the customer picked. */
+export function buildChecks(
+  d: RequestDraft,
+  today: string,
+  names: Readonly<Record<string, string>> = {},
+): Check[] {
   const c = ar.order.checks;
   const L = ar.order.builder;
   const checks: Check[] = [];
@@ -225,7 +236,7 @@ export function buildChecks(d: RequestDraft, today: string): Check[] {
       "prod",
       c.prod,
       d.prod ? "ok" : "attn",
-      d.prod ? L.products[d.prod] : c.prodAttnWear,
+      d.prod ? productLabel(d.prod, names) : c.prodAttnWear,
       2,
       "f-prod",
     );
@@ -264,7 +275,7 @@ export function buildChecks(d: RequestDraft, today: string): Check[] {
       "prod",
       c.prod,
       d.prod ? "ok" : "attn",
-      d.prod ? L.products[d.prod] : c.prodAttnMug,
+      d.prod ? productLabel(d.prod, names) : c.prodAttnMug,
       2,
       "f-prod",
     );

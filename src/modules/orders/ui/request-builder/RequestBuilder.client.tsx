@@ -12,7 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
-import type { CategoryKey } from "@/modules/catalog";
+import type { CategoryKey, PublicCategory } from "@/modules/catalog";
 import type { BlobUploadMode } from "../../domain/files";
 import { ar, t } from "@/i18n/ar";
 import { cn } from "@/lib/cn";
@@ -22,6 +22,7 @@ import {
   emptyDraft,
   fileError,
   isOrg,
+  productLabel,
   readiness as readinessOf,
   updateDraft,
   type Check,
@@ -30,7 +31,7 @@ import {
 } from "../../domain/request";
 import { BuilderHeader, MobileHeader, ReadinessAside, type StepState } from "./chrome";
 import { Confirmation } from "./Confirmation";
-import { StepContact, StepDetails, StepFiles, StepReview, StepType } from "./steps";
+import { builderCatalog, StepContact, StepDetails, StepFiles, StepReview, StepType } from "./steps";
 import { clearSubmissionKey, DEMO_MODE, getOrCreateSubmissionKey, submitRequest } from "./submit";
 import s from "./builder.module.css";
 
@@ -78,13 +79,16 @@ function save(value: Saved | null) {
 export function RequestBuilder({
   initialCategory,
   uploadMode,
-  hiddenProducts = [],
+  categories,
 }: {
   initialCategory: CategoryKey | null;
   uploadMode: BlobUploadMode | null;
-  /** Product keys the admin hid from the site (dashboard → products). */
-  hiddenProducts?: readonly string[];
+  /** What the catalog offers now (dashboard → products): categories and visible product types. */
+  categories: readonly PublicCategory[];
 }) {
+  const catalog = useMemo(() => builderCatalog(categories), [categories]);
+  /** The catalog at mount, for the one-time draft restore below. */
+  const catalogAtMount = useRef(catalog);
   const [draft, setDraft] = useState<RequestDraft>(() => ({
     ...emptyDraft(),
     ...(initialCategory ? { cat: initialCategory } : {}),
@@ -103,15 +107,19 @@ export function RequestBuilder({
   // Restore the tab's draft once, then keep it saved.
   useEffect(() => {
     // Syncing from sessionStorage after hydration (it doesn't exist on the server).
-    /* eslint-disable react-hooks/set-state-in-effect */
     const saved = loadSaved();
     if (saved && saved.step < 6) {
-      setDraft({ ...emptyDraft(), ...saved.draft, files: [] });
+      // A category or product hidden since the draft was saved can't be ordered any more.
+      const offered = catalogAtMount.current.categories.find((c) => c.key === saved.draft.cat);
+      const cat = offered ? saved.draft.cat : "";
+      const prod = offered?.products.some((p) => p.key === saved.draft.prod)
+        ? saved.draft.prod
+        : "";
+      setDraft({ ...emptyDraft(), ...saved.draft, cat, prod, files: [] });
       setStep(saved.step);
       setMaxStep(saved.maxStep);
     }
     setHydrated(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   useEffect(() => {
@@ -126,7 +134,10 @@ export function RequestBuilder({
     setSubmitError(null);
   }, []);
 
-  const checks = useMemo(() => buildChecks(draft, today), [draft, today]);
+  const checks = useMemo(
+    () => buildChecks(draft, today, catalog.productNames),
+    [draft, today, catalog],
+  );
   const ready = readinessOf(checks);
   const current = Math.min(step, 5) as 1 | 2 | 3 | 4 | 5;
   const stepIssues = checks.filter((c) => c.step === current && c.status === "attn");
@@ -243,9 +254,9 @@ export function RequestBuilder({
 
   const StepIcon = STEP_ICONS[current - 1]!;
   const productName = draft.prod
-    ? b.products[draft.prod]
+    ? productLabel(draft.prod, catalog.productNames)
     : draft.cat
-      ? b.cats[draft.cat].short
+      ? (catalog.categoryNames[draft.cat] ?? b.cats[draft.cat].short)
       : "";
   const mobileSub =
     t(b.stepOf, { n: current }) + (productName && current > 1 ? ` · ${productName}` : "");
@@ -350,9 +361,9 @@ export function RequestBuilder({
                 </div>
               ) : null}
 
-              {current === 1 ? <StepType d={draft} set={set} e={errors} /> : null}
+              {current === 1 ? <StepType d={draft} set={set} e={errors} catalog={catalog} /> : null}
               {current === 2 ? (
-                <StepDetails d={draft} set={set} e={errors} hidden={hiddenProducts} />
+                <StepDetails d={draft} set={set} e={errors} catalog={catalog} />
               ) : null}
               {current === 3 ? (
                 <StepFiles d={draft} set={set} e={errors} onFiles={onFiles} onRemove={removeFile} />
@@ -360,6 +371,7 @@ export function RequestBuilder({
               {current === 4 ? <StepContact d={draft} set={set} e={errors} today={today} /> : null}
               {current === 5 ? (
                 <StepReview
+                  catalog={catalog}
                   d={draft}
                   checks={checks}
                   onEdit={(n) => goStep(n)}

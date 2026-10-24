@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { NAV_LINKS } from "./data";
@@ -101,6 +102,7 @@ export function HomeHeader() {
           >
             <Icon name="search" size={20} />
           </button>
+          <ThemeButton className={iconBtn} style={iconBox(46, 16)} />
           <Link
             href="/track"
             className={iconBtn}
@@ -152,6 +154,7 @@ export function HomeHeader() {
         >
           <Icon name="search" size={20} />
         </button>
+        <ThemeButton className={iconBtn} style={iconBox(46, 16)} />
         <Link href="/track" className={iconBtn} aria-label="طلباتي" style={iconBox(46, 16)}>
           <Icon name="orders" size={20} />
         </Link>
@@ -197,6 +200,7 @@ export function HomeHeader() {
       >
         {logo(52, 14)}
         <div style={{ display: "flex", gap: 6 }}>
+          <ThemeButton className={iconBtn} style={iconBox(44, 14)} />
           <Link href="/track" className={iconBtn} aria-label="طلباتي" style={iconBox(44, 14)}>
             <Icon name="orders" size={20} />
           </Link>
@@ -247,6 +251,26 @@ export function HomeHeader() {
         </nav>
       ) : null}
     </header>
+  );
+}
+
+/**
+ * Light/dark switch (not in the home designs; added on request). Both icons render and CSS shows
+ * the right one, so the server HTML matches whatever theme the anti-flash script picked.
+ */
+function ThemeButton({ className, style }: { className: string; style: React.CSSProperties }) {
+  const { resolvedTheme, setTheme } = useTheme();
+  return (
+    <button
+      type="button"
+      className={className}
+      aria-label="تبديل الوضع الفاتح والداكن"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      style={style}
+    >
+      <Icon name="moon" size={20} className={s.lightOnly} />
+      <Icon name="sun" size={20} className={s.darkOnly} />
+    </button>
   );
 }
 

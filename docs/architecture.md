@@ -43,7 +43,6 @@ flowchart LR
     blob[("Vercel Blob")]
     wa["WhatsApp<br/>(wa.me / Cloud API)"]
     redis[("Upstash Redis")]
-    analytics["Plausible / GA4<br/>[pending]"]
   end
 
   UI --> modules
@@ -53,7 +52,6 @@ flowchart LR
   orders --> blob
   messaging --> wa
   helpers --> redis
-  content --> analytics
 ```
 
 | Module       | Owns                                                                 | Phase 0 state                                  |
@@ -62,7 +60,7 @@ flowchart LR
 | `audit`      | `activity_logs`, sensitive-access flag                               | working                                        |
 | `orders`     | orders, sizes, places, files, pieces, events, **lifecycle**, submit  | state machine + `submitOrder` + draft uploads + lifecycle |
 | `messaging`  | templates, outbox, providers                                         | working (manual provider)                      |
-| `content`    | settings, site content, gallery, reviews, analytics reader           | settings + demo analytics                      |
+| `content`    | settings, site content, gallery, reviews, page views + traffic report | settings + first-party analytics (ADR-0008)    |
 | `catalog`    | categories, products, options                                        | seed data                                      |
 | `quotes`     | quote versions, expiry                                               | expiry cron                                    |
 | `tracking`   | links, ref+phone verify (no OTP, ADR-0007), signed session, DTO      | working (token deep-link still placeholder)    |

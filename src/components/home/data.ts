@@ -37,73 +37,74 @@ export type Product = {
   label: string;
 };
 
-const PRODUCTS: Record<string, Product> = {
+type CategoryCopy = { d: ByBreakpoint; alt: string; href?: string };
+
+/**
+ * Marketing copy per catalog category, from the designs. The card's title, photo and whether it
+ * shows at all come from the catalog in the database (see `productCards`).
+ */
+const CATEGORY_COPY: Record<string, CategoryCopy> = {
   mug: {
-    key: "mug",
-    t: "المجات والكاسات",
     d: {
       d: "مجات بتصميماتك الخاصة للمناسبات والهدايا.",
       t: "مجات بتصميماتك الخاصة للمناسبات والهدايا.",
       m: "مجات بتصميماتك للمناسبات والهدايا.",
     },
-    img: "/images/home/mug-bottle.jpg",
-    w: 432,
-    h: 348,
     alt: "مج مطبوع",
-    href: "/order?category=mug",
-    label: "اطلب المجات والكاسات",
   },
   wear: {
-    key: "wear",
-    t: "طباعة الملابس",
     d: {
       d: "تيشرتات، هوديز، كابات بجودة عالية وتصاميم مميزة.",
       t: "تيشرتات، هوديز، كابات بجودة عالية.",
       m: "تيشرتات، هوديز، كابات بجودة عالية.",
     },
-    img: "/images/home/tshirt.jpg",
-    w: 432,
-    h: 364,
     alt: "تيشيرت مطبوع",
     href: "/services/wear",
-    label: "تفاصيل طباعة الملابس",
   },
-  gift: {
-    key: "gift",
-    t: "الهدايا المخصصة",
+  custom: {
     d: {
       d: "هدايا فريدة بتصميمات تناسب كل مناسبة.",
       t: "هدايا فريدة بتصميمات تناسب كل مناسبة.",
       m: "هدايا فريدة تناسب كل مناسبة.",
     },
-    img: "/images/home/shop-sign.jpg",
-    w: 428,
-    h: 348,
     alt: "هدية مطبوعة بشعار يوزرسيف",
-    href: "/order?category=custom",
-    label: "اطلب الهدايا المخصصة",
   },
   sticker: {
-    key: "sticker",
-    t: "الاستيكرات والمطبوعات",
     d: {
       d: "استيكرات بجودة عالية ومطبوعات لمختلف الاستخدامات.",
       t: "استيكرات بجودة عالية لمختلف الاستخدامات.",
       m: "استيكرات بجودة عالية لكل الاستخدامات.",
     },
-    img: "/images/home/sticker.jpg",
-    w: 432,
-    h: 348,
     alt: "استيكرات مطبوعة",
-    href: "/order?category=sticker",
-    label: "اطلب الاستيكرات والمطبوعات",
+  },
+  phone: {
+    d: {
+      d: "كفر بتصميمك لموديل موبايلك بالظبط.",
+      t: "كفر بتصميمك لموديل موبايلك بالظبط.",
+      m: "كفر بتصميمك لموديل موبايلك.",
+    },
+    alt: "كفر موبايل مطبوع",
   },
 };
 
-/** Desktop and tablet order (RTL grid: mugs first on the right). */
-export const PRODUCTS_GRID = [PRODUCTS.mug!, PRODUCTS.wear!, PRODUCTS.gift!, PRODUCTS.sticker!];
-/** The mobile design lists clothing first. */
-export const PRODUCTS_MOBILE = [PRODUCTS.wear!, PRODUCTS.mug!, PRODUCTS.gift!, PRODUCTS.sticker!];
+/** Home «منتجاتنا» cards: the categories customers can order, in the catalog's order. */
+export function productCards(categories: readonly { key: string; name: string; img: string }[]) {
+  return categories.map((c): Product => {
+    const copy = CATEGORY_COPY[c.key];
+    const d = copy?.d ?? { d: "", t: "", m: "" };
+    return {
+      key: c.key,
+      t: c.name,
+      d,
+      img: c.img,
+      w: 432,
+      h: 348,
+      alt: copy?.alt ?? c.name,
+      href: copy?.href ?? `/order?category=${c.key}`,
+      label: copy?.href ? `تفاصيل ${c.name}` : `اطلب ${c.name}`,
+    };
+  });
+}
 
 export const WHY: { t: ByBreakpoint; s: ByBreakpoint; icon: IconName }[] = [
   {
@@ -181,28 +182,6 @@ export const STEPS: { n: string; t: string; s: ByBreakpoint; icon: IconName }[] 
     },
     icon: "truck",
   },
-];
-
-export type GalleryCategory = "all" | "wear" | "mug" | "cap" | "sticker";
-
-export const GALLERY_CHIPS: { key: GalleryCategory; label: string }[] = [
-  { key: "all", label: "الكل" },
-  { key: "wear", label: "تيشرتات" },
-  { key: "mug", label: "مجات" },
-  { key: "cap", label: "كابات" },
-  { key: "sticker", label: "استيكرات" },
-];
-
-/** Demo mockups shown until real, consented customer work is added (labelled «نموذج عرض»). */
-export const GALLERY_ITEMS: { cat: Exclude<GalleryCategory, "all">; img: string; alt: string }[] = [
-  { cat: "wear", img: "/images/home/hoodie.jpg", alt: "هودي مطبوع" },
-  { cat: "mug", img: "/images/home/mug-bottle.jpg", alt: "مج ومطرة مطبوعين" },
-  { cat: "cap", img: "/images/home/cap.jpg", alt: "كاب مطبوع" },
-  { cat: "sticker", img: "/images/home/phone-cases.jpg", alt: "كفرات موبايل مطبوعة" },
-  { cat: "wear", img: "/images/home/tshirt.jpg", alt: "تيشيرت مطبوع" },
-  { cat: "sticker", img: "/images/home/sticker.jpg", alt: "استيكر مطبوع" },
-  { cat: "sticker", img: "/images/home/shop-sign.jpg", alt: "لافتة محل" },
-  { cat: "wear", img: "/images/home/heat-press.jpg", alt: "طباعة حرارية على تيشيرت" },
 ];
 
 /** Placeholders only: real reviews are added with the customer's consent, never written for them. */

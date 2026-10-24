@@ -8,6 +8,9 @@ import { ar, t } from "@/i18n/ar";
 import { requirePagePermission } from "@/lib/auth/session";
 import { can, DASHBOARD_SECTIONS } from "@/lib/rbac";
 
+// Session-bound data: load it on click, not ahead of time (see dashboard/loading.tsx).
+export const prefetch = "force-disabled";
+
 /**
  * Dashboard home. The admin lands on «الطلبات» (the first screen of the admin designs); team
  * members get a card per workspace/section they can open.

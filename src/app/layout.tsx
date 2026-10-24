@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
+import { Suspense } from "react";
+import { PageViews } from "@/components/analytics/PageViews.client";
 import { Providers } from "@/components/ui/Providers.client";
 import { ar } from "@/i18n/ar";
 import "./globals.css";
@@ -39,6 +41,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {ar.nav.skipToContent}
         </a>
         <Providers>{children}</Providers>
+        {/* Reads the URL, so it must not block the static shell (Cache Components). */}
+        <Suspense fallback={null}>
+          <PageViews />
+        </Suspense>
       </body>
     </html>
   );

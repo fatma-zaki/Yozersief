@@ -7,6 +7,7 @@ import { actionError, actionOk, fromResult, type ActionResult } from "@/lib/acti
 import { auth } from "@/lib/auth/auth";
 import {
   requirePermission,
+  forgetRecentSessions,
   requireStaff,
   requireStaffEnrollingTwoFactor,
 } from "@/lib/auth/session";
@@ -55,6 +56,7 @@ export async function signOutOtherDevicesAction(): Promise<ActionResult<{ remove
   try {
     const staff = await requireStaff();
     const removed = await signOutOtherDevices(staff);
+    forgetRecentSessions();
     revalidatePath("/dashboard/security");
     return actionOk({ removed });
   } catch (error) {
@@ -82,6 +84,7 @@ export async function confirmTwoFactorAction(code: string): Promise<ActionResult
   try {
     await requireStaffEnrollingTwoFactor();
     await auth.api.verifyTOTP({ body: { code }, headers: await headers() });
+    forgetRecentSessions();
     revalidatePath("/dashboard/security");
     return actionOk(undefined);
   } catch (error) {

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { actionError, fromResult, type ActionResult } from "@/lib/action";
 import { requirePermission } from "@/lib/auth/session";
-import { saveProduct, setProductVisibility } from "@/modules/catalog";
+import { invalidatePublicCatalog, saveProduct, setProductVisibility } from "@/modules/catalog";
 import type { ProductVisibilityInput, SaveProductInput } from "@/modules/catalog/schemas";
 
 /** Products → «إضافة المنتج» / «حفظ التعديلات» (brief B4). */
@@ -13,7 +13,11 @@ export async function saveProductAction(
   try {
     const staff = await requirePermission("catalog.manage");
     const result = await saveProduct(staff, input);
-    if (result.ok) revalidatePath("/dashboard/products");
+    if (result.ok) {
+      revalidatePath("/dashboard/products");
+      // The home page and the request builder show the catalog.
+      invalidatePublicCatalog();
+    }
     return fromResult(result);
   } catch (error) {
     return actionError(error);
@@ -27,7 +31,11 @@ export async function setProductVisibilityAction(
   try {
     const staff = await requirePermission("catalog.manage");
     const result = await setProductVisibility(staff, input);
-    if (result.ok) revalidatePath("/dashboard/products");
+    if (result.ok) {
+      revalidatePath("/dashboard/products");
+      // The home page and the request builder show the catalog.
+      invalidatePublicCatalog();
+    }
     return fromResult(result);
   } catch (error) {
     return actionError(error);

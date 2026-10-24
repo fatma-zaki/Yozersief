@@ -55,6 +55,55 @@ async function submit(input: Record<string, unknown>) {
 
 const secret = "test-token-hash-secret-32chars!!";
 
+describe("submitOrder — product types from the catalog", () => {
+  const wearOrder = (submissionKey: string, prod: string) => ({
+    submissionKey,
+    ctype: "person",
+    cat: "wear",
+    prod,
+    color: "white",
+    qty: "2",
+    sizes: { S: "", M: "2", L: "", XL: "", XXL: "" },
+    places: ["front"],
+    help: true,
+    hasDesignFiles: false,
+    hasNamesSheet: false,
+    name: "منى",
+    phone: "01011113333",
+    receipt: "pickup",
+  });
+
+  it("accepts a product type added from the dashboard", async () => {
+    const [wear] = await db
+      .select()
+      .from(schema.productCategories)
+      .where(eq(schema.productCategories.key, "wear"));
+    await db
+      .insert(schema.products)
+      .values({ categoryId: wear!.id, key: "p-polo", nameAr: "بولو", isVisible: true });
+    const result = await submit(wearOrder("a1111111-1111-4111-8111-111111111111", "p-polo"));
+    expect(result.ok).toBe(true);
+  });
+
+  it("refuses a product that belongs to another category", async () => {
+    const [custom] = await db
+      .select()
+      .from(schema.productCategories)
+      .where(eq(schema.productCategories.key, "custom"));
+    await db.insert(schema.products).values({
+      categoryId: custom!.id,
+      key: "demo-heat-press",
+      nameAr: "طباعة حرارية",
+      isVisible: true,
+    });
+    const result = await submit(
+      wearOrder("a2222222-2222-4222-8222-222222222222", "demo-heat-press"),
+    );
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.code).toBe("validation");
+  });
+});
+
 describe("submitOrder", () => {
   it("persists an order and returns only the public ref", async () => {
     const submissionKey = "11111111-1111-4111-8111-111111111111";

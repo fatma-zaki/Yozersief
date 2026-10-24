@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { actionError, actionOk, type ActionResult } from "@/lib/action";
-import { requirePermission } from "@/lib/auth/session";
+import { forgetRecentSessions, requirePermission } from "@/lib/auth/session";
 import { setMemberStatus } from "@/modules/identity";
 
 const memberStatusSchema = z.object({
@@ -19,6 +19,8 @@ export async function setMemberStatusAction(
     const parsed = memberStatusSchema.parse(input);
     const staff = await requirePermission("accounts.manage");
     await setMemberStatus(staff, parsed);
+    // A paused member must lose access now, not when the session cache expires.
+    forgetRecentSessions();
     revalidatePath("/dashboard/accounts");
     return actionOk(undefined);
   } catch (error) {

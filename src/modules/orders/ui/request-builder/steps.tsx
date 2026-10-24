@@ -19,7 +19,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { ChangeEvent, ReactNode } from "react";
-import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog/schemas";
+import type { PublicCategory } from "@/modules/catalog";
+import { WEAR_SIZES } from "@/modules/catalog/schemas";
 import { ar, t } from "@/i18n/ar";
 import { cn } from "@/lib/cn";
 import { normalizeEgyptianMobile } from "@/lib/phone";
@@ -30,13 +31,12 @@ import {
   hasSizeSplit,
   isNamesSheet,
   isOrg,
-  MUG_PRODUCTS,
   PRINT_PLACES,
+  productLabel,
   sizeSum,
   STICKER_SHAPES,
   toDecimal,
   toInt,
-  WEAR_PRODUCTS,
   type Check as ReadinessCheck,
   type RequestDraft,
 } from "../../domain/request";
@@ -60,13 +60,25 @@ export type StepProps = {
   e: Record<string, string>;
 };
 
-const CATEGORY_IMAGES = {
-  wear: "/images/categories/wear.jpg",
-  mug: "/images/categories/mug.jpg",
-  phone: "/images/categories/phone.jpg",
-  sticker: "/images/categories/sticker.jpg",
-  custom: "/images/categories/custom.jpg",
-} as const;
+/**
+ * What the catalog offers right now (dashboard → products): the categories to pick from, each
+ * with its visible product types, plus display names by key for the checklist and review.
+ */
+export type BuilderCatalog = {
+  categories: readonly PublicCategory[];
+  productNames: Readonly<Record<string, string>>;
+  categoryNames: Readonly<Record<string, string>>;
+};
+
+export function builderCatalog(categories: readonly PublicCategory[]): BuilderCatalog {
+  return {
+    categories,
+    productNames: Object.fromEntries(
+      categories.flatMap((c) => c.products.map((p) => [p.key, p.name] as const)),
+    ),
+    categoryNames: Object.fromEntries(categories.map((c) => [c.key, c.name] as const)),
+  };
+}
 
 function Legend({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
   return (
@@ -79,7 +91,7 @@ function Legend({ children, hint }: { children: ReactNode; hint?: ReactNode }) {
 
 /* ───────────── Step 1: type & product ───────────── */
 
-export function StepType({ d, set, e }: StepProps) {
+export function StepType({ d, set, e, catalog }: StepProps & { catalog: BuilderCatalog }) {
   const icons = { person: <User />, biz: <Building2 />, group: <Users /> };
   return (
     <div className={cn(s.fade, "flex flex-col gap-[26px]")}>
@@ -116,7 +128,7 @@ export function StepType({ d, set, e }: StepProps) {
       <fieldset id="f-cat" tabIndex={-1} className="m-0 border-0 p-0">
         <Legend>{b.whatPrint}</Legend>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] sm:gap-4">
-          {CATEGORY_KEYS.map((k) => (
+          {catalog.categories.map(({ key: k, name, img }) => (
             <label key={k} className={s.cat} data-on={d.cat === k}>
               <input
                 className={s.srInput}
@@ -127,12 +139,7 @@ export function StepType({ d, set, e }: StepProps) {
                 onChange={() => set({ cat: k })}
               />
               <span className={cn(s.cimg, "h-[104px] sm:h-[130px]")}>
-                <Image
-                  src={CATEGORY_IMAGES[k]}
-                  alt=""
-                  fill
-                  sizes="(min-width: 640px) 200px, 45vw"
-                />
+                <Image src={img} alt="" fill sizes="(min-width: 640px) 200px, 45vw" />
               </span>
               <span aria-hidden="true" className={s.tick}>
                 <Check className="size-4" strokeWidth={2.5} />
@@ -143,7 +150,7 @@ export function StepType({ d, set, e }: StepProps) {
                   "px-1.5 pt-1 text-[15px] leading-6 font-extrabold sm:text-base sm:leading-[26px]",
                 )}
               >
-                {b.cats[k].t}
+                {name}
               </span>
               <span className={cn(s.muted, "px-1.5 text-[13px] leading-5")}>{b.cats[k].d}</span>
             </label>
@@ -165,12 +172,8 @@ export function StepType({ d, set, e }: StepProps) {
 
 /* ───────────── Step 2: details ───────────── */
 
-export function StepDetails({
-  d,
-  set,
-  e,
-  hidden = [],
-}: StepProps & { hidden?: readonly string[] }) {
+export function StepDetails({ d, set, e, catalog }: StepProps & { catalog: BuilderCatalog }) {
+  const productTypes = catalog.categories.find((c) => c.key === d.cat)?.products ?? [];
   const qty = toInt(d.qty);
   const sum = sizeSum(d.sizes);
   const sumOk = qty > 0 && sum === qty;
@@ -205,19 +208,17 @@ export function StepDetails({
         <fieldset id="f-prod" tabIndex={-1} className="m-0 border-0 p-0">
           <Legend>{b.productType}</Legend>
           <div className="flex flex-wrap gap-2">
-            {(d.cat === "mug" ? MUG_PRODUCTS : WEAR_PRODUCTS)
-              .filter((p) => !hidden.includes(p))
-              .map((p) => (
-                <ChipOption
-                  key={p}
-                  type="radio"
-                  name="prod"
-                  checked={d.prod === p}
-                  onChange={() => set({ prod: p })}
-                >
-                  {b.products[p]}
-                </ChipOption>
-              ))}
+            {productTypes.map((p) => (
+              <ChipOption
+                key={p.key}
+                type="radio"
+                name="prod"
+                checked={d.prod === p.key}
+                onChange={() => set({ prod: p.key })}
+              >
+                {p.name}
+              </ChipOption>
+            ))}
           </div>
           {e.prod ? <p className={cn(s.err, "mt-2")}>{e.prod}</p> : null}
         </fieldset>
@@ -809,7 +810,11 @@ export function StepContact({ d, set, e, today }: StepProps & { today: string })
 
 type Row = { k: string; v: string; missing?: boolean };
 
-function reviewSections(d: RequestDraft, checks: readonly ReadinessCheck[]) {
+function reviewSections(
+  d: RequestDraft,
+  checks: readonly ReadinessCheck[],
+  catalog: BuilderCatalog,
+) {
   const r = b.review;
   const row = (k: string, v: string, missing = false): Row => ({ k, v, missing: missing || !v });
   const plain = (k: string, v: string): Row => ({ k, v });
@@ -819,7 +824,7 @@ function reviewSections(d: RequestDraft, checks: readonly ReadinessCheck[]) {
   const pieces = qty ? t(r.pieces, { n: qty }) : "";
   const specs: Row[] = [];
   if (d.cat === "wear") {
-    specs.push(row(r.type, d.prod ? b.products[d.prod] : ""));
+    specs.push(row(r.type, d.prod ? productLabel(d.prod, catalog.productNames) : ""));
     specs.push(row(r.color, d.color ? b.colors[d.color] : ""));
     specs.push(row(r.qty, pieces));
     if (hasSizeSplit(d)) {
@@ -832,7 +837,7 @@ function reviewSections(d: RequestDraft, checks: readonly ReadinessCheck[]) {
     }
     specs.push(row(r.places, d.places.map((p) => b.placeLabels[p]).join("، ")));
   } else if (d.cat === "mug") {
-    specs.push(row(r.type, d.prod ? b.products[d.prod] : ""));
+    specs.push(row(r.type, d.prod ? productLabel(d.prod, catalog.productNames) : ""));
     specs.push(row(r.qty, pieces));
     specs.push(plain(r.text, d.text.trim() || b.none));
   } else if (d.cat === "phone") {
@@ -879,7 +884,7 @@ function reviewSections(d: RequestDraft, checks: readonly ReadinessCheck[]) {
       step: 1 as const,
       rows: [
         row(r.orderFor, d.ctype ? b.ctypes[d.ctype].t : ""),
-        row(r.product, d.cat ? b.cats[d.cat].t : ""),
+        row(r.product, d.cat ? (catalog.categoryNames[d.cat] ?? b.cats[d.cat].t) : ""),
       ],
     },
     {
@@ -905,7 +910,9 @@ export function StepReview({
   checks,
   onEdit,
   submitError,
+  catalog,
 }: {
+  catalog: BuilderCatalog;
   d: RequestDraft;
   checks: readonly ReadinessCheck[];
   onEdit: (step: 1 | 2 | 3 | 4) => void;
@@ -913,7 +920,7 @@ export function StepReview({
 }) {
   return (
     <div className={cn(s.fade, "flex flex-col gap-3.5")}>
-      {reviewSections(d, checks).map((sec, i) => (
+      {reviewSections(d, checks, catalog).map((sec, i) => (
         <section key={sec.step} className={cn(s.tint, "flex flex-col gap-3 px-4 py-4 sm:px-5")}>
           <div className="flex items-center justify-between gap-2">
             <h2

@@ -7,6 +7,9 @@ import { formatDateTime } from "@/lib/format";
 import { ROLES } from "@/lib/rbac";
 import { listMembers, listMySessions } from "@/modules/identity";
 
+// Session-bound data: load it on click, not ahead of time (see dashboard/loading.tsx).
+export const prefetch = "force-disabled";
+
 /**
  * Accounts & permissions (brief A6.2, B9), from docs/design/Admin-Accounts.html. Members,
  * invitations, pausing and the signed-in devices are live; the role matrix, security switches

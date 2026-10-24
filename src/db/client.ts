@@ -18,8 +18,11 @@ const pool =
   globalForDb.pgPool ??
   new Pool({
     connectionString: env.DATABASE_URL,
-    max: env.NODE_ENV === "production" ? 5 : 10,
-    idleTimeoutMillis: 10_000,
+    // Dashboard screens fan out ~10 queries at once; fewer connections queue them in waves.
+    max: 10,
+    // Opening a TLS connection to Neon costs several round trips (~1s from Egypt), so keep warm
+    // connections between clicks. The Neon pooler handles many idle clients cheaply.
+    idleTimeoutMillis: 5 * 60_000,
   });
 
 if (env.NODE_ENV !== "production") globalForDb.pgPool = pool;

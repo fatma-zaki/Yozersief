@@ -115,6 +115,10 @@ export async function submitOrder(input: SubmitOrderInput): Promise<Result<Submi
       const msg = "المنتج ده مش متاح دلوقتي، اختار نوع تاني.";
       return err(new ValidationError({ prod: [msg] }, msg));
     }
+    // Product types come from the catalog now, so make sure this one is of the chosen category.
+    if (product.categoryId !== categoryId) {
+      return err(new ValidationError({ prod: ["المنتج مش موجود."] }, "المنتج مش موجود."));
+    }
     productId = product.id;
   }
 

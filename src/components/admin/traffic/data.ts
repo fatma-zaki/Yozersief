@@ -1,58 +1,13 @@
+import type { Device, Source } from "@/modules/content";
+
 /**
- * Demo traffic from docs/design/Admin-Traffic.html. The design shows these as «بيانات تجريبية»
- * until an analytics provider is chosen (brief B12, B13 #7); nothing here is real traffic.
+ * Display helpers for the traffic board (docs/design/Admin-Traffic.html). The figures come from
+ * `getTrafficReport` (first-party page views, ADR-0008).
  */
 
-export type Range = "today" | "d7" | "d30";
-
-const MONTHS = [
-  "يناير",
-  "فبراير",
-  "مارس",
-  "أبريل",
-  "مايو",
-  "يونيو",
-  "يوليو",
-  "أغسطس",
-  "سبتمبر",
-  "أكتوبر",
-  "نوفمبر",
-  "ديسمبر",
-];
+export type { Range } from "@/modules/content";
 
 export const fmt = (n: number) => n.toLocaleString("en-US");
-
-const CFG: Record<Range, { n: number; base: number; seed: number }> = {
-  today: { n: 24, base: 11, seed: 2 },
-  d7: { n: 7, base: 190, seed: 5 },
-  d30: { n: 30, base: 170, seed: 9 },
-};
-
-export function series(range: Range) {
-  const cfg = CFG[range];
-  const end = new Date(2026, 9, 22);
-  const vals: number[] = [];
-  const labels: string[] = [];
-  for (let i = 0; i < cfg.n; i++) {
-    let v =
-      cfg.base * (1 + 0.32 * Math.sin((i + cfg.seed) * 0.85) + 0.14 * Math.cos(i * 2.1 + cfg.seed));
-    if (range === "today")
-      v = cfg.base * (0.25 + 1.6 * Math.max(0, Math.sin(((i - 7) / 17) * Math.PI))) + (i % 3);
-    vals.push(Math.max(1, Math.round(v)));
-    if (range === "today") {
-      const h = i % 12 === 0 ? 12 : i % 12;
-      labels.push(h + (i < 12 ? " ص" : " م"));
-    } else {
-      const d = new Date(end);
-      d.setDate(end.getDate() - (cfg.n - 1 - i));
-      labels.push(`${d.getDate()} ${MONTHS[d.getMonth()]}`);
-    }
-  }
-  const total = vals.reduce((a, b) => a + b, 0);
-  const max = Math.max(...vals);
-  const top = Math.ceil(max / 10) * 10 || 10;
-  return { n: cfg.n, vals, labels, total, max, top };
-}
 
 /** Catmull-Rom → cubic Bézier through the points (the design's smoothing). */
 export function smoothPath(pts: [number, number][]): string {
@@ -73,12 +28,6 @@ export function smoothPath(pts: [number, number][]): string {
   return line;
 }
 
-export const DELTAS: Record<Range, [string, string, string, string]> = {
-  today: ["+8%", "+5%", "+1", "+0.3"],
-  d7: ["+12%", "+9%", "+18%", "+0.2"],
-  d30: ["+6%", "+4%", "-3%", "-0.1"],
-};
-
 export const UP = "M7 17 17 7M7 7h10v10";
 export const DOWN = "M7 7l10 10M17 7v10H7";
 
@@ -97,48 +46,37 @@ export function deltaText(t: string) {
   return t + (!t.includes("%") && t.includes(".") ? " نقطة" : "");
 }
 
-export const SOURCES: [string, number, string][] = [
-  [
+/** Label and icon per source, in the design's wording. */
+export const SOURCE_META: Record<Source, [string, string]> = {
+  instagram: [
     "انستجرام",
-    0.38,
     "M17 2H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5zM16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37zM17.5 6.5h.01",
   ],
-  ["فيسبوك", 0.22, "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
-  ["تيك توك", 0.14, "M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"],
-  ["واتساب", 0.11, "M7.9 20A9 9 0 1 0 4 16.1L2 22Z"],
-  ["بحث جوجل", 0.09, "M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"],
-  [
+  facebook: ["فيسبوك", "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"],
+  tiktok: ["تيك توك", "M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"],
+  whatsapp: ["واتساب", "M7.9 20A9 9 0 1 0 4 16.1L2 22Z"],
+  google: ["بحث جوجل", "M19 11a8 8 0 1 1-16 0 8 8 0 1 1 16 0M21 21l-4.3-4.3"],
+  direct: [
     "دخول مباشر",
-    0.06,
     "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
   ],
-];
+  other: [
+    "مواقع تانية",
+    "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+  ],
+};
 
-export const PAGES: [string, string, number][] = [
-  ["الرئيسية", "/", 1],
-  ["منشئ الطلب", "/request", 0.46],
-  ["طباعة الملابس", "/services/tshirts", 0.31],
-  ["تتبّع الطلب", "/track", 0.22],
-  ["معرض الأعمال", "/#gallery", 0.18],
-];
-
-export const FUNNEL: [string, number][] = [
-  ["زاروا الموقع", 1],
-  ["فتحوا منشئ الطلب", 0.12],
-  ["بعتوا طلب", 0.021],
-  ["اتوافق على طلبهم", 0.016],
-];
-
-export const DEVICES: [string, number, string][] = [
-  [
+export const DEVICE_META: Record<Device, [string, string]> = {
+  mobile: [
     "موبايل",
-    78,
     "M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01",
   ],
-  [
+  desktop: [
     "ديسكتوب",
-    15,
     "M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 21h8M12 17v4",
   ],
-  ["تابلت", 7, "M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01"],
-];
+  tablet: [
+    "تابلت",
+    "M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01",
+  ],
+};
