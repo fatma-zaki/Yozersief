@@ -188,14 +188,14 @@ describe("verifyTrackingLookup", () => {
     const result = await verifyTrackingLookup({ ref, phone: wrongPhone });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.userMessage).toMatch(/مش متطابقين/);
+    expect(result.error.userMessage).toMatch(/غير متطابقين/);
   });
 
   it("fails generically for nonexistent ref", async () => {
     const result = await verifyTrackingLookup({ ref: "YZ-ZZZZZZ", phone });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.userMessage).toMatch(/مش متطابقين/);
+    expect(result.error.userMessage).toMatch(/غير متطابقين/);
   });
 });
 
@@ -342,7 +342,7 @@ describe("verifyTrackingAction rate limiting", () => {
     const result = await verifyTrackingAction({ ref, phone });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toMatch(/محاولات كتير/);
+    expect(result.error).toMatch(/محاولات كثيرة/);
   });
 
   it("fails closed when the limiter denies (unavailable path)", async () => {

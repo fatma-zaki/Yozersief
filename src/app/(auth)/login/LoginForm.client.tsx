@@ -4,11 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/Button";
-import { Field, Input } from "@/components/ui/Input";
 import { ar } from "@/i18n/ar";
 import { loginSchema, type LoginInput } from "@/modules/identity/schemas";
 import { signInAction } from "./actions";
+import s from "./login.module.css";
 
 /** Only same-site paths are accepted for ?next=, to avoid open redirects. */
 export function safeNext(value: string | null): string {
@@ -39,38 +38,55 @@ export function LoginForm() {
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
-      <Field id="identifier" label={ar.auth.identifier} error={errors.identifier?.message}>
-        <Input
+    <form onSubmit={onSubmit} noValidate className={s.form}>
+      <div className={s.field}>
+        <label htmlFor="identifier" className="sr-only">
+          {ar.auth.identifier}
+        </label>
+        <input
           id="identifier"
+          className={s.input}
           dir="ltr"
           autoComplete="username"
           inputMode="email"
+          placeholder={ar.auth.identifier}
           aria-invalid={Boolean(errors.identifier)}
           {...register("identifier")}
         />
-      </Field>
-      <Field id="password" label={ar.auth.password} error={errors.password?.message}>
-        <Input
+        {errors.identifier?.message ? (
+          <p id="identifier-error" role="alert" className={s.error}>
+            {errors.identifier.message}
+          </p>
+        ) : null}
+      </div>
+      <div className={s.field}>
+        <label htmlFor="password" className="sr-only">
+          {ar.auth.password}
+        </label>
+        <input
           id="password"
+          className={s.input}
           type="password"
           dir="ltr"
           autoComplete="current-password"
+          placeholder={ar.auth.password}
           aria-invalid={Boolean(errors.password)}
           {...register("password")}
         />
-      </Field>
+        {errors.password?.message ? (
+          <p id="password-error" role="alert" className={s.error}>
+            {errors.password.message}
+          </p>
+        ) : null}
+      </div>
       {formError ? (
-        <p
-          role="alert"
-          className="rounded-input bg-danger-bg text-danger px-4 py-3 text-sm font-bold"
-        >
+        <p role="alert" className={s.alert}>
           {formError}
         </p>
       ) : null}
-      <Button type="submit" size="lg" disabled={isSubmitting}>
+      <button type="submit" className={s.submit} disabled={isSubmitting}>
         {isSubmitting ? ar.auth.signingIn : ar.auth.signIn}
-      </Button>
+      </button>
     </form>
   );
 }

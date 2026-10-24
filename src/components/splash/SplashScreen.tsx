@@ -13,7 +13,6 @@ import {
   LOGO_BASE_SIZE,
   LOGO_PARTS,
   LOGO_VIEWBOX,
-  MOTIF_STROKES,
   PEN_STROKES,
   SPLASH_TOTAL,
   WRITE_END,
@@ -135,12 +134,6 @@ export function SplashScreen({
         data-splash=""
       >
         <div className={styles.glow} aria-hidden="true" />
-
-        <svg className={styles.motif} viewBox="0 0 1000 1000" aria-hidden="true">
-          {MOTIF_STROKES.map((m, i) => (
-            <path key={i} pathLength={1} d={m.d} style={{ animationDelay: `${m.delay}s` }} />
-          ))}
-        </svg>
 
         <div className={styles.center}>
           <div className={styles.stage} aria-hidden="true">

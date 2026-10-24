@@ -150,8 +150,8 @@ describe("admin orders screen", () => {
       phone: "010•••••678",
       product: "تيشيرت أبيض × 12",
       status: "new",
-      receipt: "استلام من المحل",
-      date: "مش محدد",
+      receipt: "الاستلام من المتجر",
+      date: "غير محدد",
       can: { approve: false, info: true, reject: false, note: true },
     });
     expect(p.specs).toContainEqual({ k: "المقاسات", v: "S4 · M8" });
@@ -198,7 +198,7 @@ describe("admin orders screen", () => {
       ["message_prepared", false],
     ]);
     const [message] = await messages(personOrder);
-    expect(message?.body).toContain("أهلًا منى");
+    expect(message?.body).toContain("مرحبًا منى");
     expect(message?.body).toContain("YZ-AB23CD");
     expect(message?.body).toContain("السعر 1200 جنيه");
     expect(message?.body).toContain("https://yz.test/track");
@@ -235,14 +235,14 @@ describe("admin orders screen", () => {
 
     const blocked = await advanceOrderStage(admin, { orderId: bizOrder });
     expect(blocked.ok).toBe(false);
-    if (!blocked.ok) expect(blocked.error.userMessage).toBe("مفيش موكاب متبعت للعميل لسه.");
+    if (!blocked.ok) expect(blocked.error.userMessage).toBe("لم يُرسل أي موكاب إلى العميل بعد.");
     expect((await orderRow(bizOrder)).bizStage).toBe("mockup");
     expect(await events(bizOrder)).toHaveLength(before);
 
     const view = (await getAdminOrders(admin)).orders.find((o) => o.id === bizOrder)!;
     expect(view.next).toEqual({
       label: "العميل اعتمد الموكاب والعينة",
-      blocked: "مفيش موكاب متبعت للعميل لسه.",
+      blocked: "لم يُرسل أي موكاب إلى العميل بعد.",
     });
   });
 

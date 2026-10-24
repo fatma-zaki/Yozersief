@@ -450,7 +450,7 @@ function Ornament({ style }: { style: CSSProperties }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- decorative, exact negative offsets
     <img
-      src="/images/admin/ornament-mint.svg"
+      src="/brand/ornament-mint.svg"
       alt=""
       aria-hidden="true"
       className={s.ornament}

@@ -1,0 +1,139 @@
+/* Login card — solid mint panel. */
+
+.card {
+  position: relative;
+  width: 100%;
+  border-radius: 32px;
+  padding: 2rem 1.75rem 1.75rem;
+  text-align: center;
+  color: var(--yz-ink);
+  background: #d9efe8;
+  border: 1px solid rgb(0 92 88 / 0.12);
+  box-shadow:
+    0 0 48px rgb(126 232 199 / 0.28),
+    0 22px 48px rgb(0 43 40 / 0.22);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #01302d;
+}
+
+.subtitle {
+  margin: 0.55rem 0 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #6f8481;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: start;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.input {
+  width: 100%;
+  min-height: 3.15rem;
+  border-radius: 18px;
+  border: 1.5px solid rgb(0 92 88 / 0.22);
+  background: linear-gradient(180deg, #ffffff 0%, #f7fcfa 100%);
+  padding: 0.7rem 1.05rem;
+  font-size: 0.98rem;
+  color: var(--yz-ink);
+  box-shadow:
+    inset 0 1px 2px rgb(0 43 40 / 0.04),
+    0 0 0 3px rgb(126 232 199 / 0.18),
+    0 0 16px rgb(126 232 199 / 0.22);
+  transition:
+    border-color 0.25s var(--yz-ease),
+    box-shadow 0.25s var(--yz-ease);
+}
+
+.input::placeholder {
+  color: var(--yz-ink-soft);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--yz-teal);
+  box-shadow:
+    inset 0 1px 2px rgb(0 43 40 / 0.04),
+    0 0 0 3px rgb(126 232 199 / 0.4),
+    0 0 22px rgb(126 232 199 / 0.4);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--yz-danger);
+  background: var(--yz-danger-bg);
+  box-shadow: 0 0 0 3px rgb(194 65 59 / 0.15);
+}
+
+.error {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--yz-danger);
+  text-align: start;
+}
+
+.alert {
+  margin: 0;
+  border-radius: 16px;
+  background: var(--yz-danger-bg);
+  color: var(--yz-danger);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: start;
+}
+
+.submit {
+  margin-top: 0.35rem;
+  min-height: 3.25rem;
+  width: 100%;
+  border-radius: 999px;
+  border: 1.5px solid rgb(126 232 199 / 0.85);
+  background: linear-gradient(180deg, #00857c 0%, #004541 55%, #01302d 100%);
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.32),
+    inset 0 -1px 0 rgb(0 0 0 / 0.12),
+    0 0 22px rgb(126 232 199 / 0.55),
+    0 10px 28px rgb(0 43 40 / 0.28);
+  transition:
+    transform 0.25s var(--yz-ease),
+    box-shadow 0.25s var(--yz-ease),
+    filter 0.25s var(--yz-ease);
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.36),
+    inset 0 -1px 0 rgb(0 0 0 / 0.12),
+    0 0 30px rgb(126 232 199 / 0.7),
+    0 14px 32px rgb(0 43 40 / 0.32);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

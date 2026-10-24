@@ -123,8 +123,7 @@ describe("gallery", () => {
   it("never publishes without the customer's consent", async () => {
     const result = await updateGalleryPhoto(admin, { id: sticker, published: true });
     expect(result.ok).toBe(false);
-    if (!result.ok)
-      expect(result.error.userMessage).toBe("مينفعش تنشر الصورة من غير موافقة العميل.");
+    if (!result.ok) expect(result.error.userMessage).toBe("لا يمكن نشر الصورة دون موافقة العميل.");
     expect((await row(sticker))?.isPublished).toBe(false);
   });
 

@@ -2,6 +2,9 @@
 
 import { useState, type CSSProperties } from "react";
 import { cn } from "@/lib/cn";
+import { formatShortDateTime } from "@/lib/format";
+import { ar } from "@/i18n/ar";
+import type { ActivityCategory, ActivityRange, TeamActivityFeed } from "@/modules/audit";
 import s from "../admin.module.css";
 import { Ic, P } from "../Ic";
 import { KitHeader, KitToast, useFlash } from "../Kit.client";
@@ -12,12 +15,11 @@ import t from "./team.module.css";
 
 /**
  * Team activity (brief B10), from docs/design/Admin-Team.html: decisions waiting for the admin,
- * member cards, the activity feed, alerts and the sensitive-data access log. Demo data with the
- * design's placeholders for staff names; the audit use cases replace it later.
+ * member cards, the activity feed, alerts and the sensitive-data access log.
+ * The activity feed is live from `activity_logs`; other sections are still demo data.
  */
 
-type Range = "today" | "week" | "month";
-type Type = "all" | "orders" | "design" | "prod" | "money" | "access";
+type Type = "all" | ActivityCategory;
 
 const MEMBERS = [
   { id: 1, name: "صاحب المتجر", role: "مدير", ini: "ي", on: true },
@@ -78,35 +80,12 @@ type MemberId = (typeof MEMBERS)[number]["id"];
 const byId = (id: MemberId) => MEMBERS.find((m) => m.id === id)!;
 
 const TYPES: [Type, string][] = [
-  ["all", "الكل"],
-  ["orders", "الطلبات"],
-  ["design", "الموكابات"],
-  ["prod", "الإنتاج"],
-  ["money", "التحصيل والتسليم"],
-  ["access", "الصلاحيات"],
-];
-
-/** [member, type, text, order, time, flag, flag tone] */
-const EVENTS: [
-  MemberId,
-  Exclude<Type, "all">,
-  string,
-  string,
-  string,
-  string,
-  "warn" | "role" | "off" | "",
-][] = [
-  [5, "orders", "جهّز مسودة عرض سعر وأرسلها للاعتماد", "YZ-T9W4KD", "11:42 ص", "", ""],
-  [5, "prod", "حدّد 10 قطع مطبوعة (36 من 60)", "YZ-W4N8TS", "11:30 ص", "", ""],
-  [3, "money", "سجّل عربونًا [المبلغ] نقدًا", "YZ-W4N8TS", "11:05 ص", "بانتظار تأكيدك", "warn"],
-  [2, "design", "رفع نسخة 2 من الموكاب", "YZ-T9W4KD", "10:50 ص", "", ""],
-  [4, "orders", "فتح رقم هاتف العميل", "YZ-Q2M7HP", "10:31 ص", "بيانات حساسة", "role"],
-  [4, "orders", "طلب بيانات من العميل على واتساب", "YZ-B6R2NX", "10:20 ص", "", ""],
-  [3, "money", "أُدخل رمز التحقق خطأً مرتين قبل التسليم", "YZ-M3X9QA", "10:02 ص", "راجعها", "warn"],
-  [5, "prod", "نقل القبعات إلى فحص الجودة", "YZ-K7D2PM", "9:40 ص", "", ""],
-  [2, "design", "أبلغ الاستقبال بأن دقة ملف العميل منخفضة", "YZ-R5L1VB", "9:22 ص", "", ""],
-  [2, "access", "حاول فتح «الزيارات وحركة الزوار» وطلب صلاحية", "", "9:15 ص", "مُنع", "off"],
-  [1, "orders", "وافق على طلب وأُرسلت رسالة واتساب", "YZ-H3J8LC", "9:00 ص", "", ""],
+  ["all", ar.team.categories.all],
+  ["orders", ar.team.categories.orders],
+  ["design", ar.team.categories.design],
+  ["prod", ar.team.categories.prod],
+  ["money", ar.team.categories.money],
+  ["access", ar.team.categories.access],
 ];
 
 const KIND_ROLE: Record<Kind, string> = {
@@ -150,19 +129,39 @@ function avatar(id: MemberId, size: number): CSSProperties {
   };
 }
 
-const FLAG = { warn: k.bWarn, role: k.bRole, off: k.bOff, "": "" } as const;
+function actorAvatar(size: number): CSSProperties {
+  return {
+    width: size,
+    height: size,
+    flexShrink: 0,
+    borderRadius: 999,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: size > 34 ? 15 : 13,
+    fontWeight: 800,
+    background: "var(--tile-bg)",
+    color: "var(--tile-ink)",
+    boxShadow: "0 0 0 1px var(--tint-bd)",
+  };
+}
 
-export function TeamBoard() {
-  const [range, setRange] = useState<Range>("today");
+function actorInitial(name: string | null): string {
+  const trimmed = name?.trim();
+  return trimmed ? trimmed.slice(0, 1) : "ن";
+}
+
+export function TeamBoard({ feed }: { feed: TeamActivityFeed }) {
+  const [range, setRange] = useState<ActivityRange>("today");
   const [member, setMember] = useState<MemberId | null>(null);
   const [type, setType] = useState<Type>("all");
   const [pending, setPending] = useState(PENDING);
   const { toast, flash, hide } = useFlash();
 
   const rangeWord = { today: "اليوم", week: "هذا الأسبوع", month: "هذا الشهر" }[range];
-  const feed = EVENTS.filter(
-    ([m, ty]) => (!member || m === member) && (type === "all" || ty === type),
-  );
+  // Member KPI cards are still demo (numeric ids). They highlight locally but do not filter the
+  // live feed — real actor UUIDs are on each DTO for a later members integration.
+  const feedRows = feed.periods[range].filter((row) => type === "all" || row.category === type);
   const done = (id: number, msg: string) => {
     setPending((all) => all.filter((x) => x.id !== id));
     flash(msg);
@@ -170,14 +169,14 @@ export function TeamBoard() {
 
   return (
     <div className={cn(k.root, shell.gutter)}>
-      <KitHeader title="نشاط الفريق" subtitle="كل ما أنجزه الفريق، وما ينتظر قرارك">
+      <KitHeader title={ar.team.title} subtitle={ar.team.subtitle}>
         <div role="group" aria-label="الفترة" style={{ display: "flex", gap: 6 }}>
           {(
             [
-              ["today", "اليوم"],
-              ["week", "7 أيام"],
-              ["month", "30 يومًا"],
-            ] as [Range, string][]
+              ["today", ar.team.ranges.today],
+              ["week", ar.team.ranges.week],
+              ["month", ar.team.ranges.month],
+            ] as [ActivityRange, string][]
           ).map(([key, label]) => (
             <button
               key={key}
@@ -199,7 +198,7 @@ export function TeamBoard() {
           <Ic d={P.download} size={16} />
           تصدير السجل
         </button>
-        <span className={cn(k.badge, k.bWarn)}>بيانات تجريبية</span>
+        <span className={cn(k.badge, k.bWarn)}>{ar.team.demoSections}</span>
       </KitHeader>
 
       <section
@@ -391,7 +390,7 @@ export function TeamBoard() {
             }}
           >
             <h2 id="fd-h" className={k.h2}>
-              سجل النشاط{member ? ` — ${byId(member).name}` : ""}
+              سجل النشاط
             </h2>
             <div
               role="group"
@@ -420,11 +419,12 @@ export function TeamBoard() {
               flexDirection: "column",
             }}
           >
-            {feed.map(([m, ty, text, order, time, flag, tone], i) => {
-              const who = byId(m);
+            {feedRows.map((row) => {
+              const who = row.actorName?.trim() || ar.team.systemActor;
+              const categoryLabel = row.category !== null ? ar.team.categories[row.category] : null;
               return (
                 <li
-                  key={i}
+                  key={row.id}
                   className={s.fade}
                   style={{
                     display: "flex",
@@ -433,8 +433,8 @@ export function TeamBoard() {
                     borderBottom: "1px solid var(--line)",
                   }}
                 >
-                  <span aria-hidden="true" style={avatar(m, 34)}>
-                    {who.ini}
+                  <span aria-hidden="true" style={actorAvatar(34)}>
+                    {actorInitial(row.actorName)}
                   </span>
                   <div
                     style={{
@@ -446,29 +446,30 @@ export function TeamBoard() {
                     }}
                   >
                     <span style={{ fontSize: 14, lineHeight: "22px" }}>
-                      <strong className={k.strong}>{who.name}</strong> {text}{" "}
-                      {order ? (
+                      <strong className={k.strong}>{who}</strong> {row.label}{" "}
+                      {row.orderRef ? (
                         <span dir="ltr" className={cn(k.badge, k.bRole)}>
-                          {order}
+                          {row.orderRef}
                         </span>
                       ) : null}
                     </span>
                     <span className={k.muted} style={{ fontSize: 12 }}>
-                      اليوم {time} · {TYPES.find(([key]) => key === ty)?.[1]}
+                      {formatShortDateTime(new Date(row.createdAt))}
+                      {categoryLabel ? ` · ${categoryLabel}` : ""}
                     </span>
                   </div>
-                  {flag ? (
-                    <span className={cn(k.badge, FLAG[tone])} style={{ alignSelf: "flex-start" }}>
-                      {flag}
+                  {row.isSensitive ? (
+                    <span className={cn(k.badge, k.bRole)} style={{ alignSelf: "flex-start" }}>
+                      {ar.team.sensitiveFlag}
                     </span>
                   ) : null}
                 </li>
               );
             })}
           </ol>
-          {feed.length === 0 ? (
+          {feedRows.length === 0 ? (
             <p className={k.muted} style={{ margin: 0, fontSize: 14 }}>
-              لا يوجد نشاط يطابق هذا الفلتر.
+              {ar.team.feedEmpty}
             </p>
           ) : null}
         </section>
