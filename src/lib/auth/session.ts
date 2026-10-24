@@ -20,13 +20,16 @@ export const getStaffContext = cache(async (): Promise<StaffContext | null> => {
   const requestHeaders = await headers();
   const token = getSessionCookie(requestHeaders, { cookiePrefix: "yz" });
   if (!token) return null;
+  // A monotonic clock for the TTL: `Date.now()` here would make every dashboard route fail
+  // prerendering under Cache Components (blocking-prerender-current-time).
+  const now = performance.now();
   const hit = recentSessions.get(token);
-  if (hit && hit.expires > Date.now()) return hit.staff;
+  if (hit && hit.expires > now) return hit.staff;
 
   // Store the promise, so requests arriving together share one lookup.
   const staff = loadStaffContext(requestHeaders);
   if (recentSessions.size >= RECENT_SESSIONS_MAX) recentSessions.clear();
-  recentSessions.set(token, { staff, expires: Date.now() + RECENT_SESSION_TTL_MS });
+  recentSessions.set(token, { staff, expires: now + RECENT_SESSION_TTL_MS });
   staff.catch(() => recentSessions.delete(token));
   return staff;
 });
