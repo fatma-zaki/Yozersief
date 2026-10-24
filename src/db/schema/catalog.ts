@@ -8,6 +8,8 @@ export const productCategories = pgTable("product_categories", {
   id: smallint("id").primaryKey().generatedByDefaultAsIdentity(),
   key: text("key").notNull().unique(),
   nameAr: text("name_ar").notNull(),
+  /** Card text on the home page; null for the B4 categories, whose text lives in i18n. */
+  description: text("description"),
   imageUrl: text("image_url").notNull(),
   sortOrder: smallint("sort_order").notNull(),
   isVisible: boolean("is_visible").notNull().default(false),

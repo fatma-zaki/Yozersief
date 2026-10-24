@@ -3,7 +3,12 @@
  * submit server action (brief A2, A5). Server validation is authoritative.
  */
 import { z } from "zod";
-import { CATEGORY_KEYS, WEAR_SIZES } from "@/modules/catalog/schemas";
+import {
+  isCategoryKey,
+  isServiceKey,
+  WEAR_SIZES,
+  type CategoryKey,
+} from "@/modules/catalog/schemas";
 import { cairoDateString, normalizeDigits } from "@/lib/format";
 import { normalizeEgyptianMobile } from "@/lib/phone";
 import {
@@ -47,7 +52,8 @@ export const submitOrderInputSchema = z
   .object({
     submissionKey: submissionKeySchema,
     ctype: z.enum(["person", "biz", "group"]),
-    cat: z.enum(CATEGORY_KEYS),
+    /** A B4 category or a service added in the dashboard; it must exist (checked on submit). */
+    cat: z.string().refine((v): v is CategoryKey => isCategoryKey(v), "اختر المنتج."),
     prod: productKey.default(""),
     color: z.union([z.enum(COLORS), z.literal("")]).default(""),
     qty: z.string().default(""),
@@ -154,6 +160,17 @@ export const submitOrderInputSchema = z
           code: "custom",
           path: ["desc"],
           message: "يجب أن يتكون وصف الفكرة من 10 أحرف على الأقل.",
+        });
+      }
+    } else if (isServiceKey(d.cat)) {
+      if (qty < 1) {
+        ctx.addIssue({ code: "custom", path: ["qty"], message: "اكتب الكمية." });
+      }
+      if (d.desc.trim().length < 10) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["desc"],
+          message: "صِف ما تريده في 10 أحرف على الأقل.",
         });
       }
     }

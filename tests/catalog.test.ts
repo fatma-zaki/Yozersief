@@ -15,7 +15,7 @@ vi.mock("@/db/client", () => ({
   pingDb: async () => true,
 }));
 
-const { getAdminCatalog, getHiddenProductKeys, saveProduct, setProductVisibility } =
+const { createService, getAdminCatalog, getHiddenProductKeys, saveProduct, setProductVisibility } =
   await import("@/modules/catalog");
 
 let db: TestDb;
@@ -213,5 +213,48 @@ describe("catalog admin", () => {
       .from(schema.activityLogs)
       .where(eq(schema.activityLogs.action, "catalog.product_hidden"));
     expect(logs).toHaveLength(1);
+  });
+
+  it("adds a service after the existing categories, with an audit row", async () => {
+    const result = await createService(admin, {
+      name: " الطباعة على الحقائب ",
+      description: "حقائب قماش وورق بتصميمك",
+      visible: true,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.key).toMatch(/^svc-[a-z0-9]{6}$/);
+
+    const [row] = await db
+      .select()
+      .from(schema.productCategories)
+      .where(eq(schema.productCategories.key, result.value.key));
+    expect(row).toMatchObject({
+      nameAr: "الطباعة على الحقائب",
+      description: "حقائب قماش وورق بتصميمك",
+      isVisible: true,
+      sortOrder: 3,
+    });
+    const data = await getAdminCatalog(admin);
+    expect(data.categories.at(-1)).toEqual({
+      key: result.value.key,
+      name: "الطباعة على الحقائب",
+      service: true,
+      visible: true,
+    });
+    const logs = await db
+      .select()
+      .from(schema.activityLogs)
+      .where(eq(schema.activityLogs.action, "catalog.service_created"));
+    expect(logs).toHaveLength(1);
+  });
+
+  it("rejects a service without a description, and a non-admin", async () => {
+    const bad = await createService(admin, { name: "خدمة", description: "قصير", visible: true });
+    expect(bad.ok).toBe(false);
+    if (!bad.ok) expect(bad.error.code).toBe("validation");
+    await expect(
+      createService(desk, { name: "خدمة", description: "وصف كافٍ للخدمة", visible: true }),
+    ).rejects.toBeInstanceOf(ForbiddenError);
   });
 });

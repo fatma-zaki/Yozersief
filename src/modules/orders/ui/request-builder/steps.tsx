@@ -20,7 +20,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ChangeEvent, ReactNode } from "react";
 import type { PublicCategory } from "@/modules/catalog";
-import { WEAR_SIZES } from "@/modules/catalog/schemas";
+import { isServiceKey, WEAR_SIZES } from "@/modules/catalog/schemas";
 import { ar, t } from "@/i18n/ar";
 import { cn } from "@/lib/cn";
 import { normalizeEgyptianMobile } from "@/lib/phone";
@@ -128,7 +128,7 @@ export function StepType({ d, set, e, catalog }: StepProps & { catalog: BuilderC
       <fieldset id="f-cat" tabIndex={-1} className="m-0 border-0 p-0">
         <Legend>{b.whatPrint}</Legend>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] sm:gap-4">
-          {catalog.categories.map(({ key: k, name, img }) => (
+          {catalog.categories.map(({ key: k, name, description, img }) => (
             <label key={k} className={s.cat} data-on={d.cat === k}>
               <input
                 className={s.srInput}
@@ -152,7 +152,9 @@ export function StepType({ d, set, e, catalog }: StepProps & { catalog: BuilderC
               >
                 {name}
               </span>
-              <span className={cn(s.muted, "px-1.5 text-[13px] leading-5")}>{b.cats[k].d}</span>
+              <span className={cn(s.muted, "px-1.5 text-[13px] leading-5")}>
+                {isServiceKey(k) ? description : b.cats[k].d}
+              </span>
             </label>
           ))}
         </div>
@@ -436,8 +438,15 @@ export function StepDetails({ d, set, e, catalog }: StepProps & { catalog: Build
         </div>
       ) : null}
 
-      {d.cat === "custom" ? (
-        <FieldBox id="f-desc" label={b.idea} hint={b.ideaHint} error={e.desc}>
+      {d.cat && isServiceKey(d.cat) ? qtyField(b.qty) : null}
+
+      {d.cat === "custom" || (d.cat && isServiceKey(d.cat)) ? (
+        <FieldBox
+          id="f-desc"
+          label={d.cat === "custom" ? b.idea : b.serviceDesc}
+          hint={d.cat === "custom" ? b.ideaHint : b.serviceDescHint}
+          error={e.desc}
+        >
           <textarea
             className={cn(s.fld, "resize-y")}
             {...fieldAria("f-desc", e.desc, true)}
@@ -851,6 +860,9 @@ function reviewSections(
     if (d.use.trim()) specs.push(plain(r.usage, d.use.trim()));
   } else if (d.cat === "custom") {
     specs.push(row(r.idea, ok("desc") ? d.desc.trim() : ""));
+  } else if (d.cat && isServiceKey(d.cat)) {
+    specs.push(row(r.qty, pieces));
+    specs.push(row(r.details, ok("desc") ? d.desc.trim() : ""));
   }
   const org = d.ctype === "biz" || d.ctype === "group" ? d.ctype : null;
   if (org) {
@@ -884,7 +896,12 @@ function reviewSections(
       step: 1 as const,
       rows: [
         row(r.orderFor, d.ctype ? b.ctypes[d.ctype].t : ""),
-        row(r.product, d.cat ? (catalog.categoryNames[d.cat] ?? b.cats[d.cat].t) : ""),
+        row(
+          r.product,
+          d.cat
+            ? (catalog.categoryNames[d.cat] ?? (isServiceKey(d.cat) ? d.cat : b.cats[d.cat].t))
+            : "",
+        ),
       ],
     },
     {

@@ -7,7 +7,7 @@
  * gates "next" on each step and the final submit, so the rules live in one place.
  */
 import { WEAR_SIZES } from "@/modules/catalog/schemas";
-import type { CategoryKey } from "@/modules/catalog";
+import { isServiceKey, type CategoryKey } from "@/modules/catalog/schemas";
 import { ar, t } from "@/i18n/ar";
 import { normalizeDigits } from "@/lib/format";
 import { normalizeEgyptianMobile } from "@/lib/phone";
@@ -189,7 +189,18 @@ export function productLabel(key: string, names: Readonly<Record<string, string>
   return names[key] ?? (ar.order.builder.products as Readonly<Record<string, string>>)[key] ?? key;
 }
 
-/** `names`: catalog product names by key, so the checklist shows what the customer picked. */
+/** The checklist's name for a category: the B4 short label, or a dashboard service's name. */
+export function categoryLabel(
+  cat: CategoryKey,
+  names: Readonly<Record<string, string>> = {},
+): string {
+  return isServiceKey(cat) ? (names[cat] ?? cat) : ar.order.builder.cats[cat].short;
+}
+
+/**
+ * `names`: catalog product and service names by key, so the checklist shows what the customer
+ * picked.
+ */
 export function buildChecks(
   d: RequestDraft,
   today: string,
@@ -217,7 +228,14 @@ export function buildChecks(
     1,
     "f-ctype",
   );
-  add("cat", c.cat, d.cat ? "ok" : "attn", d.cat ? L.cats[d.cat].short : c.catAttn, 1, "f-cat");
+  add(
+    "cat",
+    c.cat,
+    d.cat ? "ok" : "attn",
+    d.cat ? categoryLabel(d.cat, names) : c.catAttn,
+    1,
+    "f-cat",
+  );
 
   // Step 2
   const qty = toInt(d.qty);
@@ -313,6 +331,10 @@ export function buildChecks(
   } else if (d.cat === "custom") {
     const ok = d.desc.trim().length >= 10;
     add("desc", c.desc, ok ? "ok" : "attn", ok ? c.done : c.descAttn, 2, "f-desc");
+  } else if (d.cat && isServiceKey(d.cat)) {
+    qtyCheck();
+    const ok = d.desc.trim().length >= 10;
+    add("desc", c.serviceDesc, ok ? "ok" : "attn", ok ? c.done : c.serviceDescAttn, 2, "f-desc");
   }
   if (org && d.batches) {
     const ok = d.batchNotes.trim().length >= 5;

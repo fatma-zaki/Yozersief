@@ -1,4 +1,4 @@
-import { asc, eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray, sql } from "drizzle-orm";
 import { productCategories, productOptions, products } from "@/db/schema";
 import { db } from "@/db/client";
 import type { DbOrTx, Tx } from "@/db/tx";
@@ -10,10 +10,33 @@ export async function listCategories(tx: DbOrTx = db) {
       id: productCategories.id,
       key: productCategories.key,
       nameAr: productCategories.nameAr,
+      description: productCategories.description,
       imageUrl: productCategories.imageUrl,
+      isVisible: productCategories.isVisible,
     })
     .from(productCategories)
     .orderBy(asc(productCategories.sortOrder));
+}
+
+/** A service added from the dashboard, placed after every existing category. */
+export async function insertCategory(
+  fields: {
+    key: string;
+    nameAr: string;
+    description: string;
+    imageUrl: string;
+    isVisible: boolean;
+  },
+  tx: Tx,
+) {
+  const [row] = await tx
+    .insert(productCategories)
+    .values({
+      ...fields,
+      sortOrder: sql`(select coalesce(max(${productCategories.sortOrder}), 0) + 1 from ${productCategories})`,
+    })
+    .returning({ id: productCategories.id });
+  return row!.id;
 }
 
 /** Every product, newest edits last within a category (the admin screen sorts by category). */

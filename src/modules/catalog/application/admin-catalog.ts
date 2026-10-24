@@ -11,9 +11,10 @@ import {
   type PlaceValue,
   type SizeValue,
 } from "../domain/admin-catalog";
-import { isCategoryKey, type CategoryKey } from "../domain/categories";
+import { isCategoryKey, isServiceKey, newServiceKey, type CategoryKey } from "../domain/categories";
 import {
   findCategoryByKey,
+  insertCategory,
   insertProduct,
   listCategories,
   listHiddenProductKeys,
@@ -25,8 +26,10 @@ import {
   updateProduct,
 } from "../infrastructure/catalog-repository";
 import {
+  createServiceSchema,
   productVisibilitySchema,
   saveProductSchema,
+  type CreateServiceInput,
   type ProductVisibilityInput,
   type SaveProductInput,
 } from "../schemas";
@@ -45,7 +48,8 @@ export type AdminProductView = {
 };
 
 export type AdminCatalogData = {
-  categories: { key: CategoryKey; name: string }[];
+  /** `service`: added from the dashboard, with no product types of its own. */
+  categories: { key: CategoryKey; name: string; service: boolean; visible: boolean }[];
   products: AdminProductView[];
 };
 
@@ -56,12 +60,19 @@ export async function getAdminCatalog(actor: StaffContext): Promise<AdminCatalog
   const options = await listOptionsFor(productRows.map((p) => p.id));
 
   const categories = categoryRows.flatMap((c) =>
-    isCategoryKey(c.key) ? [{ id: c.id, key: c.key, name: c.nameAr, img: c.imageUrl }] : [],
+    isCategoryKey(c.key)
+      ? [{ id: c.id, key: c.key, name: c.nameAr, img: c.imageUrl, visible: c.isVisible }]
+      : [],
   );
   const byId = new Map(categories.map((c) => [c.id, c]));
 
   return {
-    categories: categories.map(({ key, name }) => ({ key, name })),
+    categories: categories.map(({ key, name, visible }) => ({
+      key,
+      name,
+      service: isServiceKey(key),
+      visible,
+    })),
     products: productRows.flatMap((p) => {
       const category = byId.get(p.categoryId);
       if (!category) return [];
@@ -171,6 +182,48 @@ export async function setProductVisibility(
       });
     }
     return { name: existing.nameAr, visible: input.visible };
+  });
+}
+
+/** A new service's photo until photo upload is wired (products share the same gap). */
+const SERVICE_IMAGE = "/images/categories/custom.jpg";
+
+/**
+ * «إضافة خدمة»: a new service on the home page and in the request builder. It has no product
+ * types; customers ordering it give a quantity and describe what they want.
+ */
+export async function createService(
+  actor: StaffContext,
+  raw: CreateServiceInput,
+): Promise<Result<{ key: string; name: string }>> {
+  assertCan(actor, "catalog.manage");
+  const parsed = createServiceSchema.safeParse(raw);
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors as Record<string, string[]>;
+    const first = Object.values(fieldErrors).flat()[0];
+    return err(new ValidationError(fieldErrors, first));
+  }
+  const input = parsed.data;
+  return inTransaction(async (tx) => {
+    const key = newServiceKey();
+    const id = await insertCategory(
+      {
+        key,
+        nameAr: input.name,
+        description: input.description,
+        imageUrl: SERVICE_IMAGE,
+        isVisible: input.visible,
+      },
+      tx,
+    );
+    await logActivity(tx, {
+      userId: actor.id,
+      action: "catalog.service_created",
+      entityType: "product_category",
+      entityId: String(id),
+      meta: { key, name: input.name, visible: input.visible },
+    });
+    return { key, name: input.name };
   });
 }
 

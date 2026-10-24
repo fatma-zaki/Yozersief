@@ -1,5 +1,6 @@
 export {
   getAdminCatalog,
+  createService,
   getHiddenProductKeys,
   saveProduct,
   setProductVisibility,
@@ -12,7 +13,15 @@ export {
   WEAR_SIZES,
   type SeedCategory,
 } from "./domain/catalog-seed";
-export { CATEGORY_KEYS, isCategoryKey, type CategoryKey } from "./domain/categories";
+export {
+  CATEGORY_KEYS,
+  isBuiltinCategoryKey,
+  isCategoryKey,
+  isServiceKey,
+  type BuiltinCategoryKey,
+  type CategoryKey,
+  type ServiceKey,
+} from "./domain/categories";
 export {
   getPublicCatalog,
   invalidatePublicCatalog,

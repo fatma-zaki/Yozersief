@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ar } from "@/i18n/ar";
-import { CATEGORY_KEYS, isCategoryKey } from "@/modules/catalog";
+import { CATEGORY_KEYS, isBuiltinCategoryKey } from "@/modules/catalog";
 
 export function generateStaticParams() {
   return CATEGORY_KEYS.map((key) => ({ key }));
@@ -12,13 +12,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/services/[key]">) {
   const { key } = await params;
-  return isCategoryKey(key) ? { title: ar.catalog[key].t } : {};
+  return isBuiltinCategoryKey(key) ? { title: ar.catalog[key].t } : {};
 }
 
 /** Service page (B10). Phase 0 skeleton: category intro + CTA; details come with Phase 5 catalog admin. */
 export default async function ServicePage({ params }: PageProps<"/services/[key]">) {
   const { key } = await params;
-  if (!isCategoryKey(key)) notFound();
+  if (!isBuiltinCategoryKey(key)) notFound();
   const category = ar.catalog[key];
 
   return (

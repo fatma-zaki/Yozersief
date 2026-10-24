@@ -18,6 +18,8 @@ export type PublicProduct = {
 export type PublicCategory = {
   key: CategoryKey;
   name: string;
+  /** Card text for a dashboard service; null for the B4 categories (their text is in i18n). */
+  description: string | null;
   img: string;
   products: PublicProduct[];
 };
@@ -26,6 +28,7 @@ export type CategoryRow = {
   id: number;
   key: string;
   nameAr: string;
+  description: string | null;
   imageUrl: string;
   isVisible: boolean;
 };
@@ -53,6 +56,7 @@ export function buildPublicCatalog(
       {
         key: c.key,
         name: c.nameAr,
+        description: c.description,
         img: c.imageUrl,
         products: visible.map((p) => ({
           key: p.key,

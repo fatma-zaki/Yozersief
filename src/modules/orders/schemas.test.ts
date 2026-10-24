@@ -33,6 +33,22 @@ describe("submitOrderInputSchema", () => {
     expect(parsed.success).toBe(false);
   });
 
+  it("accepts a dashboard service with a quantity and a description", () => {
+    const parsed = submitOrderInputSchema.safeParse({ ...base, cat: "svc-ab23cd", qty: "20" });
+    expect(parsed.success).toBe(true);
+  });
+
+  it("requires a quantity for a dashboard service", () => {
+    const parsed = submitOrderInputSchema.safeParse({ ...base, cat: "svc-ab23cd" });
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) expect(parsed.error.issues.map((i) => i.path[0])).toContain("qty");
+  });
+
+  it("rejects an unknown category key", () => {
+    const parsed = submitOrderInputSchema.safeParse({ ...base, cat: "bags" });
+    expect(parsed.success).toBe(false);
+  });
+
   it("requires design files or help", () => {
     const parsed = submitOrderInputSchema.safeParse({
       ...base,

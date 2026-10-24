@@ -5,6 +5,7 @@ const cat = (id: number, key: string, isVisible = true): CategoryRow => ({
   id,
   key,
   nameAr: `فئة ${key}`,
+  description: null,
   imageUrl: `/images/categories/${key}.jpg`,
   isVisible,
 });

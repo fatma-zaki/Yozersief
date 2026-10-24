@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import {
+  createServiceAction,
   saveProductAction,
   setProductVisibilityAction,
 } from "@/app/(dashboard)/dashboard/products/actions";
@@ -16,6 +17,7 @@ import { KitHeader, KitToast, Switch, useFlash } from "../Kit.client";
 import k from "../kit.module.css";
 import shell from "../shell/shell.module.css";
 import p from "./products.module.css";
+import { ServiceDrawer, type ServiceDraft, type ServiceFailure } from "./ServiceDrawer.client";
 
 /**
  * Products & services (brief B4, B10), from docs/design/Admin-Products.html. Data comes from
@@ -41,7 +43,10 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
   const [drawer, setDrawer] = useState<{ mode: "new" | "edit"; n: number; draft: Draft } | null>(
     null,
   );
+  const [serviceOpen, setServiceOpen] = useState(false);
   const { toast, flash, hide } = useFlash();
+  // Products belong to the B4 categories; a dashboard service has no product types.
+  const productCategories = data.categories.filter((c) => !c.service);
 
   const catName = new Map(data.categories.map((c) => [c.key, c.name]));
   const items = data.products.map((x) =>
@@ -102,6 +107,26 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
     return null;
   };
 
+  const saveService = async (d: ServiceDraft): Promise<ServiceFailure | null> => {
+    const result = await createServiceAction(d);
+    if (!result.ok) {
+      const field = result.fieldErrors?.name
+        ? "name"
+        : result.fieldErrors?.description
+          ? "description"
+          : null;
+      return { error: result.error, field };
+    }
+    setServiceOpen(false);
+    flash(
+      d.visible
+        ? `أُضيفت خدمة «${result.data.name}» وأصبحت ظاهرة في الموقع`
+        : `أُضيفت خدمة «${result.data.name}» (مخفية)`,
+    );
+    router.refresh();
+    return null;
+  };
+
   return (
     <div className={cn(k.root, shell.gutter)}>
       <KitHeader title="الخدمات والمنتجات" subtitle="ما يظهر للعملاء في الموقع وفي منشئ الطلب">
@@ -133,7 +158,7 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
               draft: {
                 id: null,
                 name: "",
-                categoryKey: data.categories[0]?.key ?? "wear",
+                categoryKey: productCategories[0]?.key ?? "wear",
                 img: "/images/admin/file-preview.png",
                 desc: "",
                 colors: [],
@@ -147,6 +172,15 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
         >
           <Ic d={P.plus} size={18} stroke={2.4} />
           إضافة منتج
+        </button>
+        <button
+          className={cn(k.btn, k.soft)}
+          type="button"
+          onClick={() => setServiceOpen(true)}
+          style={{ minHeight: 46, padding: "8px 22px", borderRadius: 999, fontSize: 15 }}
+        >
+          <Ic d={P.plus} size={18} stroke={2.4} />
+          إضافة خدمة
         </button>
       </KitHeader>
 
@@ -331,10 +365,13 @@ export function ProductsBoard({ data }: { data: AdminCatalogData }) {
           key={drawer.n}
           mode={drawer.mode}
           initial={drawer.draft}
-          categories={data.categories}
+          categories={productCategories}
           onClose={() => setDrawer(null)}
           onSave={save}
         />
+      ) : null}
+      {serviceOpen ? (
+        <ServiceDrawer onClose={() => setServiceOpen(false)} onSave={saveService} />
       ) : null}
       <KitToast text={toast} onClose={hide} />
     </div>

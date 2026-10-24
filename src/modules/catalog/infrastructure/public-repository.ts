@@ -10,6 +10,7 @@ export async function listCategoriesWithVisibility(tx: DbOrTx = db) {
       id: productCategories.id,
       key: productCategories.key,
       nameAr: productCategories.nameAr,
+      description: productCategories.description,
       imageUrl: productCategories.imageUrl,
       isVisible: productCategories.isVisible,
     })

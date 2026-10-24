@@ -104,7 +104,8 @@ export function productLabel(o: OrderFacts): string {
     case "sticker":
       return `ملصق${o.shape ? ` ${label(L.shapes, o.shape)}` : ""}${qty}`;
     default:
-      return o.categoryName;
+      // «فكرة خاصة» has no quantity; a dashboard service does.
+      return `${o.categoryName}${qty}`;
   }
 }
 
@@ -143,6 +144,7 @@ export function specList(o: OrderFacts): { k: string; v: string }[] {
     add("الكمية", o.quantity ? String(o.quantity) : null);
   } else {
     add("النوع", o.categoryName);
+    add("الكمية", o.quantity ? String(o.quantity) : null);
   }
   if (o.needsDesignHelp) add("التصميم", "يحتاج إلى مساعدة في التصميم");
   if (o.receiptMethod === "delivery") add("عنوان التوصيل", o.deliveryAddress);

@@ -7,7 +7,7 @@ import { generateOrderRef } from "@/lib/ids";
 import { normalizeEgyptianMobile } from "@/lib/phone";
 import { err, ok, type Result } from "@/lib/result";
 import { hashToken } from "@/lib/tokens";
-import { WEAR_SIZES } from "@/modules/catalog";
+import { isServiceKey, WEAR_SIZES } from "@/modules/catalog";
 import { hasSizeSplit, isOrg, toDecimal, toInt } from "../domain/request";
 import type { SubmitOrderInput } from "../schemas";
 import {
@@ -69,7 +69,7 @@ function buildOrderValues(
     unit: input.cat === "sticker" ? nullIfEmpty(input.unit) : null,
     shape: input.cat === "sticker" ? nullIfEmpty(input.shape) : null,
     customText: input.cat === "mug" || input.cat === "phone" ? nullIfEmpty(input.text) : null,
-    description: input.cat === "custom" ? nullIfEmpty(input.desc) : null,
+    description: input.cat === "custom" || isServiceKey(input.cat) ? nullIfEmpty(input.desc) : null,
     notes: nullIfEmpty(input.notes) ?? nullIfEmpty(input.use),
     needsDesignHelp: input.help,
     designNotes: nullIfEmpty(input.artNotes),

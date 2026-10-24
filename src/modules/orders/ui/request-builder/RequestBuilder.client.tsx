@@ -20,6 +20,7 @@ import { cn } from "@/lib/cn";
 import { cairoDateString } from "@/lib/format";
 import {
   buildChecks,
+  categoryLabel,
   emptyDraft,
   fileError,
   isOrg,
@@ -137,7 +138,7 @@ export function RequestBuilder({
   }, []);
 
   const checks = useMemo(
-    () => buildChecks(draft, today, catalog.productNames),
+    () => buildChecks(draft, today, { ...catalog.categoryNames, ...catalog.productNames }),
     [draft, today, catalog],
   );
   const ready = readinessOf(checks);
@@ -244,7 +245,7 @@ export function RequestBuilder({
   const productName = draft.prod
     ? productLabel(draft.prod, catalog.productNames)
     : draft.cat
-      ? (catalog.categoryNames[draft.cat] ?? b.cats[draft.cat].short)
+      ? (catalog.categoryNames[draft.cat] ?? categoryLabel(draft.cat))
       : "";
   const mobileSub =
     t(b.stepOf, { n: current }) + (productName && current > 1 ? ` · ${productName}` : "");

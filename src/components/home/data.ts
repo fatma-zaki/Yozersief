@@ -88,10 +88,14 @@ const CATEGORY_COPY: Record<string, CategoryCopy> = {
 };
 
 /** Home «منتجاتنا» cards: the categories customers can order, in the catalog's order. */
-export function productCards(categories: readonly { key: string; name: string; img: string }[]) {
+export function productCards(
+  categories: readonly { key: string; name: string; description: string | null; img: string }[],
+) {
   return categories.map((c): Product => {
     const copy = CATEGORY_COPY[c.key];
-    const d = copy?.d ?? { d: "", t: "", m: "" };
+    // A service added in the dashboard brings its own card text.
+    const text = c.description ?? "";
+    const d = copy?.d ?? { d: text, t: text, m: text };
     return {
       key: c.key,
       t: c.name,
